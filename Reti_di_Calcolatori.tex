@@ -68,6 +68,42 @@ Università degli Studi ``Roma Tre"}}
 \clearpage
 \pagenumbering{arabic}
 
+\section{Introduzione}
+
+Una qualsiasi interconnessione di calcolatori può rappresentare una rete di calcolatori, ma in base alla distanza reciproca tra questi componenti 
+si tratta di reti differenti. Convenzionalmente si considerano reti di calcolatori, sistemi di calcolatori interconnessi ad una distanza 
+superiore ai 50 cm. Una distanza minore, fino ai 5 cm, generalmente interessa componenti dello stesso computer, sulla stessa scheda madre, connesse tra di loro; mentre una 
+distanza inferiore ai 5 cm rappresenta componenti sullo stesso chip. Inoltre le reti considerate possono essere ulteriormente divise in base 
+alla distanza dei loro elementi:
+\begin{itemize}
+  \item Se hanno una distanza minore di 5 km, si tratta di risorse connesse sulla stessa rete o edificio, o su edifici vicini. Questo tipo di rete si chiama Local Area Network (LAN);
+  \item Se hanno una distanza superiore ai 5 km, si tratta di risorse connesse su una vasta area geografica. Questo tipo di rete si chiama Wide Area Network (WAN).
+\end{itemize}
+Tra questi due livelli possono essere presenti anche tecnologie molto diverse tra di loro, queste tecnologie vengono identificate da acronimi da cui 
+è possibile ricavare lo scopo della tecnologia, senza tuttavia conoscere il suo funzionamento. 
+
+Una connessione tra componenti di una rete coinvolge sempre uno scambio di informazioni, tramite uno scambio di messaggi in serie. Gli elementi della 
+rete effettuano degli accessi ad essa apparentemente in parallelo e simultanei, per poter comunicare tra di loro. Mentre su componenti sulla stessa macchina o sullo 
+stesso chip avvengono tramite accessi ad una memoria condivisa. 
+
+Le connessioni componenti di una rete avvengono su uno strato fisico, quindi attraverso diversi mezzi trasmissivi, i quali non verranno analizzati approfonditamente a 
+questo livello di astrazione. Tra i più comuni mezzi trasmissivi abbiamo cavi in fibra ottica, o in rame, ed onde radio. 
+
+\subsection{Commutazione}
+
+All'interno di una rete si possono utilizzare due tipi diversi di commutazione, di circuito o di pacchetto. Il termine commutazione risale alla telefonia, quando 
+diverse aree telefoniche dovevano essere collegate tra di loro, un operatore ad un centralino doveva manualmente collegare con un cavo le due aree interessate. 
+Quest'operazione di connettere elementi tramite nodi intermedi in una rete rappresenta un elemento comune di tutte le reti. Collegare singolarmente tutti gli 
+$n$ elementi di una rete comporterebbe un numero totale di $n(n-2)/2$ connessioni. All'aumento dei componenti in una rete il numero $n$ di connessioni da costruire sulla 
+rete aumenta quadraticamente $O(n^2)$. Per cui è molto più conveniente mantenere nodi intermedi comuni a molti percorsi tra componenti della rete, utilizzando 
+apparecchiature intermedie per realizzare circuiti. In questo modo però non è possibile soddisfare tutte le possibili coppie contemporaneamente, ma si elimina la 
+crescita quadratica del sistema. 
+La commutazione di circuito consiste nella creazione del percorso fisico che connette due elementi della rete. 
+
+
+
+
+
 
 
 \end{document}
