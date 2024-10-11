@@ -101,8 +101,130 @@ crescita quadratica del sistema.
 La commutazione di circuito consiste nella creazione del percorso fisico che connette due elementi della rete. 
 
 
+%% todo aggiungere lezioni 25, 27 sett; 2, 4, 9 ott
+
+\section{Standard IEEE 802}
+
+%% add
+
+\subsection{802.11: WiFi}
+
+%% add
+
+\subsection{802.3: Ethernet}
+
+%% add
+
+Un pacchetto ethernet deve comunque avere 512 bit da trasmettere, altrimenti la parte residua del campo dati deve essere riempita di bit 
+di riempimento chiamato padding, inoltre il campo dati può contenere al massimo 1500 Byte. 
+
+\subsection{802.1D: Bridge-Switch}
+
+La connessione instaurata tramite ethernet è bidirezionale simultanea solamente su due calcolatori, ma su una stessa connessione può inviare i dati un solo 
+calcolatore, quindi sono necessarie altre componenti. Un bridge è una componente che consente di connettere tra di loro più di un computer 
+tramite ethernet, comportandosi come se fosse un calcolatore intermedio ai calcolatori della rete, connesso a ciascuno di questi tramite una connessione 
+ethernet. 
+
+Inoltre connettendo tra di loro diversi bridge è possibile creare una struttura più articolata, creando una struttura simile ad un albero. La 
+parte wired o cablata delle connessioni LAN vengono instaurate in questo modo. 
+
+%% todo img rete bridge
 
 
+I bridge svolgono una prima funzione di rendere possibili topologie articolate, effettuando un'operazione di ``filtering'', per separare tra di loro porzioni di rete che 
+non devono dialogare tra di loro in modo diretto
+
+%% todo img filtering
+
+I bridge sono delle macchine ``store \& forward'', ovvero quando ricevono un pacchetto, prima di essere inviato su altre porte, viene 
+memorizzato e trasmesso su altre porte, analogamente come se fosse un calcolatore, in caso le altre porte siano impegnate a trasmettere altri 
+pacchetti, quindi in caso di traffico. Si può quindi immaginare una coda di pacchetti sulle porte del bridge per essere trasmesse. 
+
+Il bridge sono delle tecnologie di livello 2, ed utilizzano algoritmi di instradamento per inviarli ad un MAC address specifico, ma questo tipo di 
+algoritmo viene effettuato a livello 3. Questo non sorge problemi, poiché quest'operazione di instradamento è interna alla LAN, e non coinvolge alcun'altra componente 
+della rete. I bridge devono essere conformi allo standard IEEE 802.1D. Gli standard comprendenti il carattere ``D'', sono di grande importanza. 
+I sistemi connessi a reti LAN ignorano i bridge, si dicono quindi trasparenti, poiché i calcolatori connessi alla rete non conoscono la loro posizione all'interno della 
+rete. 
+
+%% todo img connessione lan dallo standard 
+
+Un calcolatore per inviare un messaggio ad un altro calcolatore su una rete LAN, invia il suo pacchetto ad un bridge attraverso il sul MAC address. Il bridge quindi 
+utilizza in principio un diverso MAC address, per spedire questo pacchetto al computer di destinazione tramite il suo MAC address. Tra questi due MAC è presenta un 
+componente di relay, per trasmettere il pacchetto tra porte diverse del bridge. 
+
+
+Le porte di un bridge possono avere lo stesso MAC o MAC differenti. Poiché il pacchetto è specifico al MAC del bridge, deve ricostruire il pacchetto scartando i campi 
+specifici al MAC address del bridge. Inoltre poiché i pacchetti non sono tutti conformi allo standard IEEE 802.3, deve ricostruire anche il campo LLC. I MAC address 
+dei computer nella rete sono realizzati in modo da poter essere connessi a ciascun tipo di MAC. 
+
+%%\subsubsection{Learning}
+
+Si vuole che il modello di rete sia ``plug \& play'', ovvero non deve essere dipendente da un intervento umano. 
+I bridge costruiscono la loro tabella di instradamento per identificare dove sono presenti i diversi MAC address, autonomamente attraverso un meccanismo di ``learning'', 
+salvando questa tabella nel ``filtering database''. Ogni porta del bridge rappresenta una linea ethernet diversa, identificando un loro dominio di collisione, a cui 
+possono essere connessi diversi calcolatori. 
+
+Si considera una rete dove ogni componente connesso è spento, ed una tabella vuota. Appena si accende un calcolatore ed invia un pacchetto da un dominio di collisione, 
+allora il bridge capisce a quale porta corrisponde il MAC address del mittente. Ma ancora non conosce dove si trova il destinatario, quindi lo invia su tutte le sue 
+porte disponibili, su tutta la rete. Invece se conosce la porta dov'è presente il destinatario lo invia solamente su quella porta. 
+
+%% todo img tabella di filtering
+
+Il learning permette di costruire autonomamente il filtering database di un bridge, questo meccanismo tuttavia non funziona quando al rete presenta una topologia diversa 
+dalla topologia ad albero. Per esempio se è presente un ciclo all'interno della rete, il bridge si vede arrivare un pacchetto dallo stesso MAC address su porte diverse. 
+Ma un albero è una topologia contenente solo ``Single Points of Failures'' (SPoF) e quindi fortemente sconsigliata, poiché un singolo malfunzionamento causerebbe la 
+perdita di funzionalità dell'intera rete. Per cui data una topologia a grafo, un bridge è in grado di calcolare autonomamente un albero 
+ricoprente della rete, ad ogni cambio di topologia della stessa. I bridge inoltre vengono collegati tra di loro per più di una connessione per evitare altri SPoF, ed 
+evitare che a un singolo guasto la rete venga tagliata in due. 
+
+Tramite un meccanismo progressivo i bridge individuano la loro posizione nella struttura dell'albero ricoprente e sono in grado di staccare alcune porte e rimanere 
+collegati sull'intera rete; quando questi bridge rilevano un guasto su una di queste connessioni, riattivano una delle porte disattivate per mantenere in funzione la 
+rete, ottenendo una significativa resistenza ai gusti. 
+Questo tipo di algoritmo di spanning tree verrà trattato in corsi più avanzati di reti di calcolatori. 
+
+Le prestazioni di un bridge influenzano le prestazioni dell'intera rete locale, vengono identificate da una serie di parametri. Il numero massimo di pacchetti al 
+secondo processabili dal bridge, rappresentano un collo di bottiglia per i pacchetti che possono essere presenti sulla rete in ogni singolo momento, se vengono 
+inviati un numero superiore ci pacchetti, alcuni pacchetti verranno scartati. Un altro parametro caratteristico è il tempo medio di latenza, ovvero il tempo in cui il 
+bridge prende le sue decisioni ed invia il pacchetto alla porta giusta. 
+Per cui è preferibile avere bridge full speed, ovvero con una velocità pari al massimo teorico. Più corti sono i pacchetti maggiore è il numero di decisioni 
+effettuate nell'unità di tempo. Nello standard IEEE 802.3 a 10 Mb/s, un bridge si definisce full speed, se è in grado di processare 41880 pacchetti al secondo, 
+per ogni porta. Questi esperimenti di verifica a parità di frequenza devono essere effettuati utilizzando pacchetti di lunghezza minima, così ad ogni porta è presente 
+la massima frequenza di funzionamento del bridge. 
+Il pacchetto più piccolo che può essere inviato è da 512 bit, per cui il numero massimo di pacchetti al secondo ad una 
+velocità di 10 Mb/s è di circa 19500 pacchetti, ma il pacchetto comprende anche il preambolo ed lo SFD, per cui vanno aggiunti altri 64 bit, 
+numero di pacchetti al secondo scende quindi a 17300. 
+Tuttavia tra un pacchetto ed il successivo in ethernet è presente l'``interpacket gap'' di 96 bit. 
+Per ciascuna tipologia di porta del bridge si effettua questa analisi e si verifica nel caso peggiore quanti pacchetti è in grado di gestire. 
+
+
+Il bridge è un calcolatore, con una CPU, RAM ed interfacce per le diverse LAN, in ROM le funzionalità dello standard %%
+Per bridge più potenti, le  porte vengono raelizzate tramite schede ASIC, per risolvere il problema dell'instradamento localmente. Le porte vengono realizzati tramite 
+diversi slot che possono essere inseriti o rimossi in base al tipo di porta necessaria. Inoltre sono necessari massicci impianti di raffreddamento per riuscire a 
+mantenere la temperatura del data center. A differenza di un server che può essere rallentano in caso di traffico allentato e quindi diminuire la temperature, le apparecchiature di bridge non possono 
+spegnersi, e quindi comportano una temperatura costantemente elevata. Bridge di fascia alta sono in grado di effettuare bilanci sulle prese di corrente. 
+
+Logicamente sono presenti almeno due porte una ``MAC relay entity'', per trasmettere i pacchetti tra le varie porte, ed un'entità di livello superiore, per la gestione 
+del bridge, degli algoritmi e dei protocolli. Queste entità di alto livello comunicano con altri bridge attraverso pacchetti per realizzare lo spanning tree. 
+
+Le porte del bridge possono essere abilitate o disattivate dall'amministratore di rete. Una porta attiva può essere in stato di ``forwarding'' o di ``blocking'', se sono 
+bloccate lo spanning tree lo ha bloccate. Ogni porta ha un indirizzo MAC univoco, e sono numerate progressivamente a partire da uno. Convenzionalmente l'indirizzo MAc 
+del bridge corrisponde all'indirizzo MAC della porta numero uno. 
+
+La tabella di instradamento contiene ``entries'' (righe) statiche o dinamiche. Le righe statiche vengono inserite dall'amministratore a causa di esigenze di sicurezza 
+importanti, altrimenti la posizione del MAC address vengono mantenuti per un tempo finito, configurabile, e di default di 5 minuti. Infatti è possibile che il calcolatore 
+venga spostato spazialmente attraverso la rete, è quindi possibile si colleghi ad una porta differente. 
+
+%% add ??
+
+Lo sviluppo di ethernet ha portato alla creazione di meccanismi di controllo di flusso, soprattutto per gli switch. Una richiesta attraverso il bridge può essere di 
+pochi byte verso un server, ma può provocare un trasferimento notevole di dati verso il client, quindi attraverso il bridge ad una porta ad alta velocità, ma questi 
+pacchetti da ritrasmettere verso il cliente passano attraverso una porta di banda minore, quindi la porta più lente può andare facilmente in saturazione. 
+Viene introdotto quindi tramite lo standard IEEE 802.3x e 802.3bd un controllo di flusso tramite dei ``pause frame'' un MAC control frame di 512 bit, per fermarsi 
+prima di riprodurre traffico I pause frame non contengono dati ma contengono informazioni di controllo, e rappresentano una novità, viene quindi implementato 
+attraverso un nuovo sottostato di MAC chiamato MAC control. Il supporto allo standard 802.3x è opzionale e viene negoziato tra le schede alle due estremità del filo. 
+
+Prima dello standard 802.3x poiché ethernet era una comunicazione a turni, per impedire la saturazione i bridge potevano inviare pacchetti senza dati prendendo il 
+controllo della connessione. 
 
 
 
