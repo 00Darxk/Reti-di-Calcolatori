@@ -118,7 +118,7 @@ questi circuiti virtuali sulla stessa linea fisica.
 
 Si è risolto tramite la commutazione di pacchetto l'esclusività delle linee della rete, introdotta dal modello a commutazione di circuito. 
 
-%% todo img commutazione di circuito, di pacchetto (datagramma e circuito virtuale)
+%% TODO img commutazione di circuito, di pacchetto (datagramma e circuito virtuale)
 
 La rete internet moderna utilizza la commutazione a datagramma, per motivi economici e gestionali. Altrimenti sarebbe necessario un gestore della rete che deve trovare 
 un percorso ed attribuirlo ad una coppia ad ogni tentativo di connessione. Data la complessità della rete moderna, lasciare che i pacchetti trovino il percorso 
@@ -189,7 +189,7 @@ sempre più astratto ed il sistema aumenta progressivamente di utilità. Per la 
 La rete viene divisa in 7 livelli numerati dal basso verso l'alto, il livello indica la funzione delle tecnologie che vi appartengono e questo fornisce uno strumento di 
 classificazione per analizzarle senza dover conoscere i loro meccanismi interni. 
 
-%% todo img tabella strati iso-osi
+%% TODO img tabella strati iso-osi
 
 Ogni strato rappresenta un diverso livello di astrazione ed offrono funzioni ben definite. Poiché ognuno di questi strati è indipendente dal livello inferiore, viene minimizzato lo scambio 
 di informazioni tra strati. Il numero dei livelli venne scelto in base alle funzioni distinte di una rete da descrivere e dalla realizzabilità. 
@@ -217,9 +217,13 @@ I diversi livelli di questo modello presentano le seguenti funzioni:
   \item Il terzo livello è lo strato di rete e conosce la topologia completa della rete, per effettuare operazioni di instradamento. Contiene i protocolli come IPv4, 
   progressivamente sostituito da IPv6, e permette il trasferimento di pdu da estremo ad estremo. Inoltre permette la commutazione di circuito o di pacchetto a datagramma e 
   a circuito virtuale. 
-  \item Il quarto livello di trasporto, divide il messaggio in pacchetti 
-  
-  
+  \item Il quarto livello di trasporto, divide il messaggio in pacchetti, prova a colmare fluttuazioni della qualità del servizio dello strato di rete in modo 
+  trasparente rispetto agli strati superiori. In caso manchino dei pacchetti prova a recuperarli attraverso algoritmi di correzione, è il primo strato che risiede 
+  solamente nei terminali. Offre allo strato superiore la possibilità di instaurare una connessione e gestione della stessa, una trasmissione affidabile, ed il rilascio 
+  della connessione. 
+  \item Il quinto livello di sessione sincronizza e struttura il dialogo tra due processi.
+  \item Il sesto livello di presentazione permette uno scambio di messaggi indipendentemente dalla sintassi della trasmissione. 
+  \item Il settimo livello di applicazione offre un mezzo per accedere alla rete tramite un processo, interfacciando l'utente alla rete.  
 \end{enumerate}
 
 Per tutti i livelli superiori a quello fisico si possono definire due modalità operative ed associati servizi e protocolli, connessi e non connessi. Nei servizi o 
@@ -236,19 +240,35 @@ sono quindi più affidabili, ma meno efficienti, poiché dopo aver instaurato il
 
 In un servizio connesso sono presenti primitive per instaurare una connessione, inviare messaggi e una conferma di ricezione o ricevere messaggi, specificare 
 l'indirizzo o nome della connessione ed abbattere la connessione. Mentre per servizi non connessi sono presenti solo primitive per inviare messaggi separatamene. 
+Nelle reti LAN sono disponibili servizi connessi, solamente sul quarto strato, mentre nelle reti WAN è possibile siano offerti anche nel primo strato.  
+
+
 
 I primi tre livelli della pila ISO-OSI sono presenti su ogni nodo della rete non solo sui calcolatori, poiché rappresentano i livelli di trasmissione dei pacchetti, 
 necessari anche nei nodi intermedi per poter trasmettere i pacchetti. 
 
+Nei protocolli di livello 2,3 e 4 si utilizzano meccanismi di riscontro o acknowledgment e tecniche di controllo a finestra, a riga indice e puntatore in avanti per 
+correggere eventuali errori nei pacchetti. 
 
+Gli ultimi tre strati della pila si interfacciano con le applicazioni e lavorano generalmente in parallelo invece che in serie come il resto della pila. 
 
+Una singola connessione di livello $n$ può essere sfruttata da più connessioni di livello $n+1$, interne in modo che gli $n$-pdu contengono entrambe le $n+1$-pdu delle due 
+connessioni. Può essere il caso di connessioni tra più processi diversi sulle stesse due macchine, dove una singola connessione tra queste due macchine contenga numerose 
+connessioni processo-processo tra le due. 
 
-%% todo aggiungere lezioni 27 sett; 2, 4, 9 ott
+Inoltre una singola connessione $n+1$ può utilizzare più di una connessione di livello $n$, per parallelizzare la trasmissione e velocizzarla partizionando i dati da 
+inviare, oppure per implementare una resistenza ai guasti. La connessione $n+1$ utilizza più canali di comunicazione di livello $n$ non in competizione. 
 
+Una singola connessione di livello $n+1$ nel tempo, può utilizzare più di una connessione di livello inferiore; è possibile che il terminale si sposta durante la 
+trasmissione e si aggancia a reti diverse da quella iniziale, senza interrompere la connessione. 
+Nello stesso caso, una stessa connessione di livello $n$ continua nel tempo può essere utilizzata da diverse connessioni di livello $n+1$. La connessione originale dell'esempio 
+precedente vede uscire il primo terminale e quindi la prima connessione $n+1$ per poi vedere accedere un altro terminale ed un'altra connessione $n+1$. 
 
 \clearpage
 
 \section{Standard IEEE 802}
+
+%% TODO aggiungere lezioni 2, 4, 9 ott
 
 %% add
 
@@ -273,13 +293,13 @@ ethernet.
 Inoltre connettendo tra di loro diversi bridge è possibile creare una struttura più articolata, creando una struttura simile ad un albero. La 
 parte wired o cablata delle connessioni LAN vengono instaurate in questo modo. 
 
-%% todo img rete bridge
+%% TODO img rete bridge
 
 
 I bridge svolgono una prima funzione di rendere possibili topologie articolate, effettuando un'operazione di ``filtering'', per separare tra di loro porzioni di rete che 
 non devono dialogare tra di loro in modo diretto
 
-%% todo img filtering
+%% TODO img filtering
 
 I bridge sono delle macchine ``store \& forward'', ovvero quando ricevono un pacchetto, prima di essere inviato su altre porte, viene 
 memorizzato e trasmesso su altre porte, analogamente come se fosse un calcolatore, in caso le altre porte siano impegnate a trasmettere altri 
@@ -291,7 +311,7 @@ della rete. I bridge devono essere conformi allo standard IEEE 802.1D. Gli stand
 I sistemi connessi a reti LAN ignorano i bridge, si dicono quindi trasparenti, poiché i calcolatori connessi alla rete non conoscono la loro posizione all'interno della 
 rete. 
 
-%% todo img connessione lan dallo standard 
+%% TODO img connessione lan dallo standard 
 
 Un calcolatore per inviare un messaggio ad un altro calcolatore su una rete LAN, invia il suo pacchetto ad un bridge attraverso il sul MAC address. Il bridge quindi 
 utilizza in principio un diverso MAC address, per spedire questo pacchetto al computer di destinazione tramite il suo MAC address. Tra questi due MAC è presenta un 
@@ -313,7 +333,7 @@ Si considera una rete dove ogni componente connesso è spento, ed una tabella vu
 allora il bridge capisce a quale porta corrisponde il MAC address del mittente. Ma ancora non conosce dove si trova il destinatario, quindi lo invia su tutte le sue 
 porte disponibili, su tutta la rete. Invece se conosce la porta dov'è presente il destinatario lo invia solamente su quella porta. 
 
-%% todo img tabella di filtering
+%% TODO img tabella di filtering
 
 Il learning permette di costruire autonomamente il filtering database di un bridge, questo meccanismo tuttavia non funziona quando al rete presenta una topologia diversa 
 dalla topologia ad albero. Per esempio se è presente un ciclo all'interno della rete, il bridge si vede arrivare un pacchetto dallo stesso MAC address su porte diverse. 
