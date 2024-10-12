@@ -118,6 +118,7 @@ questi circuiti virtuali sulla stessa linea fisica.
 
 Si è risolto tramite la commutazione di pacchetto l'esclusività delle linee della rete, introdotta dal modello a commutazione di circuito. 
 
+%% todo img commutazione di circuito, di pacchetto (datagramma e circuito virtuale)
 
 La rete internet moderna utilizza la commutazione a datagramma, per motivi economici e gestionali. Altrimenti sarebbe necessario un gestore della rete che deve trovare 
 un percorso ed attribuirlo ad una coppia ad ogni tentativo di connessione. Data la complessità della rete moderna, lasciare che i pacchetti trovino il percorso 
@@ -134,7 +135,7 @@ In certi casi l'ISP può gestire la rete a circuito virtuale, se sia il destinat
 Nelle reti LAN e WAN  si possono trasmettere dati a velocità diverse:
 \begin{itemize}
   \item LAN: velocità tra 10 ai 100 Mb/s;
-  \item WAN: velocità tra 64 Kb/s ai 200~400 Mb/s. 
+  \item WAN: velocità tra 64 Kb/s ai 200-400 Mb/s. 
 \end{itemize} 
 
 Le reti WAN presentano hanno molti livelli di retrocompatibilità mantenuti, per cui si possono trasmettere dati a velocità minori di una rete LAN. 
@@ -178,7 +179,72 @@ alcuni di questi standard vengono imposti dalla case costruttrici, altri vengono
 telecomunicazioni. Alcune di queste associazioni come IETF sono indipendenti da stati nazionali, dove varie aziende o istituzioni propongono modifiche di vecchi 
 standard o introduzione e definizione di nuovi. 
 
+Il modello ISO-OSI rappresenta un importante strumento di classificazione nel modo delle reti. Venne realizzato in parte e sostanzialmente dismesso, ma nonostante 
+questo viene utilizzato a livello globale. 
+
+Questo modello si basa sull'architettura stratificata di hardware o software, dove partendo da un nucleo centrale il sistema viene diviso in livelli o strati 
+indipendenti dal livello inferiore, ed uno strato fornisce servizi solamente allo strato immediatamente superiore. Avanzando da uno strato al superiore i servizi vengono mostrati in modo 
+sempre più astratto ed il sistema aumenta progressivamente di utilità. Per la sua utilità questo tipo di architettura stratificata permane molti campi dell'informatica. 
+
+La rete viene divisa in 7 livelli numerati dal basso verso l'alto, il livello indica la funzione delle tecnologie che vi appartengono e questo fornisce uno strumento di 
+classificazione per analizzarle senza dover conoscere i loro meccanismi interni. 
+
+%% todo img tabella strati iso-osi
+
+Ogni strato rappresenta un diverso livello di astrazione ed offrono funzioni ben definite. Poiché ognuno di questi strati è indipendente dal livello inferiore, viene minimizzato lo scambio 
+di informazioni tra strati. Il numero dei livelli venne scelto in base alle funzioni distinte di una rete da descrivere e dalla realizzabilità. 
+
+All'interno di ogni strato si possono individuare diverse ``entità'', hardware o software dove sono contenuti i protocolli di quel livello. Per offrire servizi allo 
+strato superiore, è presente un punto logico chiamato ``Service Access Point'' (SAP) al quale può accedere il livello superiore. 
+L'unico punto di contatto tra livelli e quello inferiore è la loro interfaccia. Un protocollo è un linguaggio utilizzato da entità dello stesso livello, quindi entità 
+di uno stesso strato possono comunicare con le adiacenti tramite protocolli e con superiori tramite SAP, ed inferiori tramite interfaccia. 
+
+Secondo questo modello i pacchetti sono contenuti in altri pacchetti, destinati a livelli inferiori, per cui quando vengono ricevuti da un livello $n-1$, viene letto 
+il pacchetto di livello $n-1$ ed estratto il pacchetto di livello $n$ contenuto ed inviato all'entità di livello $n$. 
+I protocolli su uno stesso strato possono comunicare con altre entità dello stesso livello, e possono inviare indicazioni o conferme a richieste di entità utenti del 
+servizio del livello superiore. 
+
+I dati generati da un protocollo di livello $n$ sono detti $n$-pdu, ``Protocol Data Unit'', composti da un header indirizzato all'entità di livello $n$ ed una payload, 
+contente un $n+1$-pdu, destinata al livello superiore. Per cui all'aumento dei livelli aumenta l'overhead. 
+
+I diversi livelli di questo modello presentano le seguenti funzioni:
+\begin{enumerate}
+  \item  Il primo strato della pila ISO-OSI rappresenta lo strato fisico, che si interfaccia direttamente con il mezzo trasmissivo della rete e quindi rappresenta il livello di 
+  natura fisica della trasmissione. Offre al livello superiore una comunicazione indipendente dal mezzo trasmissivo. Fornisce allo strato di collegamento servizi di 
+  trasmissione di bit a tra sistemi adiacenti, consegna in sequenza di bit o notifiche di malfunzionamenti. 
+  \item Il secondo livello rappresenta lo strato data-link per risolvere eventuali malfunzionamenti dello strato fisico, rilevando e correggendo errori, tramite algoritmi di correzione, come i bit di parità. 
+  Offre allo strato superiore la possibilità di trasmettere pdu a sistemi adiacenti utilizzando due code nelle due direzioni. 
+  \item Il terzo livello è lo strato di rete e conosce la topologia completa della rete, per effettuare operazioni di instradamento. Contiene i protocolli come IPv4, 
+  progressivamente sostituito da IPv6, e permette il trasferimento di pdu da estremo ad estremo. Inoltre permette la commutazione di circuito o di pacchetto a datagramma e 
+  a circuito virtuale. 
+  \item Il quarto livello di trasporto, divide il messaggio in pacchetti 
+  
+  
+\end{enumerate}
+
+Per tutti i livelli superiori a quello fisico si possono definire due modalità operative ed associati servizi e protocolli, connessi e non connessi. Nei servizi o 
+protocolli connessi, si instaura una connessione o dialogo tra le entità, e termina solamente dopo convenevoli finali. La modalità non connessa non ha bisogno di una 
+connessione costante tra le due entità, viene instaurata senza un dialogo da una delle entità senza una terminazione. 
+
+Nella prima modalità l'entità non ha bisogno di ascoltare tutto il traffico per determinare quali pdu sono indirizzati alla stessa, ma necessita di una connessione 
+continua anche se vengono trasmessi una piccola quantità di dati. Mentre nella seconda modalità possono essere inviate pdu indipendente dalla connessione e dalla 
+distanza temporale tra le due, ma le entità che offrono questo servizio o protocollo devono costantemente analizzare il traffico per individuare le pdu a loro 
+indirizzate. 
+I protocolli non connessi sono quindi più efficienti, ma mancano di affidabilità, poiché manca una conferma di ricezione dei dati come nei protocolli connessi. quest'ultimi 
+sono quindi più affidabili, ma meno efficienti, poiché dopo aver instaurato il dialogo non è possibile terminarlo preventivamente, e ciò può causare uno spreco di risorse. 
+
+
+In un servizio connesso sono presenti primitive per instaurare una connessione, inviare messaggi e una conferma di ricezione o ricevere messaggi, specificare 
+l'indirizzo o nome della connessione ed abbattere la connessione. Mentre per servizi non connessi sono presenti solo primitive per inviare messaggi separatamene. 
+
+I primi tre livelli della pila ISO-OSI sono presenti su ogni nodo della rete non solo sui calcolatori, poiché rappresentano i livelli di trasmissione dei pacchetti, 
+necessari anche nei nodi intermedi per poter trasmettere i pacchetti. 
+
+
+
+
 %% todo aggiungere lezioni 27 sett; 2, 4, 9 ott
+
 
 \clearpage
 
