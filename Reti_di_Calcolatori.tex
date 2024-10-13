@@ -268,6 +268,75 @@ precedente vede uscire il primo terminale e quindi la prima connessione $n+1$ pe
 
 \section{Standard IEEE 802}
 
+Lo standard IEEE 802 riguarda i primi due livelli del modello ISO-OSI, ovvero il livello fisico, ed il livello data link. Le tecnologie definite in base a questo standard quindi hanno come obiettivo la trasmissione 
+e la rivelazione o correzione di bit attraverso un mezzo trasmissivo. Si occupano della connessione e quindi comunicazione tra macchine adiacenti, per una qualche definizione di adiacenza. Altri protocolli e standard 
+noti sono l'IPv4 ed IPv6, protocolli di routing di livello tre, protocolli TCP ed UDP di livello quattro, ed il protocollo HTTP di livello sette, ma si occupa anche da solo delle funzioni dei livelli 5 e 6. 
+
+Questi standard vengono realizzati dall'organizzazione IEEE, Institute of Electrical and Electronics Engineers, organizzazione indipendente da stati sovrani. Il progetto IEEE 802 venne definito con 
+l'obiettivo di realizzare una serie di standard di livello fisico e data-link per permettere la comunicazione di calcolatori sulla stessa rete locale, LAN, personale, PAN, o rete metropolitana, MAN, di grandezza 
+intermedia tra le reti LAN e WAN. Ha avuto successo sopratutto per le reti LAN e MAN, ma per le reti personali si utilizza uno standard diverso basato sul bluetooth. 
+Questi standard riguardano tecnologie con pacchetti di lunghezza variabile.
+
+
+Le specifiche tecnologie vengono individuate tramite una notazione puntata, con 802.$x$, dove $x$ rappresenta un numero, ed identifica la tecnologia. I numeri precedenti al punto individuano lo standard dove è 
+stata introdotta questa tecnologia. Ma le tecnologie non rimangono invariate nel tempo, per cui si possono assegnare delle lettere dopo il numero per specificare la versione o tipo di quella specifica tecnologia. 
+
+Lo standard IEEE 802 divide il livello due in due sottolivelli: ``Logical Link Control'' (LLC) e ``Media Access Control'' (MAC), questi gestiscono due tipologie diverse di pacchetti. Per le diverse tecnologie dello standard, il livello MAC è diverso, mentre il livello 
+LLC è comune a tutti. 
+Il sottolivello MAC è specifico per ogni tipo di LAN, si suppone che tutti i calcolatori che devono comunicare siano nella stessa LAN. Data questa ipotesi il sottolivello MAC risolve il problema di determinare 
+il destinatario in ricezione, e di verificare la disponibilità della LAN in trasmissione, in caso la LAN sia a singolo canale condiviso. Quindi bisogna evitare che il canale sia utilizzato da più utenti. 
+
+\subsection{Sottolivello MAC}
+
+Poiché il canale è condiviso, tutti gli utenti possono vedere i pacchetti inviati, sono quindi necessari protocolli di sicurezza e cifratura per impedira che sia possibile a chiunque connesso alla rete leggere il 
+contenuto dei pacchetti. Tecniche che non verranno trattate in questo corso. 
+Inoltre si utilizza un canale condiviso poiché se ci fosse un malfunzionamento fisico, una sola connessione verrebbe compromessa e non l'intera rete. 
+
+Per determinare il destinatario di un pacchetto nella MAC pdu è presente un campo per definire il tipo di trasmissione:
+\begin{itemize}
+  \item Punto a Punto: da un calcolatore ad un altro nella LAN;
+  \item Punto a Gruppo: da un calcolatore a diversi altri nella LAN;
+  \item Broadcast: a tutti gli utenti connessi alla LAN. 
+\end{itemize}
+
+Per permettere di identificare univocamente un unico elemento nella rete, gli indirizzi MAC devono essere univoci nella rete considerata. Dato che è possibile connettersi ad una LAN dall'esterno senza conoscere gli 
+indirizzi MAC utilizzati, servirebbe un gestore di rete per assegnarli ad ogni nuova connessione, ma questo è un approccio inefficiente. Si utilizzano quindi indirizzi MAC univoci a livello mondiale, in questo modo 
+nell'intera rete esisteranno solo indirizzi MAC differenti. Questa condizione vale anche su VPN o LPN, inoltre se su una stessa macchina vengono simulate diverse macchine virtuali, ognuna di esse dovrà avere un 
+indirizzo MAC differente, all'interno della rete locale che utilizzano per comunicare tra di loro. 
+Se due macchine avessero lo stesso MAC, riceverebbero gli stessi pacchetti, e verrebbero riconosciuti da entrambe le macchine come propri. 
+
+
+
+La MAC pdu è composta da diversi campi, che possono variare in base alla tecnologia con l'aggiunta di campi specifici. Ma per ogni tecnologia aderente allo standard IEEE 802 sono presenti sicuramente questi quattro 
+campi per la MAC pdu:
+\begin{itemize}
+  \item MAC-dsap (Destination Service Access Point): indirizzo di destinazione;
+  \item MAC-ssap (Source/Send Service Access Point): indirizzo di partenza;
+  \item Info: LLC pdu;
+  \item FCS (Frame Check Sequence): per identificare e correggere eventuali errori.
+\end{itemize}
+
+%% TODO img struttura mac pdu (divisione campi)
+
+Per ottenere l'indirizzo del destinatario, si utilizzano protocolli di acquisizione descritti in seguito. 
+
+Gli indirizzi MAC sono composti da 6 byte, in base allo standard EUI-48, ``Extended Unique Identifier'', per indirizzi a 48 bit, ma esiste anche uno standard a 64 bit non utilizzato. Questi byte vengono rappresentati in forma esadecimale, 
+separati da due punti o trattini. I primi tre byte dell'indirizzo MAC vengono assegnati al costruttore e rappresentano gli OUI ``Organization Unique Identifier'', gli ultimi 3 byte vengono scelti dal costruttore. 
+Per cui dato un indirizzo MAC, è sempre possibile determinare il costruttore della macchina a cui appartiene. 
+
+Esistono diversi tipi di indirizzi MAC, in base al valore di determinati bit:
+\begin{itemize}
+  \item Unicast: indirizzi che individuano le singole schede di rete dei calcolatori; se l'ultimo bit del primo byte ha valore zero;
+  \item Multicast: indirizzi che identificano gruppi di schede di rete; se l'ultimo bit del primo byte ha valore uno;
+  \item Broadcast: identificano tutte le schede di rete; se l'indirizzo è \verb|FF:FF:FF:FF:FF:FF|.  
+\end{itemize}
+
+Inoltre è possibile assegnare indirizzi MAC non unici a livello mondiale, specificando il valore del penultimo bit del primo byte, in modo che abbia valore uno. In questo modo è possibile gestire localmente indirizzi 
+MAC nella stessa LAN. 
+
+
+
+
 %% TODO aggiungere lezioni 2, 4, 9 ott
 
 %% add
@@ -363,7 +432,7 @@ Per ciascuna tipologia di porta del bridge si effettua questa analisi e si verif
 
 
 Il bridge è un calcolatore, con una CPU, RAM ed interfacce per le diverse LAN, in ROM le funzionalità dello standard %%
-Per bridge più potenti, le  porte vengono raelizzate tramite schede ASIC, per risolvere il problema dell'instradamento localmente. Le porte vengono realizzati tramite 
+Per bridge più potenti, le  porte vengono realizzate tramite schede ASIC, per risolvere il problema dell'instradamento localmente. Le porte vengono realizzati tramite 
 diversi slot che possono essere inseriti o rimossi in base al tipo di porta necessaria. Inoltre sono necessari massicci impianti di raffreddamento per riuscire a 
 mantenere la temperatura del data center. A differenza di un server che può essere rallentano in caso di traffico allentato e quindi diminuire la temperature, le apparecchiature di bridge non possono 
 spegnersi, e quindi comportano una temperatura costantemente elevata. Bridge di fascia alta sono in grado di effettuare bilanci sulle prese di corrente. 
