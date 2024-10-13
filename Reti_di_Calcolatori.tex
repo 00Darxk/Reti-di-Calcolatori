@@ -334,18 +334,27 @@ Esistono diversi tipi di indirizzi MAC, in base al valore di determinati bit:
 Inoltre è possibile assegnare indirizzi MAC non unici a livello mondiale, specificando il valore del penultimo bit del primo byte, in modo che abbia valore uno. In questo modo è possibile gestire localmente indirizzi 
 MAC nella stessa LAN. 
 
+Per risolvere i conflitti in trasmissione si utilizzano nelle rete WiFi degli algoritmi distribuiti sulle singole macchine in contemporanea, che collaborano per determinare a chi abilitare gli accessi alla rete. 
 
+\subsection{Sottolivello LLC}
 
+Il sottolivello LLC consegna al livello MAC un pacchetto da spedire, questo pacchetto è uguale per ogni tecnologia aderente allo standard e presenta campi analoghi al sottolivello MAC. I campi LLC-dsap/ssap individuano 
+gli indirizzi LLC del mittente e destinatario, il campo info contiene il tipo di pdu per gestire diverse tipologie di pacchetto, e l'ultimo campo contiene la pdu di terzo livello. 
+Gli indirizzi LLC non individuano macchine come gli indirizzi MAC, ma vengono utilizzati per identificare i protocolli di livello 3 a cui sono indirizzati i pacchetti. Consentono la convivenza di diversi protocolli 
+di livello 3 sulla stessa macchina e sulla stessa LAN, dove sono presenti diverse pile protocollari con obiettivi e versionatura diversa. 
 
-%% TODO aggiungere lezioni 2, 4, 9 ott
+Gli indirizzi LLC vengono attribuiti dall'IEEE solo a protocolli ``ufficialmente'' standard, ma questa è una classificazione che ignora molti dei protocolli più utilizzati a livello globale come TPC-IP, il 
+protocollo più utilizzato al mondo. Vengono identificati da un byte in esadecimale, se non sono protocolli standard, il loro indirizzo è \verb|AA|, ed il pacchetto subisce una variazione con la snap-pdu, 
+``SubNet Access Point'', dopo il campo control di 5 byte per identificare il protocollo. Questo rappresenta un ulteriore livello di overhead, già elevato per il modello ISO-OSI, per i pacchetti. 
 
-%% add
-
-\subsection{802.11: WiFi}
-
-%% add
+%% TODO img llc pdu dentro a mac pdu
 
 \subsection{802.3: Ethernet}
+
+%% TODO aggiungere lezioni 4, 9 ott
+
+
+La tecnologia ethernet ha avuto un enorme successo come strumento di comunicazione di reti LAN, e WAN. 
 
 %% add
 
@@ -460,6 +469,9 @@ attraverso un nuovo sottostato di MAC chiamato MAC control. Il supporto allo sta
 Prima dello standard 802.3x poiché ethernet era una comunicazione a turni, per impedire la saturazione i bridge potevano inviare pacchetti senza dati prendendo il 
 controllo della connessione. 
 
+\subsection{802.11: WiFi}
+
+%% add
 
 
 \end{document}
