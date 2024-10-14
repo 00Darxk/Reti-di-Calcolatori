@@ -172,6 +172,16 @@ uguaglianza nella responsabilità di gestione. Sono abbastanza diffusi meccanism
 
 \clearpage
 
+\section{Introduzione a Kathar\'{a}}
+
+
+
+
+
+
+
+\clearpage
+
 \section{Modello ISO-OSI}
 
 Per il funzionamento della rete gli standard sono strettamente necessari, altrimenti non sarebbe possibile una comunicazione tra un mittente ed un destinatario qualsiasi, 
@@ -206,6 +216,8 @@ servizio del livello superiore.
 
 I dati generati da un protocollo di livello $n$ sono detti $n$-pdu, ``Protocol Data Unit'', composti da un header indirizzato all'entità di livello $n$ ed una payload, 
 contente un $n+1$-pdu, destinata al livello superiore. Per cui all'aumento dei livelli aumenta l'overhead. 
+
+\subsection{Livelli}
 
 I diversi livelli di questo modello presentano le seguenti funzioni:
 \begin{enumerate}
@@ -351,15 +363,72 @@ protocollo più utilizzato al mondo. Vengono identificati da un byte in esadecim
 
 \subsection{802.3: Ethernet}
 
-%% TODO aggiungere lezioni 4, 9 ott
+La prima tecnologia ethernet nacque nel 1970 dal consorzio DIX, dalle iniziali delle tre più grandi case produttrici informatiche dell'epoca: Digital, Intel e Xerox. 
+In seguito venne revisionato negli anni '80 due volte, nel 1989 lo standard IEEE 802.3 diventa lo standard ISO 8802.3, e negli anni '90 ebbe talmente successo sulle reti LAN e WAN che divenne essenzialmente lo 
+standard di tutte le trasmissioni su filo, completamente retrocompatibile. 
+Nel tempo ha usato diversi mezzi trasmissivi, da cavi di rame intrecciati a coppie, alla fibra ottica moderna. I cavi di rame venivano avvolti da una isolante dielettrico ed una schermatura esterna, dove erano 
+presenti quattro coppie di cavi di rame intrecciati. Questo permette connessioni punto-punto bidirezionali e contemporanee. 
+
+Dagli anni '90 in poi la banda massima possibile è aumentata fino ad un massimo di 100-400 Gb/s. 
 
 
-La tecnologia ethernet ha avuto un enorme successo come strumento di comunicazione di reti LAN, e WAN. 
 
-%% add
+Il formato del pacchetto ethernet è rimasto sostanzialmente invariato nel tempo, nonostante le sue revisioni, nello standard IEEE 802.3 presenta i seguenti campi:
+\begin{itemize}
+  \item Preambolo (56 bit): veniva utilizzato per sincronizzare in fase i pacchetti, modalità di trasmissione non più in uso;
+  \item SFD ``Start Frame Delimiter'' (8 bit): indica l'inizio del pacchetto;
+  \item Indirizzi MAC di sorgente e destinazione (96 bit);
+  \item Lunghezza del campo dati (16 bit);
+  \item Dati: di lunghezza variabile con un massimo di 1500 Byte, contiene una LLC-pdu;
+  \item Pad: eventuale riempimento, da 0 a 46 Byte, la somma con il campo dati deve essere compresa tra 46 e 1500 Byte;
+  \item FCS ``Frame Check Sequence'' (32 bit): contiene il valore del codice di ridondanza ciclica (CRC) calcolato. 
+\end{itemize}
 
-Un pacchetto ethernet deve comunque avere 512 bit da trasmettere, altrimenti la parte residua del campo dati deve essere riempita di bit 
-di riempimento chiamato padding, inoltre il campo dati può contenere al massimo 1500 Byte. 
+Non è presente invece un delimitatore finale del pacchetto. I pacchetti hanno una lunghezza minima di 512 bit, mentre una lunghezza massima di 1512 Byte, esclusi il preambolo ed il SFD. Si definisce per rete ethernet 
+l'``Inter-Frame Space'' (ITR) o ``Inter-Packet gap'' (IPG) come il tempo minimo tra due pacchetti consecutivi. Questo viene definito indipendentemente dalla velocità della rete, come il tempo necessario per 
+inviare 96 bit, è necessario per permettere di distinguere due pacchetti inviati consecutivi e determinare si tratti di spazio tra i due. 
+
+Agli albori di questa tecnologia si utilizzavano reti condivise, quindi bisogna effettuare una connessioni a turni, e per occupare la connessioni su reti di 5 km, si scelse la lunghezza minima di 512 bit. 
+Analogamente se il pacchetto è troppo grande, occuperebbe il mezzo trasmissivo per troppo tempo, quindi si è imposta una lunghezza massima. 
+
+
+Nella trasmissione ethernet il livello MAC in trasmissione riceve la LLC-pdu, inserendolo nel pacchetto di livello MAC e convertendolo in bit da passare al livello fisico. In ricezione, converte i bit in un pacchetto 
+MAC, se questo è indirizzato ad un altro oppure contiene errori, calcolando il CRC, viene scartato, altrimenti viene rimossa la parte MAC ed inviato al livello LLC. 
+Scartando pacchetti in questo modo si perde di affidabilità del sistema, ma si guadagna efficienza, poiché si suppone queste informazioni perse vengano recuperate ad un livello superiore (livello di trasporto), 
+senza che sia l'ethernet ad inviare una richiesta di ritrasmissione. Ogni terminale che riceve pacchetti deve quindi ricalcolare il CRC, quest'operazione potrebbe rappresentare il collo di bottiglia e deve essere il 
+più veloce possibile. Questo livello garantisce una distanza minima tra pacchetti rispettando l'IPG e verifica la lunghezza minima del pacchetto. Se un pacchetto non rispetta la lunghezza minima, viene anch'esso 
+buttato. Vengono inoltre generati, in trasmissione, e rimossi, in ricezione, il preambolo e lo SFD dal pacchetto. 
+
+
+
+In passato le reti ethernet erano formate da connessioni sullo stesso filo condiviso non era punto-punto e bidirezionale, chiamato dominio di collisione, tra varie stazioni ed usato a turno. I pacchetti inviati 
+da due o più macchine potevano collidere e si poteva richiedere una ritrasmissione da queste. Questo mezzo condiviso era realizzato da un repeater o ripetitore o hub, questo ripete il segnale su tutti i canali connessi e li 
+amplifica, a causa della lunghezza delle reti infatti, il segnale poteva perdere di potenza durante la trasmissione. A livello fisico si comporta come un filo, non memorizza infatti i pacchetti che riceve, 
+ma li trasmette, non è una macchina ``Store \& Forward''. Ripetitori del genere sono ancora diffusi in alcuni contesti. 
+Si trova al livello fisico ed ha diverse porta su cui può ricevere dati e trasmetterli su tutte le altre. 
+
+
+
+Il mezzo trasmissivo per le connessioni ethernet viene realizzato in cavi di rame o fibra ottica, al massimo di 100 m di lunghezza, progettati senza amplificatori. Si usano coppie separate per trasmissione e 
+ricezione per mantenere una connessione bidirezionale. Si usano connettori RJ-45. Reti a fibra ottica invece possono percorrere distanze molto significative rispetto a cavi in rame. 
+
+Ethernet II e ethernet IEEE 802 sono diversi tra di loro, lo standard ethernet II non ha uno sottolivello LLC ed è in generale molto più snello. Nelle reti locali convivono connessioni di entrambi gli standard, e 
+sono tendenzialmente molti di più nella vecchia versione di ethernet. Sono necessari quindi meccanismi per mantenere la retrocompatibilità completa dei pacchetti. 
+Non essendoci lo strato LLC, il pacchetto di terzo livello viene contenuto direttamente nel pacchetto MAC, poiché non esiste il livello LLC per questi pacchetti, si utilizza un altro campo type, per specificare a 
+quale protocollo di livello superiore inviare il pacchetto. Questo sostituisce il campo lunghezza di IEEE 802.3. Viene riconosciuto se il campo lunghezza ha un valore maggiore di 1500, lunghezza massima del campo 
+data, e viene interpretato come un codice identificativo di un protocollo di livello superiore. 
+
+%% TODO img differenza campi dei pacchetti ethernet ii/ieee 802.3 e snap
+
+Poiché ethernet ha vissuto un enorme crescita tecnologia, sono presenti diversi sottolivelli dello standard per classificarle, da versioni 802.3u da 100 Mb/s alle ultime versioni 802.3ba/bg/bm dai 40 ai 100 
+Gb/s. Sono inoltre in corso di standardizzazione tecnologie ethernet nell'ordine dei terabit al secondo.  
+
+Generalmente se nel sottolivello dello standard è presente una lettera maiuscola, questo rappresenta un tecnologia estremamente importante. 
+
+
+Sono presenti inoltre molte versioni differenti per scopi diversi, esiste uno standard specifico per il mercato automobilistico, dove è presente poco spazio interno, e quindi si utilizzano cavi da una singola coppia 
+di cavi intrecciati: 802.3bw e 802.3bp (2015/2016) permettono una banda nell'ordine dei gigabit sulla singola coppia. Esiste inoltre uno standard per inviare corrente elettrica su ethernet ed alimentare tramite 
+ethernet telefoni IP a bassa tensione: 802.3af e 802.3at (2003/2009). 
 
 \subsection{802.1D: Bridge-Switch}
 
@@ -469,9 +538,6 @@ attraverso un nuovo sottostato di MAC chiamato MAC control. Il supporto allo sta
 Prima dello standard 802.3x poiché ethernet era una comunicazione a turni, per impedire la saturazione i bridge potevano inviare pacchetti senza dati prendendo il 
 controllo della connessione. 
 
-\subsection{802.11: WiFi}
-
-%% add
-
+\clearpage
 
 \end{document}
