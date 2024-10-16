@@ -27,7 +27,8 @@ Appunti tratti dal corso di Reti di Calcolatori, Anno Accademico 2024/25, Dipart
 
 ## Materiale Aggiuntivo
 - [Kathará](https://www.kathara.org/): software utilizzato durante il corso per simulare reti di calcolatori;
-- [Wireshark](https://www.wireshark.org/): software utilizzato come dimostrazione durante il corso, per analizzare il traffico su una rete. Non è richiesto in sede di esame;
+- [Wireshark](https://www.wireshark.org/): software utilizzato come dimostrazione durante il corso, per analizzare il traffico su una rete;
+- [Tutorial](https://github.com/KatharaFramework/Kathara-Labs/tree/main/tutorials/capture-packets) sull'uso di Wireshark su Kathará;
 - [Notion del corso](https://certain-sweater-2c3.notion.site/Reti-di-Calcolatori-2a9517465c534b3b94546d9b83b1cfef),
 - [Standard IEEE 802.3-2018](https://ieeexplore.ieee.org/document/8457469), disponibile sulla rete di ateneo;
 - [Sito del Corso](https://www.dia.uniroma3.it/%7Eimpianti/HomePage24-25/index_reti1.html), per l'Anno Accademico 2024/25, dove sono presenti i lucidi delle lezioni ed esami passati. 

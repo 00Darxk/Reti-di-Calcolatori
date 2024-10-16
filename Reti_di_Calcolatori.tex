@@ -12,7 +12,7 @@
 \usepackage{bookmark}
 \usepackage{fancyhdr}
 \usepackage{romanbarpagenumber}
-%\usepackage{minted}
+\usepackage{minted}
 %\usepackage{subfig}
 \usepackage[italian]{babel}
 %\usepackage{float}
@@ -174,7 +174,125 @@ uguaglianza nella responsabilità di gestione. Sono abbastanza diffusi meccanism
 
 \section{Introduzione a Kathar\'{a}}
 
+%% TODO introduzione a cataratta
 
+Laboratorio del 16 Ottobre, emulazione di una connessione tra due calcolatori \verb|PC1| e \verb|PC2|, connessi tramite ethernet. Vengono 
+specificate le ultime due cifre del MAC address: \verb|0:1| e \verb|0:2|. 
+Viene consigliato di rappresentare la topologia della rete, descritta nel file \verb|lab.conf|, i file di estensione \verb|.startup| sono i 
+comandi eseguiti dalle ciascuna macchine all'accensione. In questo laboratorio, non ci sono comandi da eseguire all'avvio. Non sono presenti 
+neanche cartelle, per cui la configurazione di queste macchine è estremamente basilare
+
+%% TODO img topologia rete esercizio
+
+%% TODO indirizzo del lab, aggiungere a README
+
+Il file \verb|lab.conf| contiene all'inizio i meta dati del file:
+
+Seguono le dichiarazioni ed assegnazioni dei computer nel laboratorio. Dove si 
+specifica il nome della macchina, e tra parentesi quadre l'opzione da assegnare. 
+Si indica con $0$ l'interfaccia \verb|eth0|. La stringa assegnata consiste nel 
+dominio di collisione specificato \verb|A|. 
+
+Senza specificare l'indirizzo, Kathar\'{a} utilizza un indirizzo casuale, per cui 
+in molti di questi laboratori gli indirizzi MAC di queste macchine verranno 
+assegnati per renderli facilmente leggibili:
+
+\begin{minted}{powershell}
+	pc1[0]="A/00:00:00:00:00:01"
+\end{minted}
+
+Con \verb|image| viene specificata l'immagine di docker utilizzata dal calcolatore, 
+contiene tutti gli strumenti necessari per mandare, ricevere e analizzare i pacchetti: 
+\begin{minted}{powershell}
+	pc1[image]="kathara/base"
+\end{minted}
+La terza riga di assegnazione consiste nella configurazione del protocollo 
+IPv6, protocollo molto invasivo, per cui si vederebbero dati non di interesse 
+in questo esercizio in particolare:
+\begin{minted}{powershell}
+	pc1[ipv6]="false"
+\end{minted} 
+Quindi si disattiva questo protocollo. Analogamente 
+si configura la macchina 2:
+\begin{minted}{powershell}
+	pc2[0]="A/00:00:00:00:00:02"
+	pc2[image]="kathara/base"
+	pc2[ipv6]="false"
+\end{minted}
+Inoltre è possibile modificare l'indirizzo IP di un calcolatore nella rete 
+tramite il comando \verb|ip| si accedono a tutti i comandi sulle reti. 
+Il termine \verb|link| indica a quale livello appartiene il comando, in questo caso il livello due di link. 
+Si specifica quale protocollo deve essere modificato con \verb|set dev eth0|, e si specifica cosa viene modificato, in questo caso l'indirizzo \verb|address|:
+\begin{minted}{powershell}
+> ip link set dev eth0 address 00:00:00:00:01
+\end{minted}
+
+Per avviare Kathar\'{a} si apre una powershell all'interno della cartella del laboratorio, dopo aver avviato docker, e si avvia con il comando:
+\begin{minted}{powershell}
+> kathara lstart
+\end{minted}
+
+Se viene modificato il file in \verb|lab.conf| bisogna riavviare Kathará con il comando \verb|lrestart|. Si chiude invece con il comando \verb|lclean|. 
+
+All'avvio apre due terminali per entrambe le macchine, e vengono specificati i domini di collisioni e le connessioni definite nel file \verb|.conf|. 
+Per determinare la configurazione di un certo livello si utilizza sempre il comando \verb|ip|, seguito dal livello che s vuole analizzare:
+\begin{minted}{powershell}
+> ip link
+\end{minted}
+
+Al'interno di ciascuna delle macchine viene installato uno strumento chiamato \verb|scapy|, una libreria in python utilizzata per creare pacchetti, ed in particolare 
+gestire e modificare pacchetti. In questo modo si avvia il prompt di \verb|scapy|, e si esce con il comando \verb|exit|. 
+
+Questo terminale permette di creare un pacchetto ed inviarlo. Si crea una variabile \verb|p| a cui assegnare il pacchetto. Si indica che si tratta di un 
+pacchetto ethernet con \verb|Ether()|, dove bisogna specificare gli indirizzi MAC del mittente e del destinatario:
+\begin{minted}{powershell}
+> p=Ethernet(dst:'00:00:00:00:00:01', src='00:00:00:00:00:02')
+\end{minted} 
+In questo modo è possibile specificare indirizzi MAC arbitrari, anche non presenti nella rete, e Kathar\'{a} permette di analizzare questi comportamenti anomali. 
+Il resto dei campi non specificati vengono inizializzati ad informazioni di default. 
+
+Per inviare un pacchetto si utilizza la funzione \verb|send()|, che prende come argomenti il nome della variabile a cui è stato assegnato il pacchetto \verb|p| ed 
+il protocollo a cui viene inviato assegnato ad \verb|iface|:
+\begin{minted}{powershell}
+> send(p, iface='eth0')
+\end{minted}
+
+Esistono delle tecnologie chiamate ``packet sniffer'', come Wireshark, per controllare il traffico di rete. Questo viene specificato nelle ultime righe del 
+file di configurazione, questa macchina tuttavia non è collegata, si dice fluttuante e sarà utile per analizzare il traffico su queste reti emulate. 
+\begin{minted}{powershell}
+	wireshark[bridged]=true
+	wireshark[port]="3000:3000"
+	wireshark[image]="lscr.io/linuxserver/wireshark"
+	wireshark[num_terms]=0
+\end{minted}
+L'ultima configurazione determina quanti terminali di Wireshark aprire all'avvio di Kathar\'{a}. Si specifica 0, poiché si vuole utilizzare l'interfaccia grafica, e 
+poiché in questi laboratori non si utilizzeranno comandi sul terminale i Wireshark. 
+
+
+Contiene un'immagine di Wireshark, chiamata analogamente per semplicità. Quest'applicazione viene avviata all'avvio del laboratorio. Questa macchina ha un'interfaccia grafica 
+disponibile. Con il comando \verb|lconfig| è possibile aggiungere un'interfaccia ad una macchina ad uno specifico link. Si specifica il nome della macchina con \verb|-n| e 
+si può specificare di aggiungere o rimuovere l'interfaccia con \verb|--add| o \verb|--rm|:
+\begin{minted}{powershell}
+> kathara lconfig -n wireshark --add A
+\end{minted}
+Questo comando viene eseguito all'interno dell'hub del laboratorio, si utilizza per collegare questa macchina al dominio di collisione A. Nello stesso terminale dove 
+è stato eseguito il laboratorio. 
+
+%% TODO img modifica della topologia
+
+Il comando \verb|bridged| connette la macchina all'host, con il comando \verb|port| si specifica la porta dove la macchina condivide l'interfaccia grafica. Si 
+accede tramite l'indirizzo \verb|localhost:xxxx| dove viene specificata la porta inserita nella configurazione. 
+Cliccando due volte sul nome dell'interfaccia, si possono analizzare i pacchetti inviati su quella connessione. Bisogna analizzare la connessione \verb|eth1|, poiché la 
+\verb|eth0| viene inizializzata all'avvio di Kathar\'{a} ed è connessa all'host. 
+Il protocollo su vengono spediti i pacchetti creati, non essendo specificato. 
+
+
+Si può utilizzare la cartella \verb|shared| costruita ogni volta che viene costruito il laboratorio, condivisa tra la macchina dispositivo e la macchina host. In 
+questo modo è possibile utilizzare uno sniffer diverso da Wireshark per catturare i pacchetti. Si può effettuare quest'operazione tramite i comandi Linux \verb|tcpdump|, 
+con l'opzione \verb|-tenny|, una composizione di tutte le flag necessarie per configurare il comando. Quando si manda un pacchetto, si può vedere il pacchetto sul terminale, 
+direttamente. Aggiungendo l'opzione \verb|-w| si può creare un file della cattura, di estensione \verb|.pcap| ``Packet Capture''. Per salvare questo file nella cartella 
+\verb|shared|, condivisa, bisogna effettuare il comando in questa cartella. Ed è possibile aprirlo tramite Wireshark nella macchina host, per analizzare i pacchetti 
+offline rispetto alla cattura. 
 
 
 
