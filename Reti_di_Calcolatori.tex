@@ -172,17 +172,135 @@ uguaglianza nella responsabilità di gestione. Sono abbastanza diffusi meccanism
 
 \clearpage
 
-\section{Introduzione a Kathar\'{a}}
+\section{Kathar\'{a}}
 
-%% TODO introduzione a cataratta
 
-Laboratorio del 16 Ottobre, emulazione di una connessione tra due calcolatori \verb|PC1| e \verb|PC2|, connessi tramite ethernet. Vengono 
+Le reti di calcolatori sono complicate, comprendono vari dispositivi, tra cui computer e router. Tante interfacce e protocolli diversi, collegati attraverso interconnessioni fisiche. Realizzano delle strutture 
+topologiche molto vaste e complesse. 
+
+
+Si vuole sperimentare con reti anche molto complesse, senza utilizzare dispositivi fisici. 
+Anche se si ha a disposizione una rete reale, sarebbe difficile convincere un provider a fornire a costi non eccessivi la loro rete per effettuare esperimenti su di essa. Realizzare una rete esclusivamente 
+per effettuare questi esperimenti allo stesso modo si rivelerebbe estremamente costoso. 
+
+\subsection{Introduzione}
+
+Kathar\'{a} è un framework basato su container per effettuare esperimenti su reti di calcolatori, è un progetto open-source su github, per cui ognuno è in grado di contribuire allo sviluppo. 
+Permette di effettuare emulazione di rete, differente da simulazione di rete. Negli strumenti di simulazione di un sistema si vogliono riprodurre le prestazioni di un sistema reale, la sua latenza, il ritardo, gli 
+errori, la perdita di pacchetti, etc. Non si considerano le sue funzionalità, vengono analizzati solamente le prestazioni ed i parametri specifici della rete. 
+Invece l'emulazione mira a riprodurre accuratamente le funzionalità offerte dal sistema, senza limitazioni di prestazioni. In questo caso le prestazioni rappresentano aspetti marginali della rete. 
+
+Per emulare una rete si utilizza una macchina in funzione da host, all'interno della quale vengono eseguiti container autonomi. Essenzialmente macchine isolate, queste vengono poi collegate da fili virtuali, in 
+modo da simulare la presenza di una rete fisica, nonostante sia effettuata su una singola macchina. 
+In Kathar\'{a} i container sono collegati tra di loro in domini di collisione virtuali, non fili virtuali, per motivi di praticità. Questo consente di collegare l'host ad ogni dominio di collisione, per poter 
+analizzare il comportamento su tutta la rete. Utilizzando fili virtuali invece non sarebbe stato così semplice da implementare. 
+
+Ciascuno dei container viene configurato come un dispositivo, in principio sono tutti uguali, ma possono rappresentare computer, router, switch, etc. Per rappresentare tutti gli elementi di una rete realisticamente. 
+
+I container rappresentano una virtualizzazione leggera, non sono macchine virtuali, quindi viene emulato un altro sistema operativo al loro interno, ma solamente un'applicazione o una piccola parte di un 
+sistema operativo. Sono quindi molto leggeri, con un tempo di avvio ridotto rispetto alle macchine virtuali, utilizzate generalmente per realizzare micro-servizi che godono di vita autonoma. 
+
+%% TODO img VM vs container (da SO)
+
+Per Kathar\'{a} viene utilizzato il sistema Docker, il più ampiamente utilizzato a livello globale per realizzare virtualizzazioni leggere. 
+Per realizzare un container è necessaria un'immagine, ovvero un'insieme di software e le loro librerie e binari, necessari alla loro esecuzione, statici. Sono disponibili diverse immagini per realizzare dispositivi 
+diversi, ma in questo corso verrà utilizzata solamente l'immagine di base presente in Kathar\'{a}. Tramite quest'immagine è possibile realizzare un computer, un router, un bridge ed è possibile inserire al suo 
+interno applicazioni di tipo server, servizi web, etc. Tutti gli elementi necessari per effettuare esperimenti di rete in questo corso. Ogni container poiché rappresenta un'esecuzione isolata di un'immagine, può 
+essere costruiro su un'immagine diverse, oppure di versione diversa dagli altri container in esecuzione, senza influire sul funzionamento di Kathar\'{a}. 
+
+Un dispositivo si presenta con un terminale, su cui possono essere eseguiti comandi specifici a quel dispositivo, una memoria dedicata, un filesystem e zero o più interfacce di rete. Ogni interfaccia di rete è 
+connessa ad un unico dominio di collisione. Tutte le interfacce trattate rispetteranno il protocollo \ref{sec:ieee_802.3} per comunicare tra di loro. 
+
+
+Kathar\'{a} dispone di tre tipi di comandi:
+\begin{itemize}
+  \item ``v-commands'': utilizzano il carattere \verb|v| come prefisso, e sono comandi di basso livello per configurare ed avviare un singolo dispositivo;
+  \item ``l-commands'': utilizzano il carattere \verb|l| come prefisso, e permettono di gestire un intero ``lab'', configurandolo ed avviandolo;
+  \item ``Global commands'': sono comandi principalmente di gestione. 
+\end{itemize}
+
+I v-commands sono:
+\begin{itemize}
+  \item \verb|vstart|: comando di avvio di un dispositivo;
+  \item \verb|vconfig|: aggiunge un file di configurazione ad un dispositivo attualmente in esecuzione;
+  \item \verb|vclean|: termina l'esecuzione di un dispositivo. 
+\end{itemize}
+
+Gli l-commands sono:
+\begin{itemize}
+  \item \verb|lstart|: comando di avvio di un lab;
+  \item \verb|lconfig|: permette di effettuare operazioni di configurazione su un dispositivo di un lab già attivo;
+  \item \verb|lclean|: termina l'esecuzione del lab; 
+  \item \verb|lrestart|: termina e riavvia tutti i dispositivi del lab;
+  \item \verb|linfo|: fornisce informazioni sul lab. 
+\end{itemize}
+
+I global commands sono:
+\begin{itemize}
+  \item \verb|check|: controlla l'ambiente del sistema, per controllare che l'installazione è andata a buon fine;
+  \item \verb|connect|: permette di collegarsi ad una macchina di Kathar\'{a} già attiva;
+  \item \verb|list|: mostra tutti le macchine di Kathar\'{a} in esecuzione per l'utente corrente;
+  \item \verb|settings|: mostra e configura le opzioni di Kathar\'{a};
+  \item \verb|wipe|: elimina tutte le macchine di Kathar\'{a}, le loro connessioni ed eventuali opzioni. 
+\end{itemize}
+
+
+Per testare il funzionamento di Kathar\'{a} dopo l'installazione è consigliabile utilizzare i seguenti comandi:
+\begin{minted}{powershell}
+> kathara check 
+\end{minted}                                                                                                                                                                                 
+Per controllare il suo corretto funzionamento si può testare la creazione di una singola macchina:
+\begin{minted}{powershell}
+> kathara vstart -n pc1 --eth 0:A
+\end{minted}
+Si crea una macchina di nome \verb|pc1|, tramite l'opzione \verb|-n| e si connette al dominio di collisione \verb|A| con l'opzione \verb|--eth 0:A|, che specifica anche il tipo di connessione virtuale, in questo 
+caso ethernet. Se non vengono sollevati errori dopo questi comandi, si può interrompere la sua esecuzione con:
+\begin{minted}{powershell}
+> kathara vclean -n pc1
+\end{minted}
+
+
+Un lab di Kathar\'{a} è un insieme di dispositivi che possono essere avviati e terminati contemporaneamente. La loro struttura consiste in una directory principale del lab, sempre contenente il file \verb|lab.conf|, 
+dove viene descritta la topologia della rete. Se sono è necessario, sono presenti subdirectories dove vengono specificate le configurazioni per i singoli dispositivi. Inoltre per ciascun dispositivo è 
+ipotizzabile la presenza di un file chiamato con il nome del dispositivo di tipo \verb|.startup| dove vengono descritte le operazioni da effettuare dal dispositivo all'avvio. 
+
+Negli esercizi ed in sede d'esame non sarà richiesto di realizzare un lab, ma si dovrà analizzare il comportamento di lab preesistenti, agendo sulle reti ed in caso correggendo eventuali errori o bug. 
+
+
+Il file \verb|lab.conf| descrive la topologia della rete ed i dispositivi che devono essere avviati all'avvio del lab. Contiene istruzioni di sintassi:
+\begin{minted}{powershell}
+<machine>[<arg>]=<value>
+\end{minted}
+Dove \verb|<machine>| è il nome della macchina su cui si vuole effettuare una certa operazione, \verb|<arg>| è il tipo di operazione da effettuare su quella macchina. Se questo argomento è un numero indica a quale 
+interfaccia della macchina si riferisce l'assegnazione, ovvero connessione ad un certo dominio di collisione, di valore specificato dal termine \verb|value|. 
+
+Per avere un dispositivo nel lab, questo deve essere citato nel file di configurazione. Non è possibile riferirsi ad un'interfaccia successiva, se non si è già assegnata la sua precedente. Gli unici caratteri 
+consentiti per definire il nome di una macchina o il nome di un dominio di collisione sono caratteri alfanumerici, dove lettere maiuscole e minuscole vengono considerate uguali. 
+
+I filesystem di tutte le macchine sono indipendenti ed isolati dal filesystem della macchina host, ma sarebbe conveniente il alcuni casi poter accedere e scrivere su file nella macchina host, per salvare una 
+serie di dati, da analizzare dopo la terminazione delle macchine. 
+Esistono due diverse modalità per permette un'interfaccia tra i filesystem della macchina host e dei vari dispositivi. Si possono condividere file tra i due filesystem direttamente, in modo che ogni cambiamento 
+su uno dei due sia riflesso anche nell'altro. Oppure è possibile condividere una copia del file, in modo da avere due file indipendenti contenenti le stesse informazioni, quest'ultima è certamente la più 
+semplice, ma la meno funzionale. 
+Su Kathar\'{a} sono presenti entrambi questi approcci. Utilizza una cartella \verb|/shared| all'interno del lab, contenuta nei filesystem di ogni dispositivo in esecuzione in quel lab per condividere direttamente 
+un file. Questa condivisione è abilitata di default, ma è possibile modificarlo nelle impostazioni. Invece per condividere una copia di un file si possono utilizzare le subdirectories di un dispositivo, direttamente 
+collegate alle subdirectories del lab di quello specifico dispositivo. 
+In queste stesse subdirectories sono contenuti i file di avvio \verb|.startup| delle singole macchine. Contengono comandi shell da essere eseguiti all'avvio, per configurare le interfacce di rete o avviare 
+certi servizi di rete. 
+
+Per avviare un lab di Kathar\'{a} bisogna aprire una Powershell, su Windows, e navigare alla directory del lab. In questa directory vanno eseguiti i vari l-commands, per avviare o terminare l'esecuzione di un lab. 
+
+Per evitare eventuali complicazioni, in questi laboratori si disabilita l'opzione per il protocollo IPv6, poiché genera complicazioni di semantica di difficile interpretazione. 
+
+\subsection{Laboratorio del 16 Ottobre}
+
+In questa esercitazione si vuole emulare la una connessione tra due calcolatori \verb|PC1| e \verb|PC2|. Vengono 
 specificate le ultime due cifre del MAC address: \verb|0:1| e \verb|0:2|. 
 Viene consigliato di rappresentare la topologia della rete, descritta nel file \verb|lab.conf|, i file di estensione \verb|.startup| sono i 
 comandi eseguiti dalle ciascuna macchine all'accensione. In questo laboratorio, non ci sono comandi da eseguire all'avvio. Non sono presenti 
 neanche cartelle, per cui la configurazione di queste macchine è estremamente basilare
 
-%% TODO img topologia rete esercizio
+%% TODO img topologia rete esercizio (dai lucidi)
 
 %% TODO indirizzo del lab, aggiungere a README
 
@@ -244,7 +362,7 @@ Al'interno di ciascuna delle macchine viene installato uno strumento chiamato \v
 gestire e modificare pacchetti. In questo modo si avvia il prompt di \verb|scapy|, e si esce con il comando \verb|exit|. 
 
 Questo terminale permette di creare un pacchetto ed inviarlo. Si crea una variabile \verb|p| a cui assegnare il pacchetto. Si indica che si tratta di un 
-pacchetto ethernet con \verb|Ether()|, dove bisogna specificare gli indirizzi MAC del mittente e del destinatario:
+pacchetto ethernet con \verb|Ethernet()|, dove bisogna specificare gli indirizzi MAC del mittente e del destinatario:
 \begin{minted}{powershell}
 > p=Ethernet(dst:'00:00:00:00:00:01', src='00:00:00:00:00:02')
 \end{minted} 
@@ -480,6 +598,7 @@ protocollo più utilizzato al mondo. Vengono identificati da un byte in esadecim
 %% TODO img llc pdu dentro a mac pdu
 
 \subsection{802.3: Ethernet}
+\label{sec:ieee_802.3}
 
 La prima tecnologia ethernet nacque nel 1970 dal consorzio DIX, dalle iniziali delle tre più grandi case produttrici informatiche dell'epoca: Digital, Intel e Xerox. 
 In seguito venne revisionato negli anni '80 due volte, nel 1989 lo standard IEEE 802.3 diventa lo standard ISO 8802.3, e negli anni '90 ebbe talmente successo sulle reti LAN e WAN che divenne essenzialmente lo 

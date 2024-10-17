@@ -2,7 +2,7 @@
 Appunti tratti dal corso di Reti di Calcolatori, Anno Accademico 2024/25, Dipartimento di Ingegneria Civile, Informatica e delle Tecnologie Aeronautiche, Università degli Studi "Roma Tre". 
 
 ## Contenuti:
-- [Appunti](Reti_di_Calcolatori.pdf) delle lezioni, tenute l'anno accademico 2024/25 dal Professore Giuseppe di Battist;
+- [Appunti](Reti_di_Calcolatori.pdf) delle lezioni, tenute l'anno accademico 2024/25 dal Professore Giuseppe di Battista;
 - [Immagini](Immagini/) realizzate in Tikz, necessarie per compilare il [file sorgente](Reti_di_Calcolatori.tex) degli appunti.  
 
 
@@ -27,7 +27,7 @@ Appunti tratti dal corso di Reti di Calcolatori, Anno Accademico 2024/25, Dipart
 
 ## Materiale Aggiuntivo
 - [Kathará](https://www.kathara.org/): software utilizzato durante il corso per simulare reti di calcolatori;
-- [Wireshark](https://www.wireshark.org/): software utilizzato come dimostrazione durante il corso, per analizzare il traffico su una rete;
+- [Wireshark](https://www.wireshark.org/): software di packet sniffing utilizzato durante il corso, per analizzare il traffico su una rete;
 - [Tutorial](https://github.com/KatharaFramework/Kathara-Labs/tree/main/tutorials/capture-packets) sull'uso di Wireshark su Kathará;
 - [Notion del corso](https://certain-sweater-2c3.notion.site/Reti-di-Calcolatori-2a9517465c534b3b94546d9b83b1cfef),
 - [Standard IEEE 802.3-2018](https://ieeexplore.ieee.org/document/8457469), disponibile sulla rete di ateneo;
