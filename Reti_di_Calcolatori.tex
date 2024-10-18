@@ -516,6 +516,8 @@ precedente vede uscire il primo terminale e quindi la prima connessione $n+1$ pe
 
 \section{Standard IEEE 802}
 
+%% TODO img dallo standard
+
 Lo standard IEEE 802 riguarda i primi due livelli del modello ISO-OSI, ovvero il livello fisico, ed il livello data link. Le tecnologie definite in base a questo standard quindi hanno come obiettivo la trasmissione 
 e la rivelazione o correzione di bit attraverso un mezzo trasmissivo. Si occupano della connessione e quindi comunicazione tra macchine adiacenti, per una qualche definizione di adiacenza. Altri protocolli e standard 
 noti sono l'IPv4 ed IPv6, protocolli di routing di livello tre, protocolli TCP ed UDP di livello quattro, ed il protocollo HTTP di livello sette, ma si occupa anche da solo delle funzioni dei livelli 5 e 6. 
@@ -529,12 +531,12 @@ Questi standard riguardano tecnologie con pacchetti di lunghezza variabile.
 Le specifiche tecnologie vengono individuate tramite una notazione puntata, con 802.$x$, dove $x$ rappresenta un numero, ed identifica la tecnologia. I numeri precedenti al punto individuano lo standard dove è 
 stata introdotta questa tecnologia. Ma le tecnologie non rimangono invariate nel tempo, per cui si possono assegnare delle lettere dopo il numero per specificare la versione o tipo di quella specifica tecnologia. 
 
-Lo standard IEEE 802 divide il livello due in due sottolivelli: ``Logical Link Control'' (LLC) e ``Media Access Control'' (MAC), questi gestiscono due tipologie diverse di pacchetti. Per le diverse tecnologie dello standard, il livello MAC è diverso, mentre il livello 
+Lo standard IEEE 802.2 divide il livello due in due sottolivelli: ``Logical Link Control'' (LLC) e ``Media Access Control'' (MAC), questi gestiscono due tipologie diverse di pacchetti. Per le diverse tecnologie dello standard, il livello MAC è diverso, mentre il livello 
 LLC è comune a tutti. 
 Il sottolivello MAC è specifico per ogni tipo di LAN, si suppone che tutti i calcolatori che devono comunicare siano nella stessa LAN. Data questa ipotesi il sottolivello MAC risolve il problema di determinare 
 il destinatario in ricezione, e di verificare la disponibilità della LAN in trasmissione, in caso la LAN sia a singolo canale condiviso. Quindi bisogna evitare che il canale sia utilizzato da più utenti. 
 
-\subsection{Sottolivello MAC}
+\subsection{802.2: Sottolivello MAC}
 
 Poiché il canale è condiviso, tutti gli utenti possono vedere i pacchetti inviati, sono quindi necessari protocolli di sicurezza e cifratura per impedira che sia possibile a chiunque connesso alla rete leggere il 
 contenuto dei pacchetti. Tecniche che non verranno trattate in questo corso. 
@@ -584,7 +586,7 @@ MAC nella stessa LAN.
 
 Per risolvere i conflitti in trasmissione si utilizzano nelle rete WiFi degli algoritmi distribuiti sulle singole macchine in contemporanea, che collaborano per determinare a chi abilitare gli accessi alla rete. 
 
-\subsection{Sottolivello LLC}
+\subsection{802.2: Sottolivello LLC}
 
 Il sottolivello LLC consegna al livello MAC un pacchetto da spedire, questo pacchetto è uguale per ogni tecnologia aderente allo standard e presenta campi analoghi al sottolivello MAC. I campi LLC-dsap/ssap individuano 
 gli indirizzi LLC del mittente e destinatario, il campo info contiene il tipo di pdu per gestire diverse tipologie di pacchetto, e l'ultimo campo contiene la pdu di terzo livello. 
@@ -775,6 +777,124 @@ attraverso un nuovo sottostato di MAC chiamato MAC control. Il supporto allo sta
 Prima dello standard 802.3x poiché ethernet era una comunicazione a turni, per impedire la saturazione i bridge potevano inviare pacchetti senza dati prendendo il 
 controllo della connessione. 
 
-\clearpage
+\subsection{802.11: WiFi}
+
+A differenza di ethernet, dove si ha una connessione punto a punto bidirezionale e simultanea, attraverso un bridge permette di comunicare a 
+diversi computer con una singola connessione tra tutti i calcolatori ad un bridge. Per cui i MAC ethernet è molto semplice, ma questo non si 
+può dire per la rete WiFi. Una rete locale è un ambiente dove tutti parlano contemporaneamente con tutti, e ciò non può avvenire su di un filo condiviso tra due 
+calcolatori. Quindi le connessioni WiFi presentano un indirizzo MAC molto più complesso. 
+
+Ethernet è molto versatile, ma su alcuni edifici non è possibile effettuare un cablaggio economicamente, oppure sono presenti uffici nei quali gli impiegati sono 
+presenti occasionalmente. Oppure nel caso di reti offerte pubblicamente, con utenti occasionali. 
+Per questi motivi di praticità nei portatili moderni, sono presenti schede di rete WiFi e non ethernet. 
+
+Nonostante questi benefici, il mezzo trasmissivo non è affidabile, e comporta un costante consumo elettrico per connettersi alla rete. 
+Comprende una zona di copertura limitata. Esistono diversi studi sull'uso delle frequenze o micro-frequenze sulla salute. 
+
+Il sistema WiFi nel venne definito nel comitato IEEE 802, dove forma il working group 902.11 dedicato alle LAN senza fili. Il primo standard ad affermarsi è 802.11b. 
+Nel 1999 si forma il consorzio Wireless Ethernet Compatibilità Alliance, successivamente denominato Wi-Fi (Wireless Fidelity) Alliance per certificare i prodotti 
+IEEE 802.11. 
+
+
+Una rete WiFi può presentare architetture di due tipi, ad hoc o strutturate. In una rete ad hoc le stazioni comunicano direttamente l'una con l'altra. 
+
+%% TODO img architettura ad hoc 
+
+Quest'architettura è prevista dallo standard, ma le reti WiFi non funzionano in questo modo. Quest'architettura è stata progettata per permettere di comunicare 
+dispositivi personali, ma su questo ambiente applicativo ha prevalso bluetooth. 
+
+Sono realizzate tramite architettura strutturata, tutte le stazioni, astrazione di calcolatore poiché funziona su tante tipologie di dispositivi, possono accedere 
+solamente tramite punti di accesso (Access Point o AP). Questi punti di accesso sono interconnessi mediante fili, quindi non rappresenta una rete completamente senza fili. 
+Questi collegamenti vengono effettuati tramite ethernet, rappresentato come un unico domino di collisione, nonostante sia presente una topologia più complessa. 
+In queste reti non è presente un master, ma tutti gli AP sono allo stesso livello, in modo che non siano presenti SPoF. 
+
+%% TODO img architettura strutturata
+
+Quest'architettura permette una semplice scalabilità, infatti è sufficiente connettere altri AP alla rete ethernet. 
+L'informatica deve essere scalabile, con costi limitati deve poter aumentare le sue infrastrutture.  
+
+
+Ciascuno di questi AP ha un MAC di tipo IEEE 802.11, e si comporta come un bridge, presenta almeno due interfacce, una 802.11 per comunicare con i dispositivi wireless, 
+ed un'altra porta 802.3 per comunicare sulla rete ethernet. Ma questi pacchetti inviati con due MAC differenti, necessitano di un'entità di relay per poter 
+gestire questi diversi tipi di MAC. Ogni AP controlla un ``Basic Service Set'' (BSS), che estende la rete cablata. Ogni BSS ha un identificatore (BSSID), può essere 
+utilizzato il MAC della scheda AP corrispondente. Ma è possibile modificare questo BSSID. 
+La parte cablata si chiama ``Distribution System'' (DS) e rappresenta l'infrastruttura portante della rete. 
+
+Sono presenti delle eccezioni, infatti è possibile costruire dei collegamenti tra AP che estendono il DS tramite WiFi. Ma dal punto di vista dell'architettura si comporta 
+come un filo, collegando solamente due AP. 
+
+
+Per gestire il sottolivello MAC, bisogna gestire il problema dell'accesso al mezzo trasmissivo condiviso. Inoltre bisogna avere una spedizione affidabile dei pacchetti 
+su un mezzo trasmissivo poco affidabile. 
+Livelli fisici differenti utilizzano frequenze e bande diverse. Il sottolivello MAC viene a sua volta diviso in due sottolivelli, questo viene effettuato per permettere 
+di realizzare architetture modulari. 
+Un sottolivello ``Distributed Coordination Function'' (DCF) e ``Point Coordination Function'' (PCF), questi due livelli indipendentemente sono connessi al LLC. 
+L'accesso distribuito al mezzo trasmissivo viene realizzato nel DCF, questo è il modello effettivamente utilizzato. Rappresenta il MAC vero e proprio, e tramite questo 
+le macchine tentano di accedere al mezzo trasmissivo, ma non è garantito questo accesso, e può comportare ritardi. 
+In alcuni ambienti applicativi si vuole accedere al mezzo trasmissivo con garanzia di un tempo di ritardo massimo che non superi una certa soglia. In queste 
+applicazioni si sceglie una stazione di riferimento che in ogni intervallo temporale indica chi può trasmettere con il mezzo trasmissivo. Ambienti ``Mission Critical'', 
+dove una macchina deve necessariamente effettuare un azione in un certo intervallo di tempo. 
+
+La probabilità che il ritardo sia elevato in una rete WiFi è molto bassa, per cui questa tecnologia non viene quasi mai utilizzata. Poiché in questo caso bisognerebbe 
+utilizzare un controllore unico che si cerca molto spesso di non utilizzare in una rete. 
+
+Per qualunque MAC IEEE 802.2 deve essere presente l'indirizzo del destinatario, del mittente, il campo dati e l'FCS. 
+Esiste un altro campo ``Frame Control'' nello standard 802.11 che indica il tipo di pacchetto, di controllo o contenente dati, e fornisce anche informazioni 
+sul mittente ed il destinatario del DS, sulla frammentazione e sulla riservatezza. Contiene un campo per indicare di durate che indica il tempo necessario in cui deve 
+essere effettuata la trasmissione. Sono presenti fino a quattro indirizzi MAC. Il ``Sequence Control'' contiene informazioni utili per la frammentazione o il riassemblaggio 
+dei pacchetti. 
+
+Si parla quindi di indirizzamento per spiegare il motivo per cui sono presenti fino a quattro indirizzi MAC in un unico pacchetto. Ogni scheda di rete 
+wireless contiene un suo indirizzo MAC, e questa raccoglie i pacchetti e verifica che sia diretto alla stessa macchina dal suo indirizzo MAC. Nel pacchetto di livello MAC 
+sono presenti quattro indirizzi numerati da 1 a 4, più due bit. Questi bit sono ToDS e FromDS, se il primo bit vale 1, questo pacchetto è spedito all'AP per essere 
+smistato dal DS, il secondo vale uno quando il pacchetto proviene dal DS. In funzione di questi valori i quattro indirizzi hanno significati diversi. 
+
+%% TODO img tabella di indirizzamento 
+
+%% TODO slides di riferimento sulle specifiche dei quattro indirizzi 
+
+Quando due computer comunicano direttamente, un una rete ad hoc, il primo indirizzo del pacchetto corrisponde all'indirizzo del destinatario ed il seguente all'indirizzo 
+del mittente. Il terzo campo di indirizzo corrisponde al BSSID, ma questo si riferisce solamente alle reti strutturate. In questo modello le macchine comunicano tra di 
+loro in gruppi chiusi, quindi condividano un identificatore chiamato BSSID. La connessione è quindi lecita solamente se il BSSID è lo stesso. Poiché si tratta di 
+una comunicazione diretta, i suoi bit hanno valore nullo. 
+
+In una trasmissione da una stazione ad un AP, il primo indirizzo è l'indirizzo dell'access point, il secondo è quello del mittente vero. Il terzo indirizzo è quello 
+del pacchetto vero. Questi AP sono comunque trasparenti rispetto alle macchine, poiché alla prima connessione il calcolatore memorizza l'indirizzo del BSSID a cui può 
+richiedere accesso per inviare e ricevere pacchetti. 
+
+Quando un pacchetto viene inviato dal DS, il primo indirizzo è il MAC del destinatario vero, il secondo è l'indirizzo dell'AP che lo invia, ed il terzo è l'indirizzo del 
+vero mittente. 
+
+NNell'ultimo caso, il pacchetto è inviato e ricevuto dal DS, è il caso di due AP che comunicano tra di loro tramite WiFi. Sono necessari i due indirizzi degli AP e gli 
+indirizzi del destinatario e del mittente vero. 
+
+
+Per realizzare dei turni senza una stazione di coordinamento centralizzata si utilizza il sottolivello DCF. Il DCF ha come requisiti principali di evitare interferenze di 
+trasmissioni simultanee, contendo il maggior numero possibile di connessione e gestendo il canale trasmissivo in modo equo. Non si vuole utilizzare un controllore 
+centralizzato, senza un clock. 
+Si utilizza un algoritmo csma/ca, ``Carrier Senza Multiple Access/Collision Avoidance''. Questo meccanismo determina se il mezzo trasmissivo è disponibile, in caso 
+una stazione ha un pacchetto da spedire ``Carrier Sense''. Se il mezzo è occupato aspetta che la stazione sia libera prima di trasmettere. 
+\`{E} possibile che due stazioni provino a trasmettere contemporaneamente, in questo caso si verifica una collisione edi  pacchetti diventano intellegibili per 
+i destinatari, e dovranno essere ritrasmessi. Per evitare le collisioni si utilizzano degli strumenti per evitarle il quanto possibile. Gli algoritmi backoff, 
+acknowledgment, 
+
+DCF per effettuare il suo lavoro utilizza gli intervalli tra due pacchetti consecutivi per gestire delle priorità. Questo tempo è l'interpacket gap, che in ethernet 
+è lungo 96 bit-time. Ci sono due tipi principali di IFS, ``Inter-Frame Space'', di tempo variabile tra i vari pacchetti: DIFS, ``DCF IFS'', in generale quello standard, e 
+SIFS, ``Short IFS'' di lunghezza minore. 
+Se un pacchetto consecutivo può essere trasmesso immediatamente, allora si utilizza il SIFS, altrimenti si utilizza il tempo di standard DIFS. 
+
+
+Per ora si considera il DCF senza il RTS/CTS per evitare collisioni. 
+Quando una stazione vuole trasmettere, ed il canale è occupato, capisce che è presente traffico nel canale, e si autolimita scegliendo un numero random, di backoff, 
+nell'intervallo $[0,cw]$, ed incrementa il timer quando il timer solo quando è libero. La trasmissione può essere effettuata solamente quando il timer raggiunge il termine. 
+
+Quando una stazione rileva una collisione, utilizzando vari meccanismi, duplica il $cw$ in modo che l'intervallo di causalità sia duplicato, in modo da rendere più 
+improbabile collisioni future. Limitato superiormente al valore $cw_{\max}$. Se è un pacchetto viene inviato con successo, il valore di $cw$ viene posto al 
+valore minimo $cw_{\min}$. 
+Valori ragionevoli per questo intervallo $[cw_{\min},cw_{\max}]$ sono $[7,31]$ e $[255, 1023]$. 
+
+%% TODO img diagramma di flusso ? 
+
+%% TODO img diagramma temporale 
 
 \end{document}
