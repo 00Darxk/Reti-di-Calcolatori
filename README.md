@@ -3,6 +3,7 @@ Appunti tratti dal corso di Reti di Calcolatori, Anno Accademico 2024/25, Dipart
 
 ## Contenuti:
 - [Appunti](Reti_di_Calcolatori.pdf) delle lezioni, tenute l'anno accademico 2024/25 dal Professore Giuseppe di Battista;
+- [Esercizi](Esercizi/) svolti durante il corso;
 - [Immagini](Immagini/) realizzate in Tikz, necessarie per compilare il [file sorgente](Reti_di_Calcolatori.tex) degli appunti.  
 
 
