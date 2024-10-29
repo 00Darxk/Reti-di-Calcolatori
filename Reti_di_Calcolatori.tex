@@ -315,24 +315,24 @@ Senza specificare l'indirizzo, Kathar\'{a} utilizza un indirizzo casuale, per cu
 in molti di questi laboratori gli indirizzi MAC di queste macchine verranno 
 assegnati per renderli facilmente leggibili:
 
-\begin{minted}{powershell}
-	pc1[0]="A/00:00:00:00:00:01"
+\begin{minted}{c}
+    pc1[0]="A/00:00:00:00:00:01"
 \end{minted}
 
 Con \verb|image| viene specificata l'immagine di docker utilizzata dal calcolatore, 
 contiene tutti gli strumenti necessari per mandare, ricevere e analizzare i pacchetti: 
-\begin{minted}{powershell}
-	pc1[image]="kathara/base"
+\begin{minted}{c}
+    pc1[image]="kathara/base"
 \end{minted}
 La terza riga di assegnazione consiste nella configurazione del protocollo 
 IPv6, protocollo molto invasivo, per cui si vederebbero dati non di interesse 
 in questo esercizio in particolare:
-\begin{minted}{powershell}
+\begin{minted}{c}
 	pc1[ipv6]="false"
 \end{minted} 
 Quindi si disattiva questo protocollo. Analogamente 
 si configura la macchina 2:
-\begin{minted}{powershell}
+\begin{minted}{c}
 	pc2[0]="A/00:00:00:00:00:02"
 	pc2[image]="kathara/base"
 	pc2[ipv6]="false"
@@ -342,12 +342,12 @@ tramite il comando \verb|ip| si accedono a tutti i comandi sulle reti.
 Il termine \verb|link| indica a quale livello appartiene il comando, in questo caso il livello due di link. 
 Si specifica quale protocollo deve essere modificato con \verb|set dev eth0|, e si specifica cosa viene modificato, in questo caso l'indirizzo \verb|address|:
 \begin{minted}{powershell}
-> ip link set dev eth0 address 00:00:00:00:01
+prompt> ip link set dev eth0 address 00:00:00:00:01
 \end{minted}
 
 Per avviare Kathar\'{a} si apre una powershell all'interno della cartella del laboratorio, dopo aver avviato docker, e si avvia con il comando:
 \begin{minted}{powershell}
-> kathara lstart
+prompt> kathara lstart
 \end{minted}
 
 Se viene modificato il file in \verb|lab.conf| bisogna riavviare Kathará con il comando \verb|lrestart|. Si chiude invece con il comando \verb|lclean|. 
@@ -355,7 +355,7 @@ Se viene modificato il file in \verb|lab.conf| bisogna riavviare Kathará con il
 All'avvio apre due terminali per entrambe le macchine, e vengono specificati i domini di collisioni e le connessioni definite nel file \verb|.conf|. 
 Per determinare la configurazione di un certo livello si utilizza sempre il comando \verb|ip|, seguito dal livello che s vuole analizzare:
 \begin{minted}{powershell}
-> ip link
+prompt> ip link
 \end{minted}
 
 Al'interno di ciascuna delle macchine viene installato uno strumento chiamato \verb|scapy|, una libreria in python utilizzata per creare pacchetti, ed in particolare 
@@ -364,7 +364,7 @@ gestire e modificare pacchetti. In questo modo si avvia il prompt di \verb|scapy
 Questo terminale permette di creare un pacchetto ed inviarlo. Si crea una variabile \verb|p| a cui assegnare il pacchetto. Si indica che si tratta di un 
 pacchetto ethernet con \verb|Ethernet()|, dove bisogna specificare gli indirizzi MAC del mittente e del destinatario:
 \begin{minted}{powershell}
-> p=Ethernet(dst:'00:00:00:00:00:01', src='00:00:00:00:00:02')
+prompt> p=Ethernet(dst:'00:00:00:00:00:01', src='00:00:00:00:00:02')
 \end{minted} 
 In questo modo è possibile specificare indirizzi MAC arbitrari, anche non presenti nella rete, e Kathar\'{a} permette di analizzare questi comportamenti anomali. 
 Il resto dei campi non specificati vengono inizializzati ad informazioni di default. 
@@ -372,12 +372,12 @@ Il resto dei campi non specificati vengono inizializzati ad informazioni di defa
 Per inviare un pacchetto si utilizza la funzione \verb|send()|, che prende come argomenti il nome della variabile a cui è stato assegnato il pacchetto \verb|p| ed 
 il protocollo a cui viene inviato assegnato ad \verb|iface|:
 \begin{minted}{powershell}
-> send(p, iface='eth0')
+prompt> send(p, iface='eth0')
 \end{minted}
 
 Esistono delle tecnologie chiamate ``packet sniffer'', come Wireshark, per controllare il traffico di rete. Questo viene specificato nelle ultime righe del 
 file di configurazione, questa macchina tuttavia non è collegata, si dice fluttuante e sarà utile per analizzare il traffico su queste reti emulate. 
-\begin{minted}{powershell}
+\begin{minted}{c}
 	wireshark[bridged]=true
 	wireshark[port]="3000:3000"
 	wireshark[image]="lscr.io/linuxserver/wireshark"
@@ -391,7 +391,7 @@ Contiene un'immagine di Wireshark, chiamata analogamente per semplicità. Quest'
 disponibile. Con il comando \verb|lconfig| è possibile aggiungere un'interfaccia ad una macchina ad uno specifico link. Si specifica il nome della macchina con \verb|-n| e 
 si può specificare di aggiungere o rimuovere l'interfaccia con \verb|--add| o \verb|--rm|:
 \begin{minted}{powershell}
-> kathara lconfig -n wireshark --add A
+prompt> kathara lconfig -n wireshark --add A
 \end{minted}
 Questo comando viene eseguito all'interno dell'hub del laboratorio, si utilizza per collegare questa macchina al dominio di collisione A. Nello stesso terminale dove 
 è stato eseguito il laboratorio. 
@@ -412,9 +412,122 @@ direttamente. Aggiungendo l'opzione \verb|-w| si può creare un file della cattu
 \verb|shared|, condivisa, bisogna effettuare il comando in questa cartella. Ed è possibile aprirlo tramite Wireshark nella macchina host, per analizzare i pacchetti 
 offline rispetto alla cattura. 
 
+\subsection{Laboratorio del 25 Ottobre}
+
+In questo laboratorio si utilizza un bridge che collega quattro macchine su quattro domini di collisione differenti: 
+\begin{minted}{c}
+pc1[0]="A/00:00:00:00:00:01"
+pc1[image]="kathara/base"
+pc1[ipv6]="false"
+pc2[0]="B/00:00:00:00:00:02"
+pc2[image]="kathara/base"
+pc2[ipv6]="false"
+pc3[0]="C/00:00:00:00:00:03"
+pc3[image]="kathara/base"
+pc3[ipv6]="false"
+pc4[0]="D/00:00:00:00:00:04"
+pc4[image]="kathara/base"
+pc4[ipv6]="false"
+\end{minted}
+Ed una macchina che si comporta come bridge b1:
+\begin{minted}{c}
+b1[0]="A/00:00:00:00:00:b1"
+b1[1]="B/00:00:00:00:00:b2"
+b1[2]="C/00:00:00:00:00:b3"
+b1[3]="D/00:00:00:00:00:b4"
+b1[image]="kathara/base"
+b1[ipv6]="false"
+\end{minted}
+Per permettere questo comportamento bisogna aggiungere un'interfaccia bridge con il seguente comando, che utilizza software per realizzare bridge, già presenti nei 
+sistemi Linux. Si utilizza il software \verb|ip link|, già utilizzato precedentemente:
+\begin{minted}{powershell}
+root@b1:~$ ip link add name mainbridge type bridge
+\end{minted}
+%$
+In questo modo si crea l'interfaccia di nome \verb|mainbridge|, e di tipo \verb|bridge|, all'interno della macchina b1.  
+
+Dopo aver creato il bridge bisogna connettere le diverse interfacce della macchina al bridge appena creato. Questo processo prende il nome di ``enslaving'', si realizza 
+impostando il bridge come il master di quell'interfaccia, tramite il seguente comando:
+\begin{minted}{powershell}
+root@b1:~$ ip link set dev eth0 master mainbridge
+\end{minted}
+%$
+Questo va effettuato su ogni dominio di collisione a cui è connesso il bridge. 
+
+Quando viene realizzato il bridge, di default è spento e per attivarlo, o per fermarlo \verb|set down|, si utilizza un ulteriore comando:
+\begin{minted}{powershell}
+root@b1:~$ ip link set up dev mainbridge
+\end{minted}
+%$
+Per controllare i bridge si utilizza un'altra serie di comandi già presenti in Linux, chiamata \verb|brctl|, per ``Bridge Control''. Quando un bridge riceve un pacchetto, 
+il MAC address del mittente viene salvato per un certo periodo di tempo nel suo filtering database. Dato che questo database è dinamico, il MAC address viene 
+rimosso dopo un tempo di invecchiamento, di default di 5 minuti, o 300 secondi. Per modificare questo tempo si inserisce nel seguente comando come parametro, in secondi:
+\begin{minted}{powershell}
+root@b1:~$ brctl setageing mainbridge 600  
+\end{minted}
+%$
+Bisogna specificare il nome del bridge precedentemente creato \verb|mainbridge| ed il tipo di operazione da effettuare \verb|setageing|. 
 
 
+Considerando questi comandi, il file \verb|b1.startup|, permette di avere un bridge funzionate ed attivo ad avvio del lab:
+\begin{minted}{powershell}
+ip link add name mainbridge type bridge
+ip link set dev eth0 master mainbridge
+ip link set dev eth1 master mainbridge
+ip link set dev eth2 master mainbridge
+ip link set dev eth3 master mainbridge
+ip link set up dev mainbridge
+brctl setageing mainbridge 600
+\end{minted}
 
+Durante il lab per osservare il filtering database del bridge si può utilizzare il comando \verb|showmacs|, che restituisce una tabella, contenente la porta, 
+l'indirizzo MAC corrispondente. Inoltre contiene un'indicazione se quell'indirizzo MAC è locale, all'avvio infatti conosce automaticamente gli indirizzi MAC delle sue 
+interfacce locali; 
+ed il tempo di invecchiamento. Se un MAC è locale, il suo tempo non viene aumentato:
+\begin{minted}{powershell}
+root@b1:~$ brctl showmacs mainbridge
+port no mac addr            is local?   ageing timer
+ 1      00:00:00:00:00:b1   yes             0.00
+ 1      00:00:00:00:00:b1   yes             0.00
+ 2      00:00:00:00:00:b2   yes             0.00
+ 2      00:00:00:00:00:b2   yes             0.00
+ 3      00:00:00:00:00:b3   yes             0.00
+ 3      00:00:00:00:00:b3   yes             0.00
+ 4      00:00:00:00:00:b4   yes             0.00
+ 4      00:00:00:00:00:b4   yes             0.00
+\end{minted}
+%$
+Il primo parametro indica il numero di porta del bridge, su un kernel Linux, il massimo numero di porte disponibili è di 1024, queste vengono assegnate sequenzialmente 
+a partire da 1, nell'ordine in cui sono state connesse. 
+
+Se viene inviato un pacchetto da una delle stazioni, il bridge è in grado di imparare il suo MAC address:
+\begin{minted}{powershell}
+root@pc1:~$ scapy
+>>> p=Ether(dst='00:00:00:00:00:02', src='00:00:00:00:00:01')
+>>> sendp(p, iface='eth0')
+Sent 1 packets.
+>>>
+\end{minted}
+%$
+
+Dopo l'invio di questo pacchetto, il bridge conosce la posizione nella rete della stazione \verb|pc1|:
+\begin{minted}{powershell}
+root@b1:~$ brctl showmacs mainbridge
+port no mac addr            is local?   ageing timer
+    1      00:00:00:00:00:01   no             18.54
+    1      00:00:00:00:00:b1   yes             0.00
+    1      00:00:00:00:00:b1   yes             0.00
+    2      00:00:00:00:00:b2   yes             0.00
+    2      00:00:00:00:00:b2   yes             0.00
+    3      00:00:00:00:00:b3   yes             0.00
+    3      00:00:00:00:00:b3   yes             0.00
+    4      00:00:00:00:00:b4   yes             0.00
+    4      00:00:00:00:00:b4   yes             0.00
+\end{minted}
+%$
+
+Se si invia un pacchetto con l'indirizzo MAC sorgente errato, allora il bridge non è in grado di imparare la posizione delle stazioni e quindi invierà pacchetti 
+nei domini errati, impedendo ai pacchetti di arrivare a destinazione. 
 
 \clearpage
 
@@ -886,11 +999,11 @@ SIFS, ``Short IFS'' di lunghezza minore.
 Se un pacchetto consecutivo può essere trasmesso immediatamente, allora si utilizza il SIFS, altrimenti si utilizza il tempo di standard DIFS. 
 
 
-Per ora si considera il DCF senza il RTS/CTS per evitare collisioni. 
+Per ora si considera il DCF senza il RTS/CTS, ``Request To Send''/``Clear To Send'' per evitare collisioni.  
 Quando una stazione vuole trasmettere, ed il canale è occupato, capisce che è presente traffico nel canale, e si autolimita scegliendo un numero random, di backoff, 
 nell'intervallo $[0,cw]$, ed incrementa il timer quando il timer solo quando è libero. La trasmissione può essere effettuata solamente quando il timer raggiunge il termine. 
 
-Quando una stazione rileva una collisione, utilizzando vari meccanismi, duplica il $cw$ in modo che l'intervallo di causalità sia duplicato, in modo da rendere più 
+Quando una stazione rileva una collisione, utilizzando vari meccanismi, duplica il $cw$ in modo che l'intervallo di casualità sia duplicato, in modo da rendere più 
 improbabile collisioni future. Limitato superiormente al valore $cw_{\max}$. Se è un pacchetto viene inviato con successo, il valore di $cw$ viene posto al 
 valore minimo $cw_{\min}$. 
 Valori ragionevoli per questo intervallo $[cw_{\min},cw_{\max}]$ sono $[7,31]$ e $[255, 1023]$. 
@@ -898,5 +1011,78 @@ Valori ragionevoli per questo intervallo $[cw_{\min},cw_{\max}]$ sono $[7,31]$ e
 %% TODO img diagramma di flusso ? 
 
 %% TODO img diagramma temporale 
+
+
+Per determinare se il canale trasmissivo è libero, si utilizza un'altro meccanismo. In ogni pacchetto viene specificata la sua durata, nel campo ``duration''. Poiché 
+il messo trasmissivo è condiviso, tutte le stazioni connesse ascoltano questo campo e si segnano la durata della trasmissione corrente nel vettore NAV, ``Network 
+Allocation Vector''. Rappresenta un contatore per sincronizzare le stazioni. Ogni stazione lo decrementa con il passare del tempo, ed ogni stazioni può trasmettere 
+solamente se questo campo vale zero. Questo campo deve essere presente come primo campo del pacchetto, per essere letto. 
+
+%% TODO img trasmissione senza uso di rts/cts diagramma temporale 
+
+Ogni pacchetto spedito da una stazione deve essere riscontrato dalla stazione destinataria tramite un acknowledgment. Quindi una macchina quando calcola la durata 
+della trasmissione, calcola il tempo di trasmissione, nota la banda ed il numero di bit del pacchetto, una durata SIFS, più corta di DIFS, prima dell'invio 
+dell'acknowledgment, e la durata di questo piccolo pacchetto. Il SIFS è l'interpacket space che separa un pacchetto dal suo acknowledgment. -
+
+
+La verifica della disponibilità della rete può essere effettuata anche a livello fisico, controllando se nel canale trasmissivo è presente del segnale attivo. Se 
+rileva un segnale attivo aspetta di trasmettere, quindi solo quando entrambe le condizioni fisiche e logiche sono verificate. 
+Una trasmissione non si interrompe fino alla fine, e termina quando viene ricevuto il pacchetto ack. Se non viene ricevuto, oppure è intelligibile, allora si è verificata 
+una collisione, e deve essere ritrasmesso il pacchetto. La stazione mittente si calcola quando dovrebbe ricevere l'acknowledgment. 
+Di tutte le stazioni nella rete, solo la stazione trasmittente è in grado di accorgersi che si è verificata una collisione. In questo caso duplica il valore di $cw$ ed 
+aspetta prima di inviare nuovamente il pacchetto.  
+
+Se una stazione trasmettesse senza interruzioni, allora il mezzo trasmissivo non sarebbe mai libero. Questo rappresenta un attacco di tipo DOS ``Denial Of Service''. 
+
+
+Se il pacchetto che viene trasmesso è molto lungo, e si effettua una collisione, la stazione mittente se ne può accorgere solamente dopo il periodo di trasmissione di 
+questo lungo pacchetto. Si perde molto tempo prima dell'identificazione della collisione. 
+Per risolvere questo problema la dimensione massima dei pacchetti WiFi è di 1500 byte come in ethernet. 
+Inoltre è possible che tra le stazioni ci sia visibilità parziale, ovvero può vedere solo una parte della rete. 
+
+Quando una stazione vuole trasmettere, invia un frame al destinatario, di breve lunghezza, chiedendo l'autorizzazione alla trasmissione. Se il destinatario è disponibile 
+emette un breve frame di conferma. Alle stazioni vicine è richiesto di non interferire per l'intera durata della trasmissione che sta per avvenire. Questo 
+meccanismo di prenotazione del canale tra due stazioni permette di evitare le collisioni. 
+Se il canale è libero, a stazione mittente invia un pacchetto RTS per richiedere l'autorizzazione, e viene concessa alla stazione con un pacchetto CTS, e tutte le altre 
+stazioni aspettano per il tempo presente nel campo duration dei pacchetti RTS e CTS, invece che nel pacchetto da trasmettere. 
+
+Una collisione si verifica quando all'invio del RTS, non viene inviato il CTS. Analogamente alle condizioni precedenti, dove al pacchetto non viene seguito l'ack. 
+
+%% TODO img diagramma temprale dcf con rts/cts
+
+%% TODO sintesi algoritmo di backoff 
+
+Il valore di $cw$ viene decrementato solamente se il canale è libero, quando NAV è pari a zero. 
+L'algoritmo di backoff rappresenta un algoritmo distribuito su molte macchine. 
+
+Su ogni stazione WiFi è presente un parametro ch indica quale pacchetti da utilizzare. Viene utilizzato RTS/CTS per pacchetti di lunghezza maggiore a questo parametro $s$. 
+In queste reti senza fili l'insieme delle stazioni appartenenti ad uno stesso BSS cambia continuamente. Per poter accedere ad un BSS si possono utilizzare 
+protocollo di handshake in due modalità. 
+
+Si utilizza un protocollo di handshake per scambiare informazioni tra l'AP ed il BSS. Ogni stazione AP presente il proprio indirizzo MAC, potrebbe inviare un messaggio 
+al BSS per indicare la sua presenza alla rete, tramite un pacchetto broadcast chiamato ``beacon frame''. 
+Altrimenti la stazione potrebbe inviare pacchetti sonda di ``probe'', trasmettendo pacchetti ``probe request'', per esplorare la rete, ed attende un pacchetto di 
+``probe response. ''
+
+Un amministratore può definire varie reti logiche sulla stessa rete fisiche, ciascuna identificata a un suo SSID. 
+Solo chi ha gli opportuni permessi può accedere ad una carta rete logica. Si definisce ESS, ``Extended Service Set'' l'insieme delle stazioni appartenenti 
+ai BSS di una rete e con lo stesso SSID. 
+
+Le stazioni nello stesso ESS, possono muoversi cambiando BSS. 
+
+
+Il livello MAC può decidere se frammentare un pacchetto e si occupa anche del riassemblaggio. In queste reti è consigliabile diminuire l'overhead di un pacchetto e ridurre la 
+probabilità di collisione, diminuendo la dimensione dei singoli pacchetti. 
+Ogni frammento del ``MAC service data unit'' viene frammentato e ciascuno di questi frammenti viene trattato come un pacchetto e viene riscontrato singolarmente. La 
+dimensione dei frammenti può essere modificata dall'utente per guadagnare un vantaggio in trasmissione sulle altre stazioni. 
+In ricezione il livello MAC ricompone questi frammenti in modo che gli strati superiori non si accorgono della frammentazione, né gli enti MAC che non 
+sono coinvolti nella trasmissione. 
+
+In questo momento storico i riscontri di LLC non vengono utilizzati, quindi anche se nello standard è possibile che l'invio e ricezione di pacchetti ack sia effettuata a 
+livello LLC. 
+
+Per inviare pacchetti di tipo broadcast, dove ToDS sia pari a zero, non si utilizzano ack e RTS/CTS, le eventuali collisioni non vengono quindi rilevate. Quando 
+ToDS è pari ad uno, si utilizzano pacchetti di ack, ed in caso RTS/CTS, per i pacchetti diretti verso gli AP. Si può configurare l'AP in modo che ogni pacchetto 
+broadcast ricevuto venga inviato o meno a tutto il BSS. 
 
 \end{document}

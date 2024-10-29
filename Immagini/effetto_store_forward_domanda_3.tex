@@ -6,7 +6,7 @@
     \draw
     (0,0)node[genericshape, anchor=east, label=A](a){}
     to[short]++(0.5,0)node[genericshape, label=S$_1$,anchor=west](s1){}
-    (s1.0)to[short]++(0.5,0)node[genericshape, label=S$_2$, anchor=west](s2){}
+    (s1.0)++(0.5,0)node[genericshape, label=S$_m$, anchor=west](s2){}
     (s2.0)to[short]++(0.5,0)node[genericshape, label=B, anchor=west](b){}
     ;
 
@@ -24,23 +24,24 @@
     (2a.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](2s1){2}
     (2s1.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](2s2){2}
     
-    (2a.south west)++(0,-1)node[rectangle, anchor=north west, draw, minimum width=1.61cm, minimum height=0.3cm, inner sep=0pt](100a){100}
-    (100a.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](100s1){100}
-    (100s1.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](100s2){100}
+    (2a.south west)++(0,-1)node[rectangle, anchor=north west, draw, minimum width=1.61cm, minimum height=0.3cm, inner sep=0pt](100a){$n$}
+    (100a.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](100s1){$n$}
+    (100s1.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](100s2){$n$}
     ;
 
     \draw
     [dashed](2a.270)++(0,-0.1)--++(0,-0.8)
-    [dashed](2s1.270)++(0,-0.1)--++(0,-0.8)
-    [dashed](2s2.270)++(0,-0.1)--++(0,-0.8)
+    (2s1.270)++(0,-0.1)--++(0,-0.8)
+    (2s2.270)++(0,-0.1)--++(0,-0.8)
+    (s1.0)--(s2.180)
     ;
 
     \draw
-    (1s2.north east)node[right]{\footnotesize $2t_i$}
-    (2s2.north east)node[right]{\footnotesize $3t_i$}
-    (2s2.south east)node[right]{\footnotesize $4t_i$}
-    (100s2.north east)node[right]{\footnotesize $101t_i$}
-    (100s2.south east)node[right]{\footnotesize $102t_i$}
+    (1s2.north east)node[right]{\footnotesize $mt_i$}
+    (2s2.north east)node[right]{\footnotesize $(m+1)t_i$}
+    (2s2.south east)node[right]{\footnotesize $(m+2)t_i$}
+    (100s2.north east)node[right]{\footnotesize $(n-1+m) t_i$}
+    (100s2.south east)node[right]{\footnotesize $(n+m)t_i$}
     ;
 
 \end{circuitikz}

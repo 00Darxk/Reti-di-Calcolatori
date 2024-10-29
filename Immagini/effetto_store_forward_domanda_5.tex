@@ -17,15 +17,15 @@
 
     \draw 
     (a.270)++(0,-0.5)node[rectangle, anchor=north west, draw, minimum width=1.61cm, minimum height=0.3cm, inner sep=0pt](1a){1}
-    (1a.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](1s1){1}
+    (1a.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.15cm, inner sep=0pt](1s1){1}
     (1s1.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](1s2){1}
     
     (1a.south west)node[rectangle, anchor=north west, draw, minimum width=1.61cm, minimum height=0.3cm, inner sep=0pt](2a){2}
-    (2a.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](2s1){2}
+    (2a.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.15cm, inner sep=0pt](2s1){2}
     (2s1.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](2s2){2}
     
     (2a.south west)++(0,-1)node[rectangle, anchor=north west, draw, minimum width=1.61cm, minimum height=0.3cm, inner sep=0pt](100a){100}
-    (100a.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](100s1){100}
+    (100a.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.15cm, inner sep=0pt](100s1){100}
     (100s1.south east)node[rectangle, anchor=north west, draw, minimum width=1.66cm, minimum height=0.3cm, inner sep=0pt](100s2){100}
     ;
 
@@ -36,11 +36,11 @@
     ;
 
     \draw
-    (1s2.north east)node[right]{\footnotesize $2t_i$}
-    (2s2.north east)node[right]{\footnotesize $3t_i$}
-    (2s2.south east)node[right]{\footnotesize $4t_i$}
-    (100s2.north east)node[right]{\footnotesize $101t_i$}
-    (100s2.south east)node[right]{\footnotesize $102t_i$}
+    (1s2.north east)node[right]{\footnotesize $t_i+t^*_i$}
+    (2s2.north east)node[right]{\footnotesize $2t_i+t^*_i$}
+    (2s2.south east)node[right]{\footnotesize $3t_i+t^*_i$}
+    (100s2.north east)node[right]{\footnotesize $100t_i+t^*_i$}
+    (100s2.south east)node[right]{\footnotesize $101t_i+t^*_i$}
     ;
 
 \end{circuitikz}

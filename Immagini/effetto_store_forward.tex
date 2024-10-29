@@ -5,14 +5,14 @@
 \begin{circuitikz}
     \draw
     (0,0)node[genericshape, anchor=east, label=A](a){}
-    to[short]++(0.5,0)node[genericshape, label=S1,anchor=west](s1){}
-    (s1.0)to[short]++(0.5,0)node[genericshape, label=S2, anchor=west](s2){}
+    to[short]++(0.5,0)node[genericshape, label=S$_1$,anchor=west](s1){}
+    (s1.0)to[short]++(0.5,0)node[genericshape, label=S$_2$, anchor=west](s2){}
     (s2.0)to[short]++(0.5,0)node[genericshape, label=B, anchor=west](b){}
     ;
 
-    \draw[->] (a.270)++(0,-0.25)--++(0,-5)node[above, left]{$t$};
-    \draw[->] (b.270)++(0,-0.25)--++(0,-5);
-    \draw[->] (s1.270)++(0,-0.25)--++(0,-5);
-    \draw[->] (s2.270)++(0,-0.25)--++(0,-5);
+    \draw[->] (a.270)++(0,-0.25)--++(0,-1.5)node[above, left]{$t$};
+    \draw[->] (b.270)++(0,-0.25)--++(0,-1.5);
+    \draw[->] (s1.270)++(0,-0.25)--++(0,-1.5);
+    \draw[->] (s2.270)++(0,-0.25)--++(0,-1.5);
 \end{circuitikz}
 \end{document}
