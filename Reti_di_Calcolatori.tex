@@ -68,6 +68,8 @@ Università degli Studi ``Roma Tre"}}
 \clearpage
 \pagenumbering{arabic}
 
+%% TODO acronimi maiuscolo/minuscolo
+
 \section{Introduzione}
 
 Una qualsiasi interconnessione di calcolatori può rappresentare una rete di calcolatori, ma in base alla distanza reciproca tra questi componenti 
@@ -627,7 +629,7 @@ precedente vede uscire il primo terminale e quindi la prima connessione $n+1$ pe
 
 \clearpage
 
-\section{Standard IEEE 802}
+\section{Livello 2: Standard IEEE 802}
 
 %% TODO img dallo standard
 
@@ -1084,5 +1086,146 @@ livello LLC.
 Per inviare pacchetti di tipo broadcast, dove ToDS sia pari a zero, non si utilizzano ack e RTS/CTS, le eventuali collisioni non vengono quindi rilevate. Quando 
 ToDS è pari ad uno, si utilizzano pacchetti di ack, ed in caso RTS/CTS, per i pacchetti diretti verso gli AP. Si può configurare l'AP in modo che ogni pacchetto 
 broadcast ricevuto venga inviato o meno a tutto il BSS. 
+
+
+\clearpage
+
+\section{Livello 3: Il Livello di Rete}
+
+Il livello di rete sceglie un percorso per i pacchetti, conoscendo la topologia della rete, attraverso passaggi intermedi chiamati salti o hop tra varie stazioni. 
+
+Se il destinatario è nella stessa LAN del mittente, allora lo raggiunge direttamente, altrimenti deve percorrere diverse reti geografiche effettuano questi salti. 
+Fino ad ora ci si è occupati di ogni salto separatamente tra la rete locale o la rete geografica attraverso un singolo filo, o mezzo trasmissivo. 
+Per connettere tra di loro LAN e WAN si utilizzano reti di raccolta o di accesso. 
+
+\subsection{Reti di Raccolta e Reti di Accesso}
+
+Nella LAN la trasmissione tar due stazioni, per quanto sia complessa la topologia della rete, è sempre diretta. Nelle reti geografiche (WAN), la trasmissione tra due 
+stazioni a livello due avviene su un canale punto-punto. Viene realizzato solamente tramite un filo, non sono necessarie altre componenti della rete. Tipicamente 
+questo filo viene realizzato da ethernet, anche se sviluppato principalmente per reti locali. 
+
+I collegamenti tra questi due tipi di rete vengono realizzati dall'ISP di cui si usufruiscono i servizi. Questa zona intermedia viene realizzata tramite reti di 
+raccolta o di accesso. La rete di raccolta è la rete nella quale si raccoglie il traffico, mettendolo assieme, proveniente da tutte le stazioni coperte dal servizio 
+dell'ISP. Le reti di accesso permettono, una volta raccolto il traffico, di accedere alla rete geografica vera e propria, composta da lunghi collegamenti punto-punto. 
+
+
+Per molti anni in quasi tutti i paesi del mondo, la rete di raccolta è stata la rete telefonica, due fili di rame, un doppino telefonico. Questa struttura molto 
+pervasiva è stata il supporto delle comunicazioni di rete per molti anni. 
+In seguito venne effettuata una progressiva sostituzione tra rame e fibra ottica, secondo una terminologia FTTx, ``Fiber To The x'', che distingue tra quanto vicino la stazione è 
+vicina alla fibra ottica. La linea di tendenza punta a FTTH, ``Fiber To The Home'', dove la fibra ottica arriva direttamente alla stazione. Un altro metodo di 
+raccolta simile è FTTB, che utilizza le esistenti strutture telefoniche per trasmettere i dati all'interno dell'edificio. 
+
+FTTN, ``Fiber TO The Node'', e FTTC, ``Fiber To The Center'', sono difficili da distinguere, questi rappresentano gli accessi xDSL o aDSL, quelli normalmente venduti, il caratteri prefisso di DSL descrive la trasmissione 
+in termini di bilanciamento e traffico disponibile. In generale il cavo in fibra ottica raggiunge una stazione centrale che utilizza le preesistenti 
+
+Tipicamente gli accessi FTTH e FTTB sono a 1 Gb/s, recentemente si stanno vendendo accessi a velocità superiore. 
+Queste strutture utilizzano la tecnologia GPON, ``Gigabit-capable Passive Optical Network'', il dispositivo vero e proprio di cui fanno uso è l'OLT, ``Optical Line Termination'', 
+essenzialmente è uno switch. Permette di collegare fino a 64 clienti sullo stesso OLT. 
+Al livello del cliente è presente un dispositivo router su cui si può connettere per accedere, questi sono collegati a vari livelli di splitting ottico, per connettere 
+tutti i router dei clienti, connessi tutti su una porta di uno switch OLT. Questi dispositivi di splitting ottico non necessitano di alimentazione, ma unisce tra di loro 
+il traffico proveniente da più clienti. 
+
+La banda di questi OLT arriva fino a 1 Gb/s, ma se più clienti vengono connessi alla stessa porta allora la banda effettiva per clienti diminuisce all'aumentare dei 
+clienti, fino a 64 per porta. Questa è la rete con cui i provider attualmente raccolgono il traffico. 
+
+Per essere collegati alla WAN, si utilizza la rete di accesso, realizzata tramite switch OLT tutti collegati tra di loro, con un estensione geografica significativa. 
+Ma è consigliabile non estendere troppo questa struttura, generalmente si indica come MAN. 
+La maggior parte dei provider realizza la propria rete di accesso tramite un anello che connette le varie reti di raccolta e ciò che lo collega alla spina dorsale, la WAN, 
+del provider è un nodo di aggregazione. 
+Vengono realizzati in cicli per mantenere una certa resistenza ai guasti, e si utilizzano alberi ricoprenti di anello e loop-avoidance con tecnologie analoghe alle 
+reti locali, per mantenere attivi solo i collegamenti strettamente necessari. 
+Se si rompe un singolo switch, solo i clienti attestati a quello switch subiranno un disservizio. Generalmente vengono utilizzati più aggregation node, per mantenere 
+un'importante resistenza ai guasti. Questo meccanismo di duplicare componenti può essere attuato a vari livelli per mantenere alta la resistenza del provider. 
+
+Molto spesso per aumentare la robustezza si utilizzano più anelli con doppi collegamenti, anche in fibra, che effettuano percorsi diversi. 
+Si utilizza una nello poiché è la struttura contenente cicli più semplice possibile. 
+
+\subsection{Indirizzo ed Instradamento}
+
+Il livello di rete fornisce servivi al livello di trasporto, che non è interessato della topologia delle varie reti attraversate per raggiungere una destinazione. Inoltre 
+non conosce le tecnologie attraversate al livello due. Può offrire servizi connessi o non. Il protocollo di rete più diffuso IPv4 utilizza un protocollo di rete 
+non connesso, utilizzano instradamento a datagramma, mentre un livello di rete connesso utilizza la commutazione a circuito virtuale. Ma questa distinzione non è 
+strettamente mantenuta. 
+
+Il livello di trasporto deve conoscere degli indirizzi distribuiti in modo consistente su tutta la rete, in modo da poterle identificare univocamente tra rete locale 
+e geografica. Una primitiva di servizio non connesso offerta al livello di trasporto indica l'indirizzo livello 3 del destinatario ed il suo payload, questo sarà ricevuto 
+dal livello quattro corrispondente. 
+
+Dal punto di vista livello tre i sistemi possono essere ``End System'', ES, o ``Intermediate System'', IS. Ad ogni sistema viene associato un indirizzo numerico per 
+poterlo identificare. Ad ogni sistema spesso viene associato un nome, la cui corrispondenza all'indirizzo viene gestita da server appositi presenti sulla rete. 
+
+Spesso queste apparecchiature intermedia si chiamano router o gateway, contengono almeno i primi tre strati della pila ISO-OSI, talvolta per motivi di gestione devono 
+contenere anche livelli superiori. Alcuni casi di instradamento avvengono anche a livello due, anche se principalmente a livello 3. 
+
+%% TODO img connessione due ES, da un IM (router), differenza tra bridge (1-2) e repeater (1)
+
+L'indirizzo di livello due identifica un destinatario solamente all'interno di una LAN, mentre l'indirizzo di livello tre deve poter identificare il destinatario 
+all'interno del'intera rete. Un sistema necessita di tanti indirizzi MAC quante sono le schede di rete al suo interno, ma è possibile associare una singola macchina 
+ad un singolo indirizzo di livello tre, ma è possibile per alcuni protocolli, come IPv4 e IPv6, di essere associati ad indirizzi di livello tre differenti.  
+
+Esistono protocolli appositi per gestire e stabilire la corrispondenza tra gli indirizzi di livello due e livello tre. Ma gli indirizzi di livello due, i MAC address, 
+sono univoci a livello globale, quindi si potrebbe utilizzare questi indirizzi. Il problema degli indirizzi MAC è che sono distribuiti casualmente, ma sarebbe utile 
+ai fini di individuare le stazioni se gli indirizzi associati a macchine vicine avessero caratteristiche simili. Poiché gli indirizzi MAC individuano univocamente 
+la scheda di rete, mente gli indirizzi di livello tre possono cambiare, utilizzare solo i MAC comporterebbe problemi di privacy. 
+
+In linea di principio si possono individuare tre tipi di instradamento principali:
+\begin{itemize}
+    \item Routing by Network Address: nel pacchetto c'è l'indirizzo del sistema destinatario, potrebbe non essere l'indirizzo dell'ES, ma di una sua interfaccia. Con commutazione a datagramma su questo indirizzo;
+    \item Label Swapping: nel pacchetto non c'è l'indirizzo, ma un'etichetta che individua un cammino virtuale, con commutazione a circuito virtuale basata su queste etichette;
+    \item Source Routing: nel pacchetto è indicata la lista ordinata di tutti gli IS da attraversare per raggiungere la destinazione. 
+\end{itemize}
+
+%% TODO img instradamento 
+
+\subsubsection{Routing by Network Address}
+
+Quando il pacchetto raggiunge un IS, con varie linee di inoltro, questo guarda la sua tabella di instradamento locale e cerca come chiave di ricerca l'indirizzo del 
+destinatario e restituisce la linea dove deve essere inoltrato il pacchetto. La commutazione è a datagramma poiché questa tabella può variare nel tempo. Questo 
+rappresenta il modo più semplice di instradamento, operato dagli switch, dove la tabella di instradamento viene chiamata filtering database. 
+
+Se l'indirizzo non fosse presente nella sua tabella di instradamento, allora il pacchetto viene buttato, a differenza dei bridge, poiché su reti grandi l'inoltro di 
+tutti i pacchetti sconosciuti su tutte le linee comporterebbero un aumento considerevole del traffico. 
+
+Sono necessari quindi dei protocolli per poter definire gli indirizzi e conoscere la topologia della rete, essendo dinamica. Questi meccanismi permettono di 
+compilare automaticamente le tabelle di instradamento dell'intera rete. Ma è possibile che siano compilate manualmente, anche se non realistico. Ma questo processo 
+di instradamento è indipendente dal chi ha compilato la tabella. 
+
+\subsubsection{Label Swapping}
+
+Se due stazioni vogliono comunicare, in una rete a circuito virtuale, viene stabilito il percorso che deve attraversare il pacchetto. Le apparecchiature intermedie 
+vengono quindi informate sul percorso che deve essere effettuato. Questo percorso viene identificato da un'etichetta in modo che all'arrivo del pacchetto presso un IS, 
+si utilizza una tabella dove sono presenti le etichette ed i possibili percorsi, e quindi viene inviato su una certa linea. Questa tabella è locale e molto piccola, e 
+determina la linea di ritrasmissione del pacchetto. 
+
+Deve essere stabilito il percorso tra le stazioni, analogamente alla tabella di instradamento per l'instradamento precedente. La differenza tra queste due tabelle 
+è nelle loro dimensioni, infatti è necessaria una tabella che contenga tutti i destinatari per il meccanismo di instradamento precedente, mentre per una tabella 
+delle etichette deve contenere solamente i possibili percorsi. Il numero di righe non è funzione del numero di stazioni globalmente presenti nella rete, ma dal numero 
+di circuiti virtuali che la attraversano in ogni dato istante. \'{E} irragionevole che in una rete tutte le stazioni trasmettano a tutte le altre stazioni. 
+
+Per evitare di dover generare etichette uniche in tutta la rete, e quindi verificarne la disponibilità, ad ogni tratto del percorso viene assegnata un'etichetta 
+diversa localmente. 
+In questo modo numero di etichette disponibili non è un limite superiore al numero dei circuiti virtuali attivabili. Queste etichette sono contenute in un campo 
+nell'intestazione del pacchetto. 
+
+\subsubsection{Source Routing}
+
+Nel pacchetto viene specificata la lista delle stazioni da attraversare per raggiungere la destinazione. Il ruolo dell'IS deve solo leggere questa lista e determinare 
+la stazione successiva al quale inoltrare il pacchetto. 
+
+\subsection{Router}
+
+L'architettura di un router è formato da un algoritmo per calcolare la tabella di instradamento, la tabella stessa ed il processo di inoltro dei pacchetti. In questo 
+corso non si occupa dell'algoritmo di creazione automatica della tabella di instradamento. 
+
+Ciò che costituisce la tabella di instradamento ed il processo di ritrasmissione di un pacchetto rappresenta il ``data plane'', mentre l'algoritmo di costruzione 
+della tabella di instradamento consiste nel ``control plane''. 
+
+In un router multiprocollo sono presenti diversi di queste pile di data e control plane per ogni protocollo, mantenendo le stesse interfacce. 
+Un router può partecipare contemporaneamente a diverse tecnologie, senza che queste diverse tecnologie e protocolli conoscano la loro presenza. Se ad un router 
+arriva un pacchetto destinato ad un protocollo che non può gestire, viene buttato. 
+
+
+
+
 
 \end{document}
