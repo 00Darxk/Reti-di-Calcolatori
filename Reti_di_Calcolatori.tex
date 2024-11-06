@@ -1224,7 +1224,111 @@ In un router multiprocollo sono presenti diversi di queste pile di data e contro
 Un router può partecipare contemporaneamente a diverse tecnologie, senza che queste diverse tecnologie e protocolli conoscano la loro presenza. Se ad un router 
 arriva un pacchetto destinato ad un protocollo che non può gestire, viene buttato. 
 
+\subsection{Il Protocollo TCP/IP}
 
+Il protocollo di rete IPv4, ``Internet Protocol version 4'' appartenente alla ``suite TPC/IP'' o ``Internet Protocol Suite'', è il principale protocollo di rete 
+di livello 3. Quest Internet Protocol Suite è la pila protocollare utilizzata dall'internet, implementata nella quasi totalità dei computer. Questi protocolli 
+sono descritti nei documenti RFC. 
+
+Alla fine degli anni '70 nasce l'Internet Protocol Suite con ``Transmission Control Protocol'' o TCP, ed il protocollo internet IPv4 con una prima versione di internet 
+chiamata arpanet. Da allora è in costante crescita. Già dai primi anni della sua storia arpanet si permetteva connessioni tra le due coste oceaniche degli Stati 
+Uniti. 
+Tra  protocolli di TCP/IP abbiamo IPv4, IPv6, ICMP ed ARP, protocolli di supporto, e protocolli di routing, di control plane per costruire le tabelle di instradamento 
+automaticamente. 
+
+Le architetture che si possono realizzare utilizzando l'internet protocol suite sono possibili in vari tipi di stratificazione. 
+
+QUando nasce la TCp/IP, nasce secondo i principi progettuali della semplificazione estrema del data plane, in modo che l'inoltro dei pacchetti sia 
+effettuato nel modo più semplice possibile. Tutte le funzioni complesse vengono spostate sugli es. Il routing è effettuato dall'indirizzo di rete e viene realizzato 
+tramite commutatone a datagramma. Il servizio offerto al livello 4 è non connesso. Il servizio è di tipo ``best effort'', ovvero un pacchetto può essere corrotto, 
+perduto o consegnato in ordine errato. 
+
+Il principio della vita stretta, o ``narrow waist'', dove i pacchetti a livello 3 sono tutti realizzati con IPv4 in modo molto snello, per permettere un'enorme 
+interoperabilità tra molti apparati, poiché è il protocollo parlato da tutti. 
+
+IPv4 è attualmente, insieme ad IPv6, il protocollo principale di livello tre, descritto nell'RFC 791. I pacchetti di questo livello si chiamano datagrammi o datagram. 
+Provvede a funzioni di instradamento, il motivo per cui nasce il livello tre, ma svolge anche la funzione di frammentazione, riassemblaggio e rilevazione degli errori. 
+Per i pacchetti la frammentazione era compito del livello quattro, ma già nelle reti WiFi i pacchetti venivano frammentati, ma nessuno all'esterno della rete 
+WiFi può rilevare la frammentazione. La frammentazione offerta dal livello quattro compie una riframmentazione, per i pacchetti già frammentati al livello tre 
+poiché troppo grandi. Al contrario di una rete WiFi, nella rete di livello tre i frammenti vengono rilevati. 
+
+I pacchetti di livello tre devono essere contenuti all'interno di un pacchetto di livello due, di campo dati di dimensione 1500 byte. Per cui datagram più grandi 
+di questa dimensione devono essere frammentati. 
+Questo rappresenta un vincolo sulla dimensione del datagram, quindi vengono frammentati solo se devono frammentarlo. Provvedere al routing deve essere semplice, quindi 
+all'arrivo di frammenti di un datagram, questi vengono inoltrai per semplificare le azioni di un router. 
+
+I pacchetti di livello datagram Ipv4 è diviso in due parti, il datagram header ed il campo dati. 
+
+%% TODO img formato pacchetto IPv4
+
+La convenzione per rappresentare i pacchetti in RFC è di rappresentare i pacchetti striscia per striscia, di lunghezza di 32 bit. Queste strisce da 4 byte vengono 
+chiamate ``long word''. 
+Il primo campo che si trova è la versione del protocollo che ha generato il pacchetto, ma è possibile che venga utilizzato da versioni successive, ma questo non è possibile 
+per i pacchetti IPv6. 
+
+l'identificatore ident, flag e fragment offset sono campi appositi per frammentar eil pacchetto. Il campo protocol indica il protocollo di livello superior, il campo header checksum 
+è analogo al campo RCS del livello 2. In seguito si specificano il mittente ed il destinatario del pacchetto. In seguito si possono specificare campi 
+addizionali opzionali nel pacchetto. Le opzioni devono obbligatoriamente essere specificate in multipli di 32 bit. Per cui si può aggiungere del padding per allinearsi 
+a 32 bit. 
+In seguito vengono inseriti i dati del pacchetto. 
+
+Questo formato è il linguaggio di quasi tutti gli es ed is del mondo. Non tutti poiché insieme ad Ipv4 si sta affermando il protocollo IPv6. 
+
+I campi versione e ihl sono entrambi di 4 bit. Il primo campo dovrebbe permettere la migrazione tra due versioni del protocollo chiara, lenta e controllata. Dato un 
+protocollo che evolve nel tempo deve essere effettuata un'operazione di parsing, strutturando il pacchetto in campi, questo parser è diverso per ogni versione. Quest'idea 
+di utilizzare un campo versione viene utilizzata anche per altri pacchetti di rete. L'``Internet Header Length'' o ihl specifica la lunghezza dell'header, multipli di 
+32 bit. Al minimo contiene 5 long word. In un pacchetto ethernet ci sono al massimo 1500 byte, di cui 20, al minimo, vengono utilizzati dall'header, i restanti 1480 
+sono disponibili a protocolli di livello superiore. 
+Il campo ``type of service'' specifica la priorità del datagramma rispetto ad altri, ed è diviso in due parti DSCP, ``Differentiated Services Code Point'', e 
+ECN, ``Explicit Congestion Notification'', utilizzati per definire la priorità del pacchetto. 
+
+QUando i pacchetti arrivano in una macchina sono tutti uguali, ma per differenziarli tra di loro si utilizza questo campo per indicare la priorità del pacchetto in 
+modo che gli apparati intermedi siano in grado di effettuare le adeguate. Questi campi priorità vengono specificati da chi ha realizzato quel pacchetto di livello 3, 
+ma dipende dal provider. Non tutti i provider sfruttano questa possibilità, se la sfruttano non permettono all'utente di specificarlo, ma la impostano loro la priorità.
+I provider che utilizzano questo strumento possono realizzare offerte commerciali utilizzando questo approccio, assegnando livelli di priorità diversi. Per l'utenza 
+domestica questo tipo di offerta non è convenzionale, ma tipicamente per aziende questo tipo di offerte è molto comune. 
+
+La possibilità di rispettare la priorità può essere garantita solamente dagli apparati di loro appartenenza, i router, ma questo non è garantito per tutto il 
+percorso del pacchetto attraverso la rete. Quando questo pacchetto con priorità arriva in un'area geografica gestita da un altro ISP, questo non ha obbligazioni 
+commerciali rispetto all'utente, e quindi questi pacchetti vengono gestiti indipendentemente dalla loro priorità. 
+Quindi queste offerte sono valide solamente per pacchetti che rimangono all'interno della zona di interesse del ISP. 
+
+I campi ident, flags e fragment offset hanno scopi diversi. Il livello quattro per realizzare pacchetti di una certa dimensione, richiede al livello tre che 
+notifica il livello due e viene restituito il valore massimo di MTU, ``Maximum Transmission Unit''. Quindi il livello di trasporto realizza pacchetti in base alla tecnologia immediatamente 
+sottostante. Ogni livello due attraversato da uno stesso pacchetto potrebbe avere diversi valori di MTU, quindi il pacchetto di livello tre potrebbe essere più 
+grande ed è possibile sia necessario frammentare il pacchetto. Questi frammenti attraversano gli is, senza che questi vengano rilevati dagli is, e verranno riassemblati solamente all'arrivo all'es. 
+IPv6 effettua una scelta radialmente diversa, ed alcune di queste scelte migliori vengono implementate anche da IPv4. 
+%% TODO frammentazione e riassemblaggio
+
+Occorrono dei campi nel pacchetto per riconoscere i pacchetto come frammento, riconoscere frammenti generati dallo tesso pacchetto e deve essere possibile determinare 
+l'ordine dei frammenti per poterli riassemblare. 
+In caso il frammento di livello due deve essere nuovamente frammentato si utilizza una semplice tecnica di realizzare un offset rispetto al pacchetto originale. Si 
+inserisce la posizione del pacchetto originale del byte. Questo valore è univoco, se ci saranno ulteriori frammentazioni questi avranno numeri di offset diversi. 
+Il campo ident, di 16 bit, identifica un datagramma e serve all'es per determinare il pacchetto di appartenenza del frammento. Se il pacchetto non è frammentato questo rappresenta bit sprecati.  
+Il campo di 13 bit può specificare solo un offset multiplo di otto, con la convenzione che tutti i frammenti sono multipli di otto, in seguito nel campo 
+flag di 3 bit, specifica se il pacchetto può essere frammentato. Il primo bit deve esser e riservato e sempre pari a zero, altri bit DF e MF permettono di non frammentare, 
+il primo e di specificare che sia l'ultimo pacchetto, l'ultimo. Se un pacchetto non può essere frammentato, allora si preferisce buttarlo. 
+Oltre all'identificatore per stabilire l'univocità del pacchetto si può utilizzare il pacchetto mittente. 
+
+Sull'ultimo frammento si può inserire un numero di byte arbitrario, poiché non è necessario l'offset, ma specificato nel campo MF. 
+Quando vengono realizzati protocolli vengono inseriti bit o gruppi di bit non utilizzati, per permettere ad evoluzioni future per cogliere circostanze non ancora 
+rappresentate dal protocollo. 
+
+Il campo ``total length'', di 16 bit, indica la dimensione massima del pacchetto, al massimo di 65555 byte, ma molto spesso è frammentato e minore di questo valore. 
+Il campo ``time to live'', di 8 bit, rappresenta il tempo di vita del pacchetto, e quando raggiunge zero viene scartato, ed il router invia una avvertimento al mittente. 
+Il valore contenuto viene decrementato ad ogni salto o hop. Quindi un pacchetto in internet può effettuare al massimo 255 salti. Nonostante la dimensione della rete 
+internet, l'elevata connettività permette di effettuare pochi salti. Viene imposto un limite per impedire che alcuni pacchetti entrino in loop. Non deve essere possibile 
+in nessun caso che un pacchetto giri in eterno sulla rete. 
+Il campo protocol di 8 bit identifica il protocollo del livello superiore che è nella payload del pacchetto IIP, i possibili valori vengono definiti dalla IANA. Molto 
+spesso il pacchetto di livello superiore contenuto è di protocollo TCP, con valore 6. 
+%% TODO perché? checksum
+Altri 16 bit identificano il campo checksum, di intestazione e deve essere ricalcolata ad ogni hop. Le tecnologie più recente impedisce che venga ricalcolata ad ogni hop. 
+I campi opzionali possono specificare quando sia segreto il pacchetto, si può specificare il source routing, specificando il cammino completo, senza interpellare la 
+tabella di instradamento. Si può specificare un'opzione meno stringente per indicare la sequenza di router obbligatoria da attraversare. Si può indicare che il 
+router attraversato specifica il proprio indirizzo oppure che specifici anche un timestamp. Non è obbligatorio per gli is di rispettare queste operazioni, poiché sono 
+operazioni aggiuntive che richiedono calcolo ulteriore e potrebbero rallentare le operazioni. 
+
+\subsubsection{Indirizzamento IPv4}
 
 
 
