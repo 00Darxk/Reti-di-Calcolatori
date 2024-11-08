@@ -1314,7 +1314,7 @@ Sull'ultimo frammento si può inserire un numero di byte arbitrario, poiché non
 Quando vengono realizzati protocolli vengono inseriti bit o gruppi di bit non utilizzati, per permettere ad evoluzioni future per cogliere circostanze non ancora 
 rappresentate dal protocollo. 
 
-Il campo ``total length'', di 16 bit, indica la dimensione massima del pacchetto, al massimo di 65555 byte, ma molto spesso è frammentato e minore di questo valore. 
+Il campo ``total length'', di 16 bit, indica la dimensione massima del pacchetto, al massimo di 65553 byte, ma molto spesso è frammentato e minore di questo valore. 
 Il campo ``time to live'', di 8 bit, rappresenta il tempo di vita del pacchetto, e quando raggiunge zero viene scartato, ed il router invia una avvertimento al mittente. 
 Il valore contenuto viene decrementato ad ogni salto o hop. Quindi un pacchetto in internet può effettuare al massimo 255 salti. Nonostante la dimensione della rete 
 internet, l'elevata connettività permette di effettuare pochi salti. Viene imposto un limite per impedire che alcuni pacchetti entrino in loop. Non deve essere possibile 
@@ -1330,6 +1330,53 @@ operazioni aggiuntive che richiedono calcolo ulteriore e potrebbero rallentare l
 
 \subsubsection{Indirizzamento IPv4}
 
+Gli indirizzi sono associati alle schede di rete e non agli indirizzi host, sono di 4 byte ed univoci a livello mondiale. Per comodità 
+sono rappresentati da quattro numeri decimali, separati da una virgola, spesso gli vengono assegnati nomi simbolici. 
+
+
+Gli indirizzi vengono assegnati alle macchine in un modo specifico per facilitare la commutazione. Indirizzi sulla stesse rete locale condividono il prefisso, un gruppo 
+di macchine è quindi identificato dal suo prefisso. Non sono assegnati in modo casuale, ma le stesse zone geografiche hanno gli stessi indirizzi. Nei router quindi si 
+possono inserire delle tabelle di indirizzi, raggruppati in ``net''. Indirizzi nella stessa net sono raggruppati su una stessa rete fisica. 
+
+La convenzione consiste di completare i prefissi con tutti zeri per realizzare un indirizzo IPv4 legittimo da poter utilizzare. Questo valore ottenuto si utilizza per 
+denotare l'intera net e LAN, e non può essere utilizzato per assegnare alcuna delle interfacce della LAN. 
+
+L'indirizzo IPv4 ha due funzioni, di identificare un'interfaccia nella rete e di locazione di gruppi di indirizzi in posizione geografiche omogenee nella rete. 
+Nei primi anni di internet gli indirizzamenti IPv4 erano divisi in cinque classi, con prefissi di diversa lunghezza, rappresentate da cinque lettere A, B, C, D, E. 
+Se l'indirizzo iniziava con il primo bit a zero, allora la sua parte prefisso si estendeva al primo byte, mentre i restanti sono un identificatore delle macchine host sulla 
+LAN. Se il primo bit è uno ed il secondo è uno zero, allora il prefisso si estende al primo ed al secondo byte. Quando il terzo bit è a zero il prefisso si 
+estende fino al terzo byte. Questi tipi di indirizzi si chiamano di classe A, B e C. Gli indirizzi di classe D hanno il terzo bit pari a zero e individuano 
+indirizzi di tipo multicast. La classe D con il quarto bit a zero viene riservata ad usi futuri. 
+
+
+Il problema di questo approccio consiste nello spreco di byte per la prima classe, poiché non esiste una LAN contenente $2^{24}$ indirizzi. Per cui si è introdotto 
+l'indirizzamento IPv4 classless che utilizza un'altra sequenza di bit accanto all'indirizzo chiamata ``netmask'', questo consente una lunghezza arbitraria della parte 
+prefisso. Ad ogni indirizzo viene associata un'indicazione che specifica la lunghezza del prefisso attraverso il numero di uno che la compongono e quella delle macchine 
+dal numero di zeri che la compongono. Una netmask è una sequenza di 4 byte. Queste vengono normalmente scritte nella documentazione di rete come numeri decimali, 
+con la stessa convenzione degli indirizzi IPv4. 
+%% TODO ex indirizzi IPv4
+La netmask di un prefisso si può rappresentare come una barra ed un numero specificando dopo l'indirizzo la lunghezza del prefisso. 
+Due indirizzi IPv4 che si trovano sullo stesso prefisso hanno la stessa netmask, generano lo stesso valore se messi in and bit a bit con la netmask 
+relativa. 
+Due indirizzi appartenenti a diverse LAN producono risultati diversi se messi in and bit a bit sulla stessa netmask, se gli indirizzi vengono 
+assegnati in modo che siano tutti disgiunti tra di loro. La responsabilità di assegnare gli indirizzi viene assetata ad organizzazioni internazionali come al RIPE. 
+
+La configurazione delle interfacce degli es prevede la specifica della netmask della net di appartenenza, per cui mettendo in and l'indirizzo del pacchetto in arrivo, 
+l'es è in grado di identificare se si tratta di un indirizzo locale o remoto. Se il destinatario è locale viene inviato tramite trasmissione diretta al destinatario, 
+se è remoto invece, viene inviato al default gateway della LAN, un router particolare. 
+Il problema in questo approccio è che non si conosce la netmask del destinatario e si ricava il prefisso del destinatario dalla netmask dell'es, l'ipotesi che gli 
+indirizzi vengono assegnati in modo disgiunto permette di risolvere questo problema di ricavare il prefisso sbagliato applicando l'and bit a bit tra la netmask e 
+l'indirizzo destinatario. L'unico caso che quest'ipotesi non risolve è quando il prefisso calcolato del destinatario è diverso da quello reale, ma comunque diverso 
+da quello locale. Questo non rappresenta un problema poiché il prefisso individuato è remoto, quindi verrà inviato indipendentemente al router. 
+Non da errore dal punto di vista della località o non località del destinatario di un pacchetto. 
+
+Dentro ad un router è presente una tabella di instradamento che controlla tramite un'azione chiamata ``IP lookup''. Questa tabella contiene singoli prefissi, che 
+vengono confrontati bit a bit con il prefisso locale, sulla relativa netmask. Non appena si rileva un riscontro il pacchetto viene inviato su quella linea, 
+altrimenti il pacchetto viene buttato. I prefissi vengono ordinati rispetto alla loro lunghezza. Se la riga 0.0.0.0/0, chiamata rotta di default,  è presente 
+allora viene prodotto un riscontro con ogni indirizzo, e nessun pacchetto verrà mai buttato. 
+Si utilizza questa rotta di default poiché la tabella di instradamento non può contenere tutti i prefissi dell'intero internet. 
+Oltre alla linea di inoltro rappresentata dall'interfaccia del router, è presente un altro campo chiamato ``next-hop'' che specifica a quale router inviare il pacchetto 
+in base all'indirizzo del destinatario, per distinguere pacchetti destinati alla stessa linea di inoltro. Tuttavia sono presenti eccezioni notevoli su questo schema. 
 
 
 \end{document}
