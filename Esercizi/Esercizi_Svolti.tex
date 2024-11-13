@@ -282,5 +282,34 @@ conoscono la posizione della stazione b sulle porte, 2, 2, 2. Mentre all'invio d
 1 e 2. 
 Rispetto alla domanda precedente, il bridge b3 ora conosce la posizione della stazione c, ma il bridge b3 non conosce la posizione della stazione a. 
 
+\clearpage
+
+\section{Esercitazione 13/11/24}
+
+Lo spazio degli indirizzi viene rappresentato come un albero binario, etichettato sugli archi con un valore 0 o 1. L'arco che esce da un nodo verso 
+il figlio sinistro viene etichettato come 0, mentre quello destro viene etichettato con un 1. 
+
+In questa rappresentazione ad albero una foglia, a profondità 32 rappresenta un indirizzi, il suo cammino fino alla radice rappresenta tutti i 32 bit dell'indirizzo 
+IPv4 corrispondente. 
+Gli indirizzi sono in corrispondenza biunivoca con le foglie dell'albero. Una net in questa rappresentazione corrisponde ad un nodo che non è una foglia, 
+infatti tutte le macchine in una stessa net hanno un certo cammino dalla radice ad un nodo in comune. Il sotto-albero radicato in questo nodo rappresenta tutti gli 
+indirizzi appartenenti alla stessa net. 
+Il suo prefisso è ottenuto completando questa net con tutti zeri, quindi è il cammino sempre verso sinistra in questo sotto-albero
+
+%% TODO img, domande
+
+\subsection{Domanda 3}
+
+Come è possibile verificare che due net non abbiano indirizzi in comune?\\
+Dati due nodi dell'albero, se il più basso antenato comune corrisponde ad uno dei nodi dell'albero, allora gli indirizzi non sono disgiunti, 
+mentre se gli indirizzi non si sovrappongono %% TODO ??
+
+\subsection*{Domanda 4}
+
+Nella rappresentazione ad albero data una rappresentazione di una net A e la rappresentazione di una net B, come è possibile verificare che A e B siano il risultato 
+esatto del ``subnetting'' di una terza net C?\\
+Bisogna 
+
+\subsection*{Domanda 5}
 
 \end{document}

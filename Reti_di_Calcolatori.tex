@@ -1372,11 +1372,125 @@ Non da errore dal punto di vista della località o non località del destinatari
 
 Dentro ad un router è presente una tabella di instradamento che controlla tramite un'azione chiamata ``IP lookup''. Questa tabella contiene singoli prefissi, che 
 vengono confrontati bit a bit con il prefisso locale, sulla relativa netmask. Non appena si rileva un riscontro il pacchetto viene inviato su quella linea, 
-altrimenti il pacchetto viene buttato. I prefissi vengono ordinati rispetto alla loro lunghezza. Se la riga 0.0.0.0/0, chiamata rotta di default,  è presente 
-allora viene prodotto un riscontro con ogni indirizzo, e nessun pacchetto verrà mai buttato. 
+altrimenti il pacchetto viene buttato. I prefissi vengono ordinati rispetto alla loro lunghezza. Sulla riga 0.0.0.0/0, chiamata rotta di default,  è presente 
+viene prodotto un riscontro con ogni indirizzo, e nessun pacchetto verrà mai buttato. 
 Si utilizza questa rotta di default poiché la tabella di instradamento non può contenere tutti i prefissi dell'intero internet. 
 Oltre alla linea di inoltro rappresentata dall'interfaccia del router, è presente un altro campo chiamato ``next-hop'' che specifica a quale router inviare il pacchetto 
 in base all'indirizzo del destinatario, per distinguere pacchetti destinati alla stessa linea di inoltro. Tuttavia sono presenti eccezioni notevoli su questo schema. 
 
+Per realizzare un indirizzo non si può utilizzare né il numero 0 né il numero 255. 
+
+Le operazioni eseguita da un es per l'inoltro di un pacchetto possono essere pensate in termini di accesso ad una tabella di instradamento. Può 
+essere considerato come una macchina con una tabella di instradamento con informazioni veramente essenziali. 
+
+Su ogni macchina l'interfaccia lo di loopback appartiene ad un indirizzo 127.0.0.0/8, ed il pacchetto rimbalza e torna indietro. Tramite quest'interfaccia 
+due applicazioni su una stessa macchina possono comunicare disaccoppiandole fortemente, quindi senza utilizzare l'API, solamente attraverso dei pacchetti. 
+Questo indirizzo è un prefisso, non è un vero indirizzo, l'indirizzo attribuito a quest'interfaccia di loopback corrisponde di default al primo indirizzo 
+disponile: 127.0.0.1. si possono inserire più interfacce di loopback su una stessa macchina, sempre all'interno dello stesso prefisso. 
+
+Alcuni indirizzi hanno un significato particolare, il primo consiste da tutti 1, dopo il prefisso, e rappresenta un indirizzo broadcast sulla LAN, per questo non 
+si può utilizzare solamente uno all'interno di un indirizzo. 
+Indirizzi di prefisso 10.0.0.0/8 sono indirizzi privati non validi in internet, che possono essere utilizzati per comunicare all'interno di una LAN, possono essere 
+associati ad indirizzi validi per comunicare verso l'esterno. 
+L'indirizzo 172.16.0.0/12 rappresenta macchine visibili solo localmente, analogamente indirizzi 192.168.0.0/16 sono indirizzi utilizzabili nella comunicazione tra 
+macchine nella stessa LAN. Il provider trasforma gli indirizzi privati in indirizzi validi per comunicare in internet.
+
+In un processo chiamato ``sub-netting'' è possibile spezzare l'indirizzo privato 10.0.0.0/8 per permettere di comunicare tra di loro varie macchine di una stessa azienda 
+o organizzazione. 
+
+
+
+Le organizzazioni che assegnano gli indirizzi utilizzano un meccanismo che divide gli indirizzi in grandi pezzi da /8, assegnati ad aree geografiche e delle organizzazioni 
+delegate ad ogni area geografica assegnano gli indirizzi a chi lo richiede. Quando finiscono la loro sezione di spazio di indirizzi, richiede all'IANA, ``Internet Assigned Numbers Authority'' 
+l'organizzazione globale per assegnare gli indirizzi IPv4. 
+Attualmente questi indirizzi si stanno esaurendo quindi queste organizzazioni potrebbero non essere in grado di assegnare gli indirizzi richiesti. 
+%% TODO acronimi ed orgs. 
+
+Gli es tendono ad avere più schede di rete, sulla stessa macchina, ma anche se sono presenti più schede l'IPv4 ne utilizza una sola alla volta, mentre le altre sono 
+inattive. Questo poiché alla sua creazione, non era immaginabile che una stessa macchina potesse contenere più schede di rete. Per cui i costruttori di macchine 
+inseriscono una gerarchia tra le varie schede di rete. Anche se tante applicazioni cercano di utilizzare più schede di rete in parallelo su un singolo es. 
+
+
+\subsubsection{ARP}
+
+Questo protocollo di terzo livello, definito nella RFC 826 per associare gli indirizzi MAC ad indirizzi IPv4. Questo protocollo risolve il problema della traduzione 
+tra questi due indirizzi. 
+
+Se bisogna inviare un pacchetto all'intero di una rete locale bisogna effettuare una consegna diretta, ovvero spedire il pacchetto direttamente alla macchina del 
+destinatario. Questa consegna viene effettuata specificando al livello 2 l'indirizzo MAC del destinatario, di cui è noto solamente l'indirizzo IPv4, quindi 
+si utilizza il protocollo ARP. 
+ARP invia un pacchetto broadcast, ``ARP request'', su tutte le macchine della LAN, e risponderanno solamente le macchine aventi quell'indirizzo MAC. Tutte le macchine sulla LAN 
+sono costrette ad aprire i pacchetti, quindi viene generata un'interruzione hardware e deve essere gestita dal sistema operativo anche se il pacchetto non 
+appartiene alla macchina. Ogni scheda di rete è costretta ad analizzare ed aprire i pacchetti che arrivano ad essa. 
+
+Questo processo di broadcast provoca un'interruzione a bordo di tutti gli host della LAN, e passano attraverso gli hub e gli switch, vengono fermati solamente 
+dai router. 
+
+Per evitare questo processo costantemente si utilizza un processo di caching, dove gli indirizzi noti vengono memorizzati. Quando un host riceve un pacchetto 
+ARP request dedicato a sé stesso invia un'``ARP reply''. 
+Gli host utilizzano ARP hanno a disposizione una cache dove si possono salvare queste corrispondenze tra IPv4 e ARP. 
+
+Su una macchina Linux il comando \verb|arp -a| permette di visualizzare la lista di queste associazioni. 
+
+Questi pacchetti sono contenuti direttamente nel pacchetto di livello 2, quindi sono presenti gli indirizzi IPv4 e MAC dei destinatari e mittenti. 
+I campi hardware e protocol specificano il tipo di indirizzi di livello due e di livello tre, mentre o campi hlen specificano la lunghezza dei due indirizzi, 
+definito in questo modo modulare poiché si pensava che la lunghezza degli indirizzi fosse cambiata. Si utilizzano quindi 
+campi di lunghezza variabile per memorizzare questi indirizzi che possono variare. 
+
+
+%% TODO formato pacchetto ARP. 
+
+Mentre se l'indirizzo è remoto, il protocollo ARP allo stesso modo deve individuare l'indirizzo MAC del router. Questo protocollo ARP appartiene al livello tre della 
+pila ISO-OSI, ed è un protocollo di supporto per l'IPv4. 
+Quando un pacchetto viene ricevuto da un router, vengono effettuate le stesse operazioni descritte per gli es, per individuare l'indirizzo MAC della macchina o del 
+router, se il pacchetto è in connessione diretta oppure è per l'esterno. 
+
+Per ogni salto del pacchetto è presente un ARP request, ARP reply e l'invio del pacchetto, se l'indirizzo MAC non è contenuto nella cache della macchina host. 
+
+\subsubsection{Il Protocollo ICMP, per IPv4}
+
+Il protocollo ICMP, ``Internet Control Massage Protocol'' per IPv4 realizza due operazioni per le reti, ed ha un approccio best effort, effettua dei tentativi al meglio delle sue capacità, altrimenti 
+il pacchetto viene buttato. 
+
+Provvede ad un piccolo servizio di rilevazione degli errori. Inoltre consente di inviare, e richiedere pacchetti ed ottenere informazioni. 
+Mentre ARP viaggia direttamente dentro il livello 2, i pacchetti ICMP viaggiano dentro pacchetti IPv4. 
+
+Le regole sul comportamento di questo protocollo vennero definite nella RFC 792.. La prima regola impone che nessun messaggio ICMP viene generato a seguito di 
+rilevati errori su altri messaggi ICMP. La seconda regola impone che se il pacchetto viene frammentato, solo il primo frammento può generare un messaggio di errore ICMP. 
+La terza regola impone che i pacchetti broadcast e multicast non generano pacchetti ICMP. 
+Si utilizzano queste regole per non generare 
+
+Il pacchetto ICMP viaggia all'interno del pacchetto dati di un pacchetto IPv4, poiché se viene sollevato un pacchetto di errore, deve poter tornare, quindi deve 
+necessariamente viaggiare dentro un pacchetto IPv4. 
+
+I messaggi di primo tipo sono messaggi di ``destination unreachable'', in questo caso i pacchetti vengono scartati poiché la destinazione non è raggiungibile per diversi 
+motivi:
+\begin{itemize}
+    \item ``network unreachable'': un gateway deve la rete dov'è destinato il pacchetto a distanza infinita, un router sta entrando nella tabella di instradamento e l'indirizzo non effettua alcun match;
+    \item ``host unreachable'': l'host a cui è destinato il pacchetto non risponde ad una chiamata ARP. Il router a cui è arrivato il pacchetto tenta di effettuare una chiamata ARP per inviare direttamente il pacchetto, ma questa fallisce quindi scarta il pacchetto;
+    \item ``protocol unreachable'': dentro il pacchetto IPv4 è presente un campo che identifica il protocollo a cui va mandato il pacchetto, se questo non è individuato allora viene sollevato questo messaggio di errore;
+    \item ``port unreachable'': la ``port'' a cui è spedito il pacchetto non è raggiungibile;
+    \item ``fragmentation needed and DF set'': se il pacchetto non può essere frammentato, anche se deve essere frammentato per passare attraverso la MTU, quindi viene scartato. 
+\end{itemize}
+
+Messaggio di tempo scaduto, se il valore del TTL ritorna a zero, il pacchetto viene scartato con un errore di tipo \verb|TIME_EXCEEDED|. 
+Messaggio di redirezione, può essere inviato da un router per indicare dove bisogna reindirizzare il traffico, indicando all'es una strada più favorevole. 
+Messaggio di eco, ad un messaggio di \verb|ECHO_REQUEST| può essere inviato un \verb|ECHO_REPLY|, una richiesta ed una relativa risposta edi eco, si utilizza per controllare 
+la raggiungibilità, dove sono presenti dei \verb|TIMESTAMP| e \verb|TIMESTAMP_REPLY| per fornire informazioni sull'orario di invio e misura la velocità del collegamento. 
+
+Il comando \verb|ping|, seguito da un indirizzo, permette di effettuare quest'ultima operazione: invia un pacchetto ICMP di eco ad una macchina e questa, se è raggiungibile, tenta di 
+inviare i pacchetti di ritorno ICMP. Questo comando è disponibile nella quasi totalità dei sistemi, ed ha l'obiettivo di verificare se un dato indirizzo IP è 
+raggiungibile ed il ritardo necessario per raggiungerlo. 
+
+Quando termina il comando di ping viene visualizzato un report che indica il numero di pacchetti inviati, persi, il tempo totale impiegato, ed il tempo di andata e 
+ritorno in media, al massimo e la deviazione media. 
+Il comando ping è realizzato con una \verb|fork()|, dove il primo si occupa di lanciare i pacchetti, mentre il secondo riceve i pacchetti. Quando i pacchetti vengono 
+inviati o ricevuti questi vengono memorizzati. I pacchetti inviati si possono visualizzare con il comando \verb|tcpdump| specificando solamente i pacchetti di tipo ICMP:
+\begin{minted}{powershell}
+    > tcpdump -n "icmp"
+\end{minted}
+
+Se si effettua un ping su un indirizzo broadcast, il primo pacchetto ICMP viene considerato il pacchetto di ritorno, mentre i seguenti pacchetti ICMP di risposta 
+vengono considerati e segnalati come duplicati. 
 
 \end{document}
