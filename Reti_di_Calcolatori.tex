@@ -294,7 +294,7 @@ Per avviare un lab di Kathar\'{a} bisogna aprire una Powershell, su Windows, e n
 
 Per evitare eventuali complicazioni, in questi laboratori si disabilita l'opzione per il protocollo IPv6, poiché genera complicazioni di semantica di difficile interpretazione. 
 
-\subsection{Laboratorio del 16 Ottobre}
+\subsection{Laboratorio del 16 Ottobre: ``Two Computers''}
 
 In questa esercitazione si vuole emulare la una connessione tra due calcolatori \verb|PC1| e \verb|PC2|. Vengono 
 specificate le ultime due cifre del MAC address: \verb|0:1| e \verb|0:2|. 
@@ -414,7 +414,7 @@ direttamente. Aggiungendo l'opzione \verb|-w| si può creare un file della cattu
 \verb|shared|, condivisa, bisogna effettuare il comando in questa cartella. Ed è possibile aprirlo tramite Wireshark nella macchina host, per analizzare i pacchetti 
 offline rispetto alla cattura. 
 
-\subsection{Laboratorio del 25 Ottobre}
+\subsection{Laboratorio del 25 Ottobre: ``One Bridge''}
 
 In questo laboratorio si utilizza un bridge che collega quattro macchine su quattro domini di collisione differenti: 
 \begin{minted}{c}
@@ -530,6 +530,95 @@ port no mac addr            is local?   ageing timer
 
 Se si invia un pacchetto con l'indirizzo MAC sorgente errato, allora il bridge non è in grado di imparare la posizione delle stazioni e quindi invierà pacchetti 
 nei domini errati, impedendo ai pacchetti di arrivare a destinazione. 
+
+\subsection{Laboratorio del 15 Novembre: ``Basic IPv4''}
+
+
+In questo laboratorio si studieranno i comandi di base per IPv4, i comandi di ping, di rotta di indirizzamento, del protocollo ARP ed il loro 
+funzionamento. 
+Su questo laboratorio verranno utilizzate cinque macchine, per configurare indirizzi IPv4 e le netmask, assegnarli agli host per 
+raggiungere l'internet e LAN anche distanti tra di loro. 
+
+%% TODO img topografia rete
+
+In questa rete una prima macchina \verb|pc1| con indirizzo MAC \verb|0:1| è connessa ad un dominio di collisione A, connesso al primo router \verb|r1|, 
+con indirizzo MAC \verb|0:a1|. I due router sono connessi sul dominio di collisione B. Il router \verb|r2| è connesso al domino B sull'indirizzo 
+MAC \verb|0:b2|, e connesso al domino di collisione C sull'indirizzo MAC \verb|0:c1|. Sul dominio di collisione C sono presenti due macchine \verb|pc2| 
+sull'indirizzo MAC \verb|0:2|, e \verb|pc3| sull'indirizzo MAC \verb|0:3|
+
+
+Si utilizzano due /24 per le LAN con gli host per definire gli indirizzi. Per il dominio di collisione A si ha l'indirizzo 195.11.14/24, il 
+dominio di collisione B ha l'indirizzo 100.0.0.8/30, per identificare solamente due indirizzi IP assegnati alle due macchine, l'indirizzo 
+IP dell'ultimo domino di collisione è \verb|200.1.1.0/24|
+Le macchine sono identificate \verb|pc1| da \verb|.5| e \verb|r1| da \verb|.1| sul dominio A. \verb|r1| da \verb|0.9| e \verb|r2| da \verb|.10| sul dominio 
+di collisione B. Sul dominio di collisione C, la macchina \verb|r2| su \verb|.1|, \verb|pc2| su \verb|.7|, \verb|pc3| su \verb|.3|. 
+
+Per ogni macchina si vuole determinare un indirizzo IP per poter comunicare tramite il comando \verb|ip address add|, seguito dall'indirizzo IP e dall'interfaccia \verb|dev|. 
+Inoltre bisogna specificare una rotta di default, il default gateway, tramite il comando \verb|ip route add default via| seguito dall'indirizzo IP di default, seguito 
+dalla specifica interfaccia dopo \verb|dev|. 
+
+\begin{minted}{python}
+    # pc1:
+    ip address add 195.11.14.5/24 dev eth0
+    ip route add default via 195.11.14.1
+    # pc2:
+    ip address add 200.1.1.7/24 dev eth0
+    ip route add default via 200.1.1.1 dev eth0
+    # pc3:
+    ip address add 200.1.1.3/24 dev eth0
+    ip route add default via 200.1.1.1 dev eth0
+\end{minted}
+
+Per ogni router bisogna impostare due indirizzi IP per ogni dominio di collisione connesso. Quando si assegna un indirizzo IP su di un'interfaccia di un router, 
+il sistema operativo assegna automaticamente quei prefissi nella tabella di instradamento per essere direttamente connessi. 
+Ma bisogna aggiungere gli indirizzi che non sono direttamente connessi manualmente, per permettere al router di inoltrare pacchetti verso altri domini di collisione. 
+\begin{minted}{python}
+    # r1:
+    ip address add 200.1.1.1/24 dev eth0
+    ip address add 100.0.0.10/30 dev eth1
+    ip route add 195.11.14.0/24 via 100.0.0.9 dev eth1
+    # r2:
+    ip address add 195.11.14.1/24 dev eth0
+    ip address add 100.0.0.9/30 dev eth1
+    ip route add 200.1.1.0/24 via 100.0.0.10 dev eth1
+\end{minted}
+
+Per ottenere una descrizione della configurazione IPv4 di una macchina si utilizza il comando \verb|ip address|. Il comando \verb|routel| mostra tutte le 
+destinazione che la macchina è in grado di raggiungere, mostrando la tabella di instradamento. 
+
+SI inserisce un link alla macchina wireshark sul dominio di collisione C, e si effettua un ping tra \verb|pc3| e \verb|pc2|, tramite i seguenti comandi:
+\begin{minted}{powershell}
+    > kathara lconfig -n wireshark --add C
+\end{minted}
+Prima di effettuare una comunicazione tramite IPv4, la macchina deve individuare l'indirizzo MAC del destinatario, tramite il protocollo ARP. Per controllare 
+gli indirizzi MAC memorizzati si può ursae il comando \verb|arp|, si può inserire la flag \verb|-n| per non risolvere gli indirizzi. 
+
+Wireshark fornisce anche l'informazione su quale pacchetto di risposta è legato a quale pacchetto di richiesta. 
+
+%% TODO add fine lezione 15/11
+
+In questo modo si può analizzare il comportamento di una connessione diretta, per analizzare una connessione ad una LAN remota si può collegare la macchina 
+wireshark al dominio B, ed effettuare un ping tra la macchina \verb|pc3| e \verb|pc1|. In questo modo si può osservare che i pacchetti ``sniffati'' da wireshark contegno 
+solamente gli indirizzi MAC dello specifico dominio di collisione, non gli indirizzi MAC appartenenti al dominio A o C. Invece si utilizzano gli indirizzi IP 
+reali del destinatario e del mittente. 
+
+%% TODO img grafo invio dei pacchetti ~ esercizi ritardo pacchetti su più fili
+
+Si esegue il comando \verb|traceroute| con la flag \verb|-z 1| per semplificare la visualizzazione. Su wireshark saranno visibili tutti questi pacchetti inviati ed 
+il loro ttl progressivamente maggiore. Si esegue questo comando da \verb|pc2| a \verb|pc1|:
+\begin{minted}{powershell}
+    root@pc2:~# traceroute 195.11.15.5 -z 1
+\end{minted}
+
+In caso si indicasse un indirizzo IPv4 inesistente effettuando un ping, vengono inviati i pacchetti di richiesta, ma la ARP request non riceve 
+risposta quindi inoltra un errore al mittente. Il router che ha fallito la consegna inoltra il messaggio ICMP di errore. Se invece si prova a effettuare un ping 
+su un indirizzo non presente su questa rete, viene sollevato un errore di tipo Destination Net Unreachable. Questi pacchetti di errore devono essere mandati da una macchina 
+all'interno di questa rete che è in grado di determinare che l'indirizzo non appartiene alla rete. Questo indirizzo non è nella tabella di instradamento, quindi 
+viene mandato al default gateway, ma non essendo nemmeno nella sua tabella di instradamento, viene scartato ed invia il messaggio ICMP al mittente. 
+
+Ora si prova ad effettuare un traceroute verso una macchina che non esiste su una LAN esistente, copia l'ultima riga del traceroute prima della macchina inesistente 
+indicando il carattere \verb|!H|, per specificare che manca la macchina host. Altrimenti se si specifica una LAN inesistente, produce solamente una riga con il 
+carattere \verb|!N|, per indicare che non è presente il network. 
 
 \clearpage
 
@@ -1490,7 +1579,39 @@ inviati o ricevuti questi vengono memorizzati. I pacchetti inviati si possono vi
     > tcpdump -n "icmp"
 \end{minted}
 
-Se si effettua un ping su un indirizzo broadcast, il primo pacchetto ICMP viene considerato il pacchetto di ritorno, mentre i seguenti pacchetti ICMP di risposta 
-vengono considerati e segnalati come duplicati. 
+Se si effettua un ping su un indirizzo broadcast, considera solo la risposta della prima macchina, mentre tutti gli altri messaggi di ritorno provenienti dalle 
+altre macchine vengono considerati come duplicati. 
+Per chiudere l'esecuzione del comando si utilizza la sequenza ``Ctrl + C''. 
+
+
+Il traceroute è disponile nella quasi totalità delle macchine, attraverso questo comando si vuole determinare quali sono i router effettivamente attraversati 
+per raggiungere una destinazione IP. 
+Quest'operazione viene eseguita inviando pacchetti di ttl molto basso, incrementandolo ad ogni pacchetto, in modo che i router che scartano il pacchetto inviano 
+il pacchetto \verb|TIME_EXCEEDED| alla macchina mittente. In questo modo si può ottenere progressivamente la sequenza di router che il pacchetto deve 
+attraversare per arrivare all'indirizzo IP destinatario. 
+Nella commutazione a datagramma, i diversi pacchetti potrebbero attraversare strade diverse, ed i vari pacchetti della sequenza potrebbero attraversare router 
+diversi. Quindi non è garantito che l'informazione così ottenuta sia corretta. Sono sicuramente corretti per i percorsi dei singoli pacchetti, ma potendo 
+variare nel tempo il percorso, non è garantito sia lo stesso per tutti i router. 
+
+Il comando nei sistemi Linux si chiama \verb|traceroute|, e \verb|tracert| su Windows, seguito dall'indirizzo IP di destinazione. Il tempo di ritardo è variabile 
+poiché i router non hanno come compito principale l'inoltro dei messaggi di errore. Quindi quando il router non sta inoltrando altri pacchetti può gestire 
+i pacchetti scartati ed inoltrare i pacchetti ICMP. 
+
+%% TODO img diagrammala codice traceroute 
+
+Quando i pacchetti di risposta non vengono rilevati dopo un tempo definito di pochi secondi, vengono segnati tramite il carattere \verb|*|. I router che non inviano i 
+pacchetti ICMP sono router che non si vogliono mostrare, quindi scartano i pacchetti senza inviare ICMP. Questi router generalmente si trovano tra i primi 
+hop, di accesso diretto alla rete dell'ISP. 
+Il contenuto dei pacchetti inviati è arbitrario, poiché sono destinati ad essere buttati. Ma generalmente si utilizzano due tipi di pacchetti, una echo request, 
+a cui il destinatario risponde con una echo reply, oppure viene inviato un pacchetto UDP, un protocollo di livello quattro. 
+
+Effettuando un'operazione \verb|tcpdump| si possono osservare i a gruppi di tre i pacchetti inviati con i rispettivi ttl. 
+Studiare le reti corrisponde a studiare le varie apparecchiature e gli strumenti di supporto che popolano le reti. 
+
+
+
+
+
+
 
 \end{document}
