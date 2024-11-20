@@ -298,7 +298,7 @@ Il suo prefisso è ottenuto completando questa net con tutti zeri, quindi è il 
 
 %% TODO img, domande
 
-\subsection{Domanda 3}
+\subsection*{Domanda 3}
 
 Come è possibile verificare che due net non abbiano indirizzi in comune?\\
 Dati due nodi dell'albero, se il più basso antenato comune corrisponde ad uno dei nodi dell'albero, allora gli indirizzi non sono disgiunti, 
@@ -311,5 +311,119 @@ esatto del ``subnetting'' di una terza net C?\\
 Bisogna 
 
 \subsection*{Domanda 5}
+
+%% TODO 
+
+\clearpage
+
+\section{Esercitazione del 20/11/24}
+
+\subsection*{Esercizio 1}
+\subsubsection*{Domanda 1}
+
+Una società ottiene il blocco di indirizzi 200.100.50.0/24, con una netmask 255.255.255.0. Viene configurata una singola rete:
+
+%% TODO indirizzi privati 10.x.x.x non mostrati all'esterno ~ traceroute
+
+
+\begin{itemize}
+    \item QUante macchine possono essere collocate sulla LAN 200.100.50.0/24?
+    \item Qual è l'indirizzo di broadcast della LAN A?
+    \item Com'è composta la tabella di instradamento del router 1?
+\end{itemize}
+
+L'ultimo byte viene utilizzato per identificare le macchine sulla LAN A, sono possibili al massimo 254 macchine, tra cui il router. Non si può 
+utilizzare né il primo che identifica la LAN 200.100.50.0, né l'ultimo che identifica l'indirizzo broadcast 200.100.50.255. 
+
+La LAN è connessa all'internet tramite il router 2 connesso su una LAN privata 10.0.0.0/30 ad il router 1, connesso a questa LAN. 
+L'indirizzo ha i primi 6 bit del quarto byte pari a zero, e gli ultimi due bit per identificare macchine diverse, solo due possibili. 
+Se si utilizzasse un indirizzo con 31 bit per la netmask, non sarebbe possibile identificare alcuna macchina, ma si potrebbe utilizzare per 
+effettuare solamente trasmissioni broadcast. Questo tuttavia non viene effettuato, poiché su una LAN si deve attribuire un indirizzo valido, 
+che comincia da una /30. A volte tuttavia è possibile che ci si riferisca ad un indirizzo /32, nella letteratura tecnica si indica che si 
+interessa solamente quell'indirizzo. Si può utilizzare per realizzare tabelle di instradamento che indicano un singolo indirizzo. 
+
+La tabella di instradamento del router 1 contiene la subnet 200.100.50.0 sulla netmask 255.255.255.0, la subnet su 10.0.0.0 sulla netmask 
+255.255.255.252, entrambe direttamente connesse. La rotta di default è 0.0.0.0, con il next hop dato dall'indirizzo 10.0.0.1
+
+
+
+\begin{itemize}
+    \item Quante macchine possono essere attestate sulla LAN 10.0.0.0/30?
+    \item Qual è l'indirizzo broadcast della LAN 10.0.0.0/30? Viene mai utilizzato?
+\end{itemize}
+
+L'indirizzo MAC di broadcast sulla LAN 10.0.0.0/30 non viene mai utilizzato, ma poiché gli indirizzi nella tabella di instradamento vengono 
+salvati su cache possono essere dimenticati e quindi dopo un certo periodo di tempo deve essere effettuata una nuova ARP request broadcast per 
+cercare l'indirizzo MAC a cui inviare il pacchetto. 
+
+\begin{itemize}
+    \item Come si comporta il router 1 quando riceva un pacchetto destinato a 200.100.50.25?
+    \item E quando riceve dalla LAN un pacchetto destinato a 200.100.51.25?
+    \item 
+\end{itemize}
+
+\subsubsection*{Domanda 2}
+
+Si considera la stessa società della domanda precedente, avendo due LAN connesse al router 1, ora con tre interfacce. Non può chiedere altri indirizzi 
+e deve utilizzare lo stesso 200.100.50.0/24 per realizzare due prefissi. Bisogna tagliare in due questo indirizzo, i primi tre byte sono uguali, 
+mentre il primo bit del quarto byte identifica una delle due subnet. Queste due LAN hanno un prefisso /25. Questi due prefissi sono:
+\begin{itemize}
+    \item 200.100.50.0/25, con netmask 255.255.255.128;
+    \item 200.100.50.128/25, con netmask 255.255.255.128.
+\end{itemize}
+
+Il primo è esattamente lo stesso della /24, quindi cambia solamente il numero di bit per la netmask. Di questi due prefissi si possono utilizzare 
+solamente 126 macchine. Non si può dividere in tre parti uguali, si possono solo tagliare a metà un'altra parte. Ci sono indirizzi, e prefissi 
+uguali con un numero di bit netmask diversi, ed è possibile che più indirizzi abbiano la stessa netmask. Tutti gli indirizzi aventi prefissi di 
+stessa lunghezza utilizzano la stessa netmask. 
+
+\begin{itemize}
+    \item Com'è composta la tabella di instradamento del router 1?
+\end{itemize}
+
+Il router ha una tabella identica alla precedente, eccetto che l'indirizzo 200.100.50.0/24 viene sostituito da due prefissi 200.100.50.0 e 
+200.100.50.128 con la stessa netmask 255.255.255.128 direttamente connesse. 
+
+\subsubsection*{Domanda 3}
+
+La stessa società subisce una riorganizzazione interna, in cui le risorse vengono distribuite nell'amministrazione che ospita metà delle 
+macchine ed in due dipartimenti che si dividono le restanti. Per effettuare questa distribuzione bisogna suddividere nuovamente in metà  
+uno dei due indirizzi, si sceglie l'indirizzo alto. 
+
+%% TODO resto delle domande
+
+\subsubsection*{Domanda 4}
+
+\subsubsection*{Domanda 5}
+
+%% TODO razionalizzazione del routing
+
+\subsection*{Esercizio 2}
+
+%% TODO 
+
+
+Si suppone che ogni interfaccia IP, esclusi i bridge, produca un traffico broadcast di $0.1$ Mbit/s. Compila la tabella del carico del traffico broadcast che 
+si aspetta sulle varie linee. 
+
+% A 0.6
+% B 0.9
+% C 0.9
+% D 0.9
+% E 0.9
+% F 0.9
+
+Questo traffico colpisce tutte le macchine sulla stessa LAN. Si considera ora un caso di traffico unicast di 1 Mbit/s, dal server SA a 
+tutti i PC di tipo A. Compilare la tabella del traffico unicast che ci si aspetta sui varia domini di collisione:
+
+% A 2
+% B 2
+% C 5
+% D 2
+% E 5
+% F 5
+
+Se si ha una LAN di passaggio, attraverso questa passeranno tutti i flussi unicast, che occupano tutta la banda del tratto intermedio. 
+
 
 \end{document}
