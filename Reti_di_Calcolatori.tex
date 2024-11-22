@@ -620,6 +620,10 @@ Ora si prova ad effettuare un traceroute verso una macchina che non esiste su un
 indicando il carattere \verb|!H|, per specificare che manca la macchina host. Altrimenti se si specifica una LAN inesistente, produce solamente una riga con il 
 carattere \verb|!N|, per indicare che non è presente il network. 
 
+\subsection{Laboratorio del 22 Novembre: ``Basi IPv6''}
+
+%% TODO add basic ipv6
+
 \clearpage
 
 \section{Modello ISO-OSI}
@@ -1609,7 +1613,105 @@ Effettuando un'operazione \verb|tcpdump| si possono osservare i a gruppi di tre 
 Studiare le reti corrisponde a studiare le varie apparecchiature e gli strumenti di supporto che popolano le reti. 
 
 
+\subsubsection{IPv6 e ICMPv6}
 
+Gli indirizzi IPv4 si stanno esaurendo, già nel 2010 la IANA ha allocato le ultime /8 disponibili attribuendole ai registri continentali. Alla fine del 2020 il registro 
+europeo ha allocato i suoi ultimi indirizzi disponibili. Gli ultimi indirizzi sono essenzialmente esauriti, ma ci sono registri più avanti di altri nella 
+distribuzione. IPv6 è alternativo rispetto a IPv4, per loro natura realizzano due reti disgiunte, che non possono comunicare tra di loro. IPv6 ha varie 
+caratteristiche interessanti, inoltre ha indirizzi di 128 bit, e sta progressivamente sostituendo gli indirizzi IPv4. 
+IPv5 non è mai esistito, poiché venne realizzato un protocollo specifico dal punto di vista applicativo, ed utilizzava un nuovo protocollo di livello 3 il cui nome 
+poteva sembrare IPv5 quindi per evitare confusione venne chiamato IPv6. 
+IPv4 e IPv6 sono destinati a convivere per anni, entrambi protocolli di livello tre, i loro pacchetti vengono gestiti separatamente dagli es e is, e per mantenere 
+l'internet rimarrà per molto tempo IPv4. 
+
+Un pacchetto IPv6 ha un header di struttura fissa, per evitare di creare problemi ad eventuali router attraversati, di 40 byte. Alcune caratteristiche di IPv4 
+spariscono o cambiano nome e vengono introdotti nuovi campi. 
+Il campo ``Ver'' versione di 4 bit, nei pacchetti IPv4 non ha funzione, poiché non vengono distinti con questo campo da IPv6, ma dal campo LLC. Il campo ``Traffic Class'' 
+di 8 bit ha sostanzialmente ele stesse funzioni di Type of Service di IPv4. Il campo ``Flow Label'' di 20 bit viene utilizzato per distinguere un flusso, ma ancora non 
+ha uno scopo definito. I router attraversati dovrebbero gestire pacchetti dello stesso flusso allo stesso modo. \'{E} un campo il cui utilizzo non è ancora 
+chiaro a livello applicativo, ma è utile per certi aspetti di sicurezza. Il campo ``Payload Length'' di 16 bit è analogo al campo Length in IPv4. Il campo 
+``Next Header'' di 8 bit individua il protocollo di livello superiore contenuto, simile al campo Protocol in IPv4. Si utilizza in IPv6 anche per specificare delle 
+opzioni, inserendo in questo campo una codifica per indicare le opzioni contenute all'interno del pacchetto. %% TODO altri campi 
+Il campo ``Hop Limit'' è il ttl, di 8 bit, come in IPv4. I pacchetti IPv6 non possono essere frammentati, quindi non sono presenti i campi in IPv4 corrispondenti alla 
+frammentazione. Se questi pacchetti incontrano un router con un MTU minore vengono scartati. La frammentazione deve essere effettuata a livello degli es, esistono 
+IPv6 protocolli che individuano in un cammino la MTU minima, e quindi l'es è in grado di creare pacchetti di lunghezza adeguate per passare attraverso l'intero pacchetto. 
+Si suppone che i controlli di livello 2 e 4 siano sufficienti, quindi sparisce la checksum di IPv4, non è presente il campo che specifica la lunghezza dell'intestazione, poiché 
+la lunghezza è fissa in IPv6. In termini di intestazione è un protocollo semplice, rispetto ad IPv4. 
+
+Gli indirizzi IPv6 sono molto diversi da IPv4, avendo molti bit in più sarebbe più difficile rappresentarli in decimale, quindi vengono rappresentati in 8 numeri 
+esadecimali separati da due punti, ogni numero rappresenta 16 bit. Questa rappresentazione consente di non effettuare conversioni di base, da binario a decimale e viceversa. 
+
+La scrittura può essere semplificata, rappresentando zeri consecutivi con un singolo zero, solo se antecedenti da altri zeri. Generalmente si omettono 
+gruppi consecutivi di 16 bit contenenti soltanto zeri, si omettono anche i due punti di separazione. Questa notazione è utilizzabile una sola volta all'interno di 
+un indirizzo, per evitare ambiguità. L'interfaccia di loopback è ::1, e rappresenta l'indirizzo 0:0:0:0:0:0:0:1, analogo di 127.0.0.1 in IPv4. 
+
+Per i prefissi si utilizza la stessa notazione ``/'' usata in IPv4, con un prefissi di lunghezza massima di 64 bit. Una netmask non è rappresentata mai nel formato dove 
+sono espliciti i suoi bit. Si usa solamente la notazione con la barra /. 
+
+Anche in IPv6 ci sono indirizzi unicast e multicast, ma non sono presenti indirizzi broadcast. Si cerca di stabilire con chi si vuole dialogare in maniera più selettiva. 
+Tuttavia questa regola ha delle interpretazioni piuttosto lasche. 
+Due tipi fondamentali di indirizzi unicast sono ``Global Unicast'', indirizzi utilizzabili i internet. esistono indirizzi simili agli indirizzi IPv4 non utilizzabili 
+in internet, con qualche differenza significativa, chiamati ``Link-Local'', utilizzabili solo nell'ambito della LAN. 
+In IPv6 indirizzi Link-Local sono usati sempre, a differenza degli indirizzi privati in IPv4, e permettono soltanto di dialogare con altre macchine sulla stessa LAN. 
+Nel mondo IPv6 link e LAN sono sinonimi, quindi non vengono chiamati LAN-Local. 
+
+Indirizzi multicast importanti sono ``Solicited Node'', ff02::01, tutte le macchine in una LAN, essenzialmente un indirizzo broadcasts, e ff02::02, tutti i router in 
+una LAN. 
+
+I primi 64 bit sono il prefisso, mentre i seguenti 64 bit vengono chiamati ``Interface Identifier'', o ``Interface ID'', per identificare univocamente un'interfaccia. 
+Questo comporta uno spreco, poiché anche se su una singola LAN sono presenti poche macchine, vengono comunque utilizzati 64 bit per indirizzarle. 
+
+Indirizzi Global Unicast vengono assegnati da organizzazioni e registri internazionali, analogamente ad indirizzi IPv4. 
+
+Indirizzi Link-Local hanno un prefisso fe80::/64
+
+
+In IPv6 un'interfaccia di rete può avere diversi indirizzi, e gli spazi di indirizzamento attribuiti a due LAN devono essere disgiunti. Gli indirizzi possono 
+essere attribuiti alle interfacce in modo manuale oppure automatico, tramite vari meccanismi built-in nel protocollo per assegnare questi interfacce. Uno di questi 
+è particolarmente interessante e si chiama auto-configurazione ``stateless''. 
+Con questo meccanismo una macchina si attribuisce un indirizzo per comunicare nella LAN, senza dialogare con il router della LAN. L'interfaccia collabora con i 
+router della LAN per assegnare uno o più indirizzi Global Unicast per poter comunicare in internet. 
+Anche in IPv4 sono presenti protocolli simili in modo che una macchina si attribuisce un indirizzo IPv4, questi meccanismi provengono da servizi esterni, mentre in IPv6 
+questi meccanismi appartengono al protocollo. 
+
+L'auto-attribuzione dell'Interface ID può essere causale oppure basata sull'indirizzo MAC dell'interfaccia, anche se ha un impatto negativo sulla privacy. Ma permette di 
+realizzare indirizzi univoci, dato che lo sono tutti gli indirizzi MAC. L'interfaccia divide l'indirizzo MAC in due parti, ciascuna di 24 bit, 
+viene inserita la sequenza di 16 bit ff:fe alla metà, tra le due parti. Al settimo bit della prima parte viene attribuito 1, poiché se l'indirizzo MAC è unico a livello 
+globale quel bit vale 0. Questi 64 bit identificano l'indirizzo nella LAN. Gli indirizzi MAC studiati si riferiscono ad uno standard EUI-48, e per passare ad indirizzi 
+MAC dda 64 bit si utilizza il meccanismo descritto nello standard EUI-64. 
+Se viene utilizzato questo indirizzo per comunicare in internet, viene mostrato il proprio indirizzo MAC, questo rappresenta un aspetto molto negativo in merito alla 
+privacy. Altrimenti meccanismi di scelta casuale possono essere utilizzati, ed includono meccanismi per evitare collisioni. 
+Un'interfaccia costruisce il proprio indirizzo Link-Local anteponendo a questo Interface ID il prefisso fe80::/64. 
+Prima di considerare questo come indirizzo, svolge un'attività di ``Duplicate Address Detection'', controllando se nella stessa LAN è presente un'interfaccia 
+di stesso indirizzo, inviando un pacchetto all'indirizzo costruito. Questo indirizzo è Link-Local quindi deve essere unico solamente all'interno della LAN. 
+I router presenti sulla LAN inviano periodicamente dei pacchetti di ``Router Advertisement'' destinati ad ff02::1, tutte le interfacce presenti sulla LAN. Le LAN 
+a loro volta possono sollecitare questi pacchetti tramite pacchetti ``Router Solicitation''. 
+Nei pacchetti di Router Advertisement, fornisce un elenco di prefissi utilizzabili sulla LAN, un tempo di validità ed una specifica se può essere utilizzato come 
+router di default, fornisce altre informazioni utili alle interfacce ed il proprio indirizzo MAC. 
+
+Un'interfaccia che riceve questi prefissi può attribuirsi indirizzi ulteriori rispetto a quelli Link-Local. 
+Esistono protocolli appositi distribuendo prefissi salvati su server, ed attribuibili da remoto ai vari router della LAN. 
+La spedizione di un pacchetto avviene come in IPv4, controllando se il destinatario è sulla stessa LAN, si effettua quindi spedizione diretta o spedizione 
+al router di default. 
+Le tabelle di instradamento dei router hanno lo stesso significato delle tabelle IPv4, utilizzate allo stesso modo. In IPv6 non c'è il protocollo ARp per individuare 
+l'indirizzo MAC del destinatario. Il protocollo ARP, invia continuamente richieste broadcast che invia molte richieste sulla LAN. In IPv6 si utilizza 
+un meccanismo ICMPv6, svolge le stesse funzioni di ICMPv4, ed altre funzioni, sopratutto svolge le funzioni svolte da ARA in IPv4. 
+
+Per cercare un indirizzo MAC si spedisce un pacchetto ICMPv6 ad un gruppo di multicast, non broadcast. Quando un'interfaccia si assegna un indirizzo ICMPv6, 
+assume anche di appartenere ad un uno specifico gruppo multicast, chiamato ``Solicited Node''. Questo indirizzo è composto da 24 bit IID sono gli ultimi 
+24 bit del'indirizzo. I primi 16 bit sono ff02, i seguenti 72 bit sono pari a zero, i seguenti 16 sono 01:ff, seguiti dai 24 dell'IID. 
+La probabilità di due macchine di avere lo stesso IID sulla stessa macchina è molto bassa, quindi questi gruppi multicast sono molto piccolo, a volte composti da una 
+singola macchina. 
+
+
+Per ottenere un indirizzo MAC di un sistema, un nodo di una macchina calcola dall'indirizzo IPv6 del destinatario la sua IID, e determina il suo gruppo multicast a cui 
+appartiene. A questo indirizzo invia un pacchetto ICMPv6 di tipo ``Neighbor Solicitation''. Se il destinatario è presente invia un pacchetto unicast, con il suo 
+indirizzo MAC specificato nella parte dati del pacchetto di tipo ``Neighbor Advertisement''. 
+Questo indirizzo viene specificato nella ``Neighbor Cache'', equivalente alla ARP Cache. 
+
+Si utilizza Solicited Node poiché un pacchetto multicast è considerato solo da un gruppo di macchine e non dall'intera LAN, richiede un gruppo multicast 
+corrispondente a livello MAC, per evitare di dover inviare pacchetti broadcast a livello due invece che a livello tre. Visto che l'indirizzo contiene gli ultimi bit 
+dell'indirizzo è probabile che venga processato da poche schede. Per individuare 
 
 
 
