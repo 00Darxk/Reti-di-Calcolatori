@@ -1713,7 +1713,126 @@ Si utilizza Solicited Node poiché un pacchetto multicast è considerato solo da
 corrispondente a livello MAC, per evitare di dover inviare pacchetti broadcast a livello due invece che a livello tre. Visto che l'indirizzo contiene gli ultimi bit 
 dell'indirizzo è probabile che venga processato da poche schede. Per individuare 
 
+\clearpage
 
+\section{Livello 4: Strato di Trasporto TCP e UDP}
+
+Da questo livello in poi si possono sviluppare applicazioni, il servizio a questo livello deve essere affidabile, poiché si suppone che la rete sia 
+affidabile. 
+
+Offre servizi contesi con una connessione bidirezionale e contemporanea tra le due parti. 
+I processi che usano queste primitive assumono quindi che questo livello sia affidabile. 
+
+Le primitive sono di diversi tipi, offerte ad una popolazione molto ampia di utenti-programmatori:
+\begin{itemize}
+    \item \texttt{listen}: Mette la macchina in attesa di ricevere una richiesta di instaurazione di una connessione;
+    \item \texttt{connect}: Tenta di instaurare una connessione;
+    \item \texttt{send}: Invia dati;
+    \item \texttt{receive}: Riceve dati;
+    \item \texttt{disconnect}: Rilascia una connessione. 
+\end{itemize}
+Il nome della primitiva dipende dal linguaggio di programmazione utilizzato per accedere a questa primitiva. 
+
+La contemporaneità nella rete non è effettivamente garantita, è molto improbabile che  nello stesso istante due es si comunichino a vicenda, ma sono in grado di 
+ascoltare la rete ed aspettare di ricevere o inviare messaggi. Affinché la connessione sia affidabile, ogni dato inviato viene riscontrato dall'es di destinazione. 
+
+Le primitive per l'instaurazione ed il rilascio di connessioni devono essere realizzati in modo affidabile, più facile da risolvere per l'instaurazione che per il suo 
+abbattimento. 
+
+I pacchetti scambiati in una connessione sono sempre numerati a entrambi le parti in modo sequenziale, e si possono riscontrare i pacchetti inviati tramite 
+acknowledgment, analogamente ai casi precedenti. La numerazione inizia da un numero arbitrario scelto dai due es. L'instaurazione della connessione si basa 
+sui numeri iniziali della sequenza scelta degli es. Questo metodo viene chiamato ``three way handshake''. 
+
+Dati due calcolatori, il primo sceglie un numero di sequenza arbitrario per il numero dei pacchetti $x$ ed invia una Connection Request al secondo con il numero scelto, 
+a questo punto il secondo calcolatore ricevuto il pacchetto sceglie il uso numero iniziale di sequenza $y$. Questo invia un pacchetto di tipo ``Connection Accepted'', 
+contenente $x$ e $y$. A questo punto il primo calcolatore suppone che questi due valori siano validi ed invia un pacchetto di riscontro al secondo calcolatore con 
+un pacchetto contenente $y$. Questo pacchetto di riscontro finale ha un valore $x$, ma queste sono questioni di convenzioni che verranno trattate successivamente. Spesso 
+il primo pacchetto dell'handshake si chiama Data, poiché potrebbe già contenere dei dati dal primo al secondo calcolatore. Questo è sicuramente non vero per il primo 
+ed il secondo pacchetto della connessione. 
+
+%% TODO imt connessioni
+
+Numerare i pacchetti è molto utile, per permettere di riscontare esattamente quali pacchetti sono stati ricevuti. 
+
+Sarebbe semplice numerare i pacchetti da zero per entrambi gli es, ma utilizzare numeri diversi è possibile distinguere pacchetti scambiati da due stessi 
+calcolatori, anche in tempi diversi, su connessioni diverse tra di loro. 
+
+Rilasciare una connessione è un processo complesso, se non viene effettuato correttamente si potrebbe rischiare la perdita di alcuni dati. Se la connessione viene 
+terminata in modo unilaterale, il rilascio è rudimentale, poiché il secondo calcolatore connesso potrebbe aver inviato pacchetti, nonostante la connessione sia stata 
+interrotta. Questi pacchetti verranno quindi persi. 
+Si potrebbe utilizzare un rilascio simmetrico, specificando all'altro calcolatore che si ascolta la connessione per un certo periodo di tempo per continuare a ricevere 
+dati inviati dopo il termine della connessione. Questo è un problema molto complesso, poiché non è definito in quale istante la connessione si dice completamente 
+terminata. 
+
+
+Questa situazione si può rappresentare in modo semplice con il problema dei due eserciti, o due generali. Si suppone esistano due eserciti, il primo numericamente 
+superiore al secondo, ma diviso in due parti minori del secondo. Queste due parti sono disgiunte tra di loro, e per poter battere il secondo esercito devono 
+necessariamente attaccare in contemporanea, altrimenti non riuscirebbero a vincere. I generali di queste due parti del primo devono comunicare spedendo 
+emissari tra di loro, ma questi devono attraversare il territorio dell'esercito nemico, e potrebbero essere catturati. 
+Si potrebbero emissari tra le due parti per riscontrare, inviando un numero arbitrario di riscontri, l'ultimo generale ad inviare il suo emissario come 
+riscontro, non saprà mai se il messaggio è stato ricevuto. Non esiste infatti protocollo di comunicazione per garantire a questi due generali una vittoria. 
+
+Si inserisce un timer, se entro un certo periodo non succede niente, allora viene rilasciata la connessione. Si vorrebbe avere un tempo di timeout molto ristretto, ma 
+questo rappresenta un'euristica, non garantisce la perdiate di pacchetti. 
+
+\subsection{TCP}
+
+Il protocollo TCP viene definito negli standard RFC 793, 1122 e 1323. TCP offre un servizio di trasmissione di dati affidabile bidirezionale e contemporaneo, chiamato 
+full-duplex, oppure punto-punto, ``host-to-host'' o ``end-to-end''. Connessioni di tipo multicast o broadcast non sono supportate, può usare protocolli di livello tre 
+diversi, sia IPv4 che IPv6, tra gli altri. 
+
+
+\`{E} il primo protocollo a garantire l'affidabilità della connessione, identifica i problemi dei livelli sottostanti, se un pacchetto viene scartato nel percorso lo 
+richiede nuovamente, e se i pacchetti arrivano disordinati li riordina. Utilizza meccanismi di acknowledgment, ogni pacchetto viene seguito da riscontri. Una 
+connessione non avviene tra due calcolatori, ma tra due processi attivi dentro una macchina. Ogni processo in una connessione è identificato dall'indirizzo IP della 
+macchina, ma questo non è sufficiente, quindi si utilizza un numero assegnato a ciascun processo per distinguerli, chiamato numero di ``port'' o porta. Una volta 
+stabilita la connessione i dati allo strato TCP vengono inviati correttamente allo strato TCP del ricevente, offerti al processo destinazione. Dal punto di vista 
+dell'applicazione la rete non esiste, si interfaccia solamente con il livello TCP del destinatario. 
+I port i TCP sap, sono numeri da 2 byte, non possono essere minori di 1024, riservati a servizi standard, anche se molti altri numeri sono riservati ad altri servizi con 
+un port superiore. 
+Un processo potrebbe chiedere al protocollo un certo numero di port specifico da utilizzare e se non è già utilizzato viene assegnato questo numero. 
+
+I pacchetti TCP si chiamano ``segment'', segmenti, costituiti da un intestazione e dai opzionali. C'è un limite per i dati IP di 65553 byte, un altro limite più stringente 
+è dato dalle MTU. I byte a disposizione dell'applicazione per ogni pacchetto sono 1460 byte, poiché 20 riservati all'intestazione del livello tre, ed altre 20 riservate 
+all'intestazione IPv4. 
+I pacchetti non sono numerati, ma vengono numerati i byte dei pacchetti. Con un numero di sequenza di 32 bit, e consente di avere reset dei numeri di sequenza 
+infrequenti, rappresenta una sequenza circolare. Questi vengono riscontrati byte per byte utilizzando acknowledgment. 
+
+I segment vengono utilizzati per instaurare connessioni, spedire dati, spedire acknowledgment o chiudere connessioni. 
+
+%% TODO img intestazione TCP. 
+
+Ogni riga è composta da 4 byte. Nella prim sono presenti il numero di porta del sorgente e del destinatario, la seconda contiene il numero di sequenza del byte spedito, 
+ed il seguente il numero di sequenza di acknowledgment. 
+Se si usasse un intestazione per spedire ogni byte sarebbe troppo inefficiente, quindi questo numero di sequenza di byte si riferisce al primo byte del campo data. 
+Questi byte vengono numerati a partire da questo numero di sequenza specificato. L'acknowledgment specifica l'ultimo byte che è stato riscontrato. 
+Il campo hlen specifica la lunghezza dell'intestazione, res è un campo riservato, il campo code contiene la funzione del pacchetto, il campo windows regola il 
+controllo di flusso, lungo 2 byte. 
+Nella riga sequenza è presente una checksum, importante per capire se il pacchetto è integro, segue un ``urgent pointer'' per specificare un dato importante da 
+leggere appena viene ricevuto il pacchetto. Segue una riga con le opzioni ed eventuale padding. 
+
+Quando si riscontra un numero di sequenza in un acknowledgment si specifica il numero del prossimo byte atteso, questo campo quindi si riferisce ai dati che viaggiano 
+in direzione opposta. Il numero di sequenza inoltre stabilisce la posizione del pacchetto nel flusso di dati generando un certo numero di pacchetti.  
+
+%% TODO img connessione TCP pc1-pc2
+
+Il nome del pacchetto per la richiesta dell'instaurazione della connessione si chiama ``syn'', mentre ``ack'' per il pacchetto di riscontro. Il significato applicativo 
+dei byte trasportati dal protocollo TCP non sono noti al protocollo stesso, o a qualunque protocollo di livello quattro, questi verano interpretati da protocolli al 
+livello superiore. 
+
+Il campo hlen contiene il numero di parole di 32 bit dell'intestazione. Il campo code determina il tipo di messaggi contenuto nel segmento:
+\begin{itemize}
+    \item URG: Il campo urgent pointer è valido;
+    \item ACK: Il campo ack è valido, ovvero il riscontro contenuto deve essere considerato;
+    \item PSH: Specifica che il pacchetto deve essere inviato velocemente;
+    \item RST: Specifica di voler resettare la connessione;
+    \item SYN: :Sincronizza i numeri di sequenza;
+    \item FIN: Il mittente ha raggiunto la fine del byte stream e rilascia la connessione. 
+\end{itemize}
+
+La checksum intessa l'intero segment e gli indirizzi IP ed il campo protocol dei campi al livello tre. Questa checksum provoca un'invasione della gerarchie sui campi del 
+terzo livello. Le opzioni specificano la negoziazione sulla massima ampiezza del campo dati nell'instaurazione della connessione. Gli host sono obbligati ad accettare 
+almeno 536 byte. 
 
 
 \end{document}
