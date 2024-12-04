@@ -1835,4 +1835,116 @@ terzo livello. Le opzioni specificano la negoziazione sulla massima ampiezza del
 almeno 536 byte. 
 
 
+\clearpage
+
+\section{Livelli Applicativi: DNS}
+
+Il DNS o Domain Name System è un applicazione del livello ISO-OSI sopra al livello quattro. Dal livello quattro in poi le applicazioni 
+
+
+Poiché è scomodo utilizzare un numero per identificare un indirizzo, si vuole assegnare ad ogni interfaccia un nome, quest'applicazione si occupa della mappatura 
+tra questi nomi assegnati a l'indirizzo IP. 
+Agli albori dell'internet questo ``Spazio dei Nomi'' era ``flat'', quindi poteva essere assegnato qualsiasi nome arbitrario, e la mappatura veniva tracciata da una 
+persona a mano su un file testuale. Al crescere della dimensione della rete tuttavia potevano sorgere facilmente conflitti. La possibilità di aggiungere e modificar Ei nomi 
+necessitava di un accesso a questo file di testo centrale. 
+
+Per migliorare questo servizio si ha pensato di decentralizzare l'assegnazione dei nomi e la responsabilità del mapping tra nome ed indirizzo. Inoltre la più 
+importante aggiunta è la possibilità di accedere al mapping con tecniche client-server. 
+
+Si utilizza un database distribuito per contenere queste corrispondenze, la robustezza e la resistenza di questo algoritmo sono favorite da meccanismi di caching e replicazione. 
+Il ``namespace'' viene partizionato per garantire un controllo efficiente non centralizzato delle assegnazioni. I nomi non sono più sequenze di caratteri, ma sequenze di 
+caratteri separati da punti. 
+I nomi che hanno un suffisso comune possono essere rappresentati attraverso un albero. 
+Il livello più alto della gerarchia, l'autorità ``top level'' delega la gestione dei nomi ad autorità assegnate a diverse partizioni dello spazio dei nomi. 
+L'autorità top level non si occupa dell delle partizioni interne, e si suppone tutti questi domini siano figli di un dominio radice, cui corrisponde una stringa vuota. 
+Questa partizione può somigliare all'indirizzamento IPv4, ma questo meccanismo di delega applicabile a più livelli può espandere lo spazio, mentre in IPv4 lo 
+spazio è finito e definito a priori. 
+
+%% TODO img albero namespace
+
+Un dominio è un sottoalbero del namespace, il cui nome è il nome della radice del sottoalbero. Le foglie di questo albero sono in corrispondenza di indirizzi IPv4 
+e IPv6, rappresentando interfacce. Inoltre è possibile che i nodi intermedi rappresentino ulteriori interfacce. Anche un singolo host è un dominio. 
+In questo momento esistono 1500 domini top level, all'inizio questa distribuzione era molto ristretta. I domini nazionali sono stati standardizzati con sigle da ISO 3166, 
+e recentemente questa restrizione è stata resa più lasca, ed esistono vari domini di recente definizione, come il dominio del cern. I domini su cui nasce internet sono principalmente 
+domini nord americani, come com, edu, gov, etc. 
+
+L'organizzazione dei nomi di internet viene chiamata ``Domain Name System'', i sistemi che realizzano il mapping tra indirizzi e nomi sono chiamati 
+Name Server (NS). Alcuni hanno al delega per una porzione del namespace, e questi sono in grado di dialogare tra di loro. Un NS ha informazioni complete su una parte 
+del namespace, detta zona, sulla quale ha autorità. Una zona è un sottoalbero del namespace, eventualmente privata di alcuni sottoalberi. 
+
+%% TODO img zona
+
+Questi sottoalberi su cui non ha autorità sono altri domini delegati ad altri NS dal top level. Un NS può essere autorità di varie zone, inoltre per la stessa zona 
+possono essere associati più NS autorità, per motivi di resistenza ai guasti. Poiché questo sistema è nevralgico per la gestione di internet, ed è necessario il suo 
+funzionamento per l'accesso all'internet. 
+
+I NS possono essere primari o secondari, i server primari contengono le informazioni aggiornate sul mapping della zona, mentre gli NS secondari richiedono periodicamente 
+il mapping della zona al server primario. Si lavora su modiche o assegnazioni dei nomi solamente sul NS primario. 
+Un NS può essere contermpoanreamnte primario per certe zone e secondario per altre. Si hanno vari gradi di libertà sul numero dei NS, sulla possibilità di essere 
+primari o secondari, oppure sulla loro posizione, possono essere anche lontani dalle macchine delle quali conservano i nomi. 
+I client che usano i NS si chiamano resolver e sono all'interno degli host. Hanno la capacità di interrogare i NS ed interpretare le loro risposte. Sopratutto 
+sono in grado di inviare le informazioni ricavate ai programmi che li utilizzano. 
+Non necessariamente è un processo autonomo, i resolver sono all'interno di comuni librerie contenuti in alcuni browser. 
+
+Se il resolver ha già le informazioni necessarie le fornisce, alternativamente le chiede direttamente alla radice autorità dello spazio dei nomi, il quale 
+fornisce al resolver un NS più specifico, scendendo l'albero fino alla raggiunta dell'indirizzo specifico. Questi NS assegnati alla radice sono costantemente 
+sotto pressione, poiché l'intera rete si basa interamente su di loro per effettuare il processo di risoluzione. 
+
+Per la risoluzione sono possibili vari atteggiamenti, può essere ricorsiva oppure iterativa. Nella risoluzione ricorsiva il client chiede al server una risorsa, 
+e pretende come risultato l'indirizzo, se il server non la conosce, è suo compito contattare altri server. Mentre nella risoluzione iterativa, è il client a dover 
+contattare ulteriori server, specificati dal server iniziale. Nella risoluzione iterativa i serve non si devono tenere informazioni in memoria su cosa sta 
+accadendo nella rete. 
+Il resolver effettua una query ricorsiva al NS e questo effettua delle query iterative a vari NS, appunto per rendere più efficiente. 
+
+%% TODO img query
+
+
+Le informazioni memorizzate tra le vari query vengono salvate su vari cache dentro i NS, che svolgono il ruolo di autorità per le varie zone, quindi in alcuni casi 
+non è necessario scendere l'intera gerarchia della zona. 
+Alcuni server possono memorizzare informazioni negative, la cache è presente anche al livello di applicazione, come i browser. 
+L'informazione sulla cache scade dopo un certo intervallo di tempo. Il tempo di vita delle informazioni in cache si chiama TTL, ``Time To Live'' e viene scelto con 
+opportune scelte per un compromesso tra consistenza ed efficienza, non è in relazione con il TTL dei pacchetti sull'internet. 
+
+Alcuni NS sono autorità per nessuna zona, e sono solamente a disposizione dei client e possono accettare query ricorsive ed effettuare query iterative. 
+Non sono solo a disposizione dei client. Normalmente ogni IPS ne mette a disposizione uno per i propri clienti, sono chiamati a volte Local NS, o Caching NS, oppure 
+Recursive NS. 
+
+Le informazioni DNS sono memorizzate su ``Resource Record'', ed ogni dominio è associato ad uno o più Resource Record, questi contengono gli indirizzi IP, ma anche 
+altre informazioni che permettono di associare ai nomi altri servizi. Uno di questi servizi sono i servizi di posta elettronica. 
+
+Questi record contengono campi per il nome del dominio, il TTL, la classe, in internet è sempre \texttt{IN}, il tipo di record ed il valore, che dipende dal valore di 
+tipo. I tipi principali sono 
+\begin{itemize}
+    \item \texttt{SOA}: ``Start of Authority'', contiene informazioni amministrative della zona;
+    \item \texttt{A}: Contiene nel valore l'indirizzo IPv4 dell'host;
+    \item \texttt{MX}: Specifica il nome dell'host che accetta le mail indirizzate al dominio del record;
+    \item \texttt{NS}: Il NS per una zona;
+    \item \texttt{AAAA}: Contiene nel valore l'indirizzo IPv6 dell'host;
+    \item \texttt{CNAME}: ``Canonical Name'', contiene il nome corrisponde ad un altro nome o alias.  
+\end{itemize}
+
+Si possono assegnare dei nomi ai computer che si comportano come NS. All'interno sono presenti dei record che si pensano nella posizione sbagliate, questi 
+indirizzano al NS, per permettere di effettuare richieste ricorsive o iterative, questi si chiamano ``Glue Record''. %% TODO glue record def
+
+I messaggi DNS si realizzano in due tipi di formato, di richiesta e di risposta. 
+Tra i campi dell'header:
+\begin{itemize}
+    \item \texttt{QR}: indica s eil messaggio è una domanda o una risposta;
+    \item \texttt{RD}: ``Recursion Required'', indica che la query è di tipo ricorsivo.
+\end{itemize}
+Tra i campi della question section:
+\begin{itemize}
+    \item \texttt{NAME}: Nome della richiesta;
+    \item \texttt{TYPE}: Tipo della richiesta.
+\end{itemize}
+
+
+Questi messaggi devono viaggiare su un protocollo di livello quattro affidabile, quindi sembra bisogna essere assegnato al TCP, ma in realtà viene assegnato all'UDP. 
+\`{E} la logica applicativa che si prende carico del meccanismo dei riconto, in caso le richieste non ricevono risposta, allora inviano nuovamente la richiesta dopo un 
+certo intervallo di tempo. I client si rivolgono alla porta UDP 53 ``Well Known'', la richiesta e la risposta viaggiano entrambe su singoli pacchetti UDP. 
+Per dialoghi che richiedono risposte di grande dimensioni si può usare TCP, nel caso in cui server secondario si rivolge al primario per richiedere le informazioni aggiornate. 
+
+Sotto il DNS non ci sono solo messaggi UDP, ma ci sono protocolli di sicurezza per evitare vengano letti da terze parti, la risposta viene quindi considerata 
+autentica. Questi meccanismi non sono trattati in questo corso. 
+
 \end{document}
