@@ -624,6 +624,49 @@ carattere \verb|!N|, per indicare che non è presente il network.
 
 %% TODO add basic ipv6
 
+\subsection{Laboratorio del 6 Dicembre: ``DNS''}
+
+%% TODO img albero gerarchia nodi
+
+In questo lab sono presenti 5 zone: uniroma3, it, ``'' (zona della root), net e startup. Quest zone sono gestite rispettivamente dai NS 
+localuni e dnsuni, dnsit, dnsroot, dnsnet, dnsstart e localstart. 
+
+La topologia è piatta, tutte le macchine sono legate allo stesso dominio di collisione 192.168.0.0/24. Sono presenti altre due macchine 
+pc1 e pc2, contenute rispettivamente in uniroma3 e startup. 
+
+Tutti questi NS sono configurati per poter gestire richieste iterative o ricorsive. 
+L'immagine docker utilizzata per gestire i DNS si chiama docker bind 9.11. %% TODO nome
+Non bisogna configurare alcuna rotta, poiché sono tutti direttamente connessi. In questa configurazione per la prima volta ogni macchina contiene una sua cartella, 
+contenente un file \texttt{resolv.conf}, questo file indica alla macchina dove si trova il suo Local Name Server. 
+Si utilizza il comando \texttt{search} per indicare per cercare un sotto-dominio di un dominio, poiché quando una ricerca fallisce, invia di nuovo la richiesta, appendendo 
+questo parametro, in modo da cercare all'interno del suo dominio. 
+
+Kathar\'{a} all'avvio copia nel percorso specificato i contenuti di queste cartelle. I DNS invece hanno una configurazione diversa, il nome del processo che parte e 
+si occupa della gestione del DNS si chiama \texttt{named}, questo si trova all'interno della cartella bind, dal comando Linux utilizzato per generare questo processo 
+DNS. Si indica nelle opzioni in questa cartella l'indirizzo dove salvare in cache gli indirizzi cercati. 
+Le configurazione del DNS comprendono sempre un comando \texttt{include} passando coe parametro la posizione delle opzioni di questo DNS, nella cartella bind descritta 
+precedentemente ed un comando per assegnare la zona \texttt{zona}, che indica il nome della zona, e determina se la macchina è root. 
+Nelle opzioni la prima riga indica il tempo per cui i valori memorizzati in cache verranno mantenuti, indicato dal comando \texttt{\$TTL}. 
+In seguito ad una chiocciola, che utilizzato per non dover ripetere 
+la zona del NS, si inseriscono le opzioni 
+per la gestione della relazione master-slave e si indica con \texttt{SOA} che questo NS è l'inizio di una nuova zona. \`{E} presente la mail di posta del gestore 
+del DNS, per operatori umani in caso qualcosa vada storto, in seguito 
+tra parentesi è presente la configurazione tra slave-master del DNS, con 
+un numero seriale, indicato da \texttt{serial}, un tempo di refresh, un 
+tempo di retry per provare a ricontattare il master, in tempo secondo dopo 
+il quale non prova più a contattare con il master, ed un tempo di 
+mantenimento in cache delle informazioni negative. 
+In ognuno di questi comandi si indica il tipo della connessione \texttt{IN}, in questi casi poiché si tratta sempre di connessioni internet. 
+
+In seguito si indicano le autorità per il dominio \texttt{.it} e \texttt{.next} indicando che questo NS conosce informazioni su queste due zone. 
+Si indica che questi NS sono collegati allo stesso dominio di collisione A, con un indirizzo 192.68.0.5 per il NS della radice, 192.168.0.1 per 
+dnsit e 192.168.0.2 per dnsnet. 
+
+Sono presenti configurazioni analoghe per lo SOA delle altre zone %% TODO 
+
+
+
+
 \clearpage
 
 \section{Modello ISO-OSI}
@@ -1946,5 +1989,9 @@ Per dialoghi che richiedono risposte di grande dimensioni si può usare TCP, nel
 
 Sotto il DNS non ci sono solo messaggi UDP, ma ci sono protocolli di sicurezza per evitare vengano letti da terze parti, la risposta viene quindi considerata 
 autentica. Questi meccanismi non sono trattati in questo corso. 
+
+%% TODO resto dns, comando -dig
+
+
 
 \end{document}
