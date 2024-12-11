@@ -68,7 +68,7 @@ Università degli Studi ``Roma Tre"}}
 \clearpage
 \pagenumbering{arabic}
 
-\section{Esercitazione 23/10/24}
+\section{Esercitazione del 23 Ottobre}
 
 \subsection{Rete Bridge con Cicli}
 
@@ -284,7 +284,7 @@ Rispetto alla domanda precedente, il bridge b3 ora conosce la posizione della st
 
 \clearpage
 
-\section{Esercitazione 13/11/24}
+\section{Esercitazione del 13 Novembre}
 
 Lo spazio degli indirizzi viene rappresentato come un albero binario, etichettato sugli archi con un valore 0 o 1. L'arco che esce da un nodo verso 
 il figlio sinistro viene etichettato come 0, mentre quello destro viene etichettato con un 1. 
@@ -316,7 +316,7 @@ Bisogna
 
 \clearpage
 
-\section{Esercitazione del 20/11/24}
+\section{Esercitazione del 20 Novembre}
 
 \subsection*{Esercizio 1}
 \subsubsection*{Domanda 1}
@@ -424,6 +424,83 @@ tutti i PC di tipo A. Compilare la tabella del traffico unicast che ci si aspett
 % F 5
 
 Se si ha una LAN di passaggio, attraverso questa passeranno tutti i flussi unicast, che occupano tutta la banda del tratto intermedio. 
+
+\clearpage
+
+\section{Esercitazione del 11 Dicembre: Stati di TCP}
+
+C'è uno scambio di dati tra due applicazioni A$_1$ ed A$_2$, la prima invia 3500 byte alla seconda applicazione. Entrambe le macchine sono su un livello 2 il cui campo 
+dati ammetta una MTU di 1400 byte. Si ricorda che l'intestazione IPv4 e TCP occupano ciascuna 20 byte. 
+
+Il dialogo tra le dua applicazioni è mostrato a livello TCP nel diagramma che segue: 
+
+%% TODO img. stati di tcp ex
+
+Si suppone che il primo byte inviato dal primo calcolatore abbia SN pari a zero. Ciascun pacchetto è etichettato in due modi:
+\begin{itemize}
+    \item \verb|SYN|, \verb|FIN| e \verb|ACK|;
+    \item \verb|SN|, \verb|AN|. 
+\end{itemize}
+
+\subsection*{Domanda 1}
+
+Completa il diagramma nel modo seguente: 
+\begin{itemize}
+    \item Dove c'è \verb|SYN|, scrivi un 1 accanto all'uguale se in quel pacchetto il bit SYN vale uno;
+    \item Dove c'è \verb|FIN|, scrivi un 1 accanto all'uguale se in quel pacchetto il bit FIN vale uno;
+    \item Dove c'è \verb|ACK|, scrivi un 1 accanto all'uguale se in quel pacchetto il bit ACK vale uno;
+    \item Dove c'è \verb|SN|, scrivi accanto all'uguale quanto vale il Sequence Number, in quel pacchetto;
+    \item Dove c'è \verb|AN|, scrivi accanto all'uguale quanto vale l'Acknowledgment Number, in quel pacchetto.
+\end{itemize}
+
+I primi tre pacchetti sono necessari alla sincronizzazione, per cui il primo pacchetto ha il bit SYN pari ad uno, ed i bit FIN ed ACK pari a zero, poiché ancora non è 
+stata instaurata la connessione. La seconda applicazione se riscontra la connessione invia un pacchetto con SYN ed ACK pari ad uno. L'ultimo pacchetto nella 
+sequenza di connessione dalla prima applicazione contiene il bit SYN pari a zero, poiché è già stata instaurata la connessione, ed il bit ACK pari ad uno. 
+
+Il primo pacchetto contenente dati contiene al massimo 1360 byte dati, sui 3500 byte da inviare, quindi ha il bit SN ha valore 0, poiché è il primo byte della 
+comunicazione, ed un AN pari a zero, poiché la seconda applicazione ancora non ha spedito nulla. La seconda applicazione, se riceve correttamente questi 1360 byte, 
+indicizzati a partire da zero, invia un pacchetto con AN uguale a 1360. Nel secondo pacchetto dati da A$_1$, il SN ha valore 1360, e l'AN ha valore 0. 
+Il successivo pacchetto di acknowledgment ha un AN pari a 2720. Il terzo pacchetto dati ha SN pari a 2720 e AN pari a zero. Questo pacchetto viene riscontrato con 
+AN pari a 3500, poiché sono presenti tutti i byte residui.  
+
+A questo punto si termina la connessione poiché si sono inviati tutti i byte descritti all'inizio. Il bit FIN del pacchetto sicuramente è pari ad uno, e gli altri due SYN e 
+AN sono pari a zero. Ma generalmente viene inserito nel bit ACK l'ultimo riscontro effettuato, e quindi un valore di uno, poiché cambiare il valore di questo bit non ha 
+un costo sulla comunicazione. Questo pacchetto viene riscontrato da A$_1$ con SYN e FIN pari a zero, ed ACK pari ad uno. 
+Questo termina la chiusura da A$_2$ a A$_1$, per chiudere la connessione da A$_1$ ad A$_2$ bisogna inviare una coppia di pacchetti analoghi. 
+
+Dal punto di vista TPC le due macchine sono una il client e l'altra il server. L'applicazione che termina la connessione per prima appartiene al client, e quindi 
+i ruoli sono invertiti rispetto alla prima parte della comunicazione, poiché i dati sono stati inviati da A$_1$ quindi si tratta di un server. \`{E} usuale all'interno 
+di una comunicazione TCP che il server rilasci la connessione. Fin quando non viene ricevuto il pacchetto di fine della connessione da A$_2$, è possibile continuare ad 
+inviare pacchetti da parte di A$_1$. 
+
+\subsection*{Domanda 2}
+
+Nel diagramma, accanto agli assi temporali, sia dalla parte di C$_1$ che dalla parte di C$_2$ ci sono dei riquadri vuoti ciascuno riquadro è riferito, tramite una freccia, 
+a un istante temporale completa il diagramma inserendo in ciascun riquadro lo stato in cui si trova TCP nell'istante corrispondente nel calcolatore corrispondente. 
+
+Si ricorda che gli stati in cui si può trovare TCP sono:
+\begin{itemize}
+    \item closed;
+    \item listen;
+    \item syn-received;
+    \item syn-sent;
+    \item established;
+    \item fin-wait-1: stato di chi inizia la chiusura;
+    \item fin-wait-2: stato di chi inizia la chiusura;
+    \item timed-wait;
+    \item close-wait;
+    \item last-ack: stato in cui si attende l'ultimo ack della connessione.
+\end{itemize}
+
+Il client ha richiesto un'instaurazione della connessione al primo pacchetto, per cominciare il three-way-handshake, quindi si trova in stato di syn-sent. Il server 
+quando ha ricevuto il pacchetto syn, ha uno stato syn-received. 
+La connessione è stata instaurata e durante lo scambio dei pacchetti, lo stato del client e del server è un macro-stato, established. 
+Durante la fine della connessione A$_2$ si comporta come un client, ed i suoi stati attraversati sono quelli del client, quindi il primo stato è fin-wait-1. La prima 
+applicazione quindi ha uno stato del server close-wait. 
+Quando A$_2$ riceve l'ultimo pacchetto ed effettua l'ultimo acknowledgment entra in uno stato timed-wait, dal quale uscirà ed entrerà nello stato di effettiva chiusura, 
+dopo un tempo di timeout. Questo stato comincia immediatamente dopo che è stato inviato questo pacchetto. Convenzionalmente si aspetta due volte il massimo tempo di vita 
+del pacchetto. 
+
 
 
 \end{document}

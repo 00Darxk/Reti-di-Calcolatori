@@ -1880,7 +1880,9 @@ almeno 536 byte.
 
 \clearpage
 
-\section{Livelli Applicativi: DNS}
+\section{Livelli Applicativi: DNS, HTML, HTTP}
+
+\subsection{DNS}
 
 Il DNS o Domain Name System è un applicazione del livello ISO-OSI sopra al livello quattro. Dal livello quattro in poi le applicazioni 
 
@@ -1923,7 +1925,7 @@ funzionamento per l'accesso all'internet.
 
 I NS possono essere primari o secondari, i server primari contengono le informazioni aggiornate sul mapping della zona, mentre gli NS secondari richiedono periodicamente 
 il mapping della zona al server primario. Si lavora su modiche o assegnazioni dei nomi solamente sul NS primario. 
-Un NS può essere contermpoanreamnte primario per certe zone e secondario per altre. Si hanno vari gradi di libertà sul numero dei NS, sulla possibilità di essere 
+Un NS può essere contemporaneamente primario per certe zone e secondario per altre. Si hanno vari gradi di libertà sul numero dei NS, sulla possibilità di essere 
 primari o secondari, oppure sulla loro posizione, possono essere anche lontani dalle macchine delle quali conservano i nomi. 
 I client che usano i NS si chiamano resolver e sono all'interno degli host. Hanno la capacità di interrogare i NS ed interpretare le loro risposte. Sopratutto 
 sono in grado di inviare le informazioni ricavate ai programmi che li utilizzano. 
@@ -1992,6 +1994,97 @@ autentica. Questi meccanismi non sono trattati in questo corso.
 
 %% TODO resto dns, comando -dig
 
+\subsection{HTML e HTTP}
 
+Il linguaggio HTML è il linguaggio che specifica le pagine web, si interessa il protocollo che porta queste informazioni attraverso la rete, ovvero HTTP. 
+HTML, ``HyperText Markup Language'', è un testo che può contenere riferimenti ad altri ipertesti. Un marcatore è un codice che segnala l'inizio o la fine di una primitiva  di 
+formattazione del testo. 
+
+Le caratteristiche dell'ipertesto sono la concisione 
+
+Si può arrivare a livelli di completezza arbitrari affidando a subordinate distribuendo l'informazione nelle pagine. 
+I dati vengono condivisi evitando le ridondanze 
+
+L'ipertesto costituito dall'insieme di tutte le pagine presenti su internet viene denominato World Wide Web, rete estesa al mondo intero. 
+Bisogna distinguere tra internet e WWW. La parola internet è ulteriormente ambigua poiché il nome del protocol Internet Protocol e l'insieme dei protocolli Internet Protocol Suite. 
+Inoltre si riferisce alla struttura fisica, ma spesso si riferisce a tutti i servizi disponibili in questo ambiente distribuito. 
+Mentre WWW si riferisce alla rete logica costituita dalle pagine web e dai loro hyperlink, queste costituiscono solo uno dei servizi offerti dall'internet. 
+
+
+HTML è un linguaggio di ``markup'', è un linguaggio che codifica delle informazioni tramite marcatori. Un linguaggio di marcatura ha senso quando si vuole rappresentare 
+un'informazione che può essere strutturata in termini sequenziali. 
+
+Si possono identificare linguaggi di marcatura fisica o logica. I linguaggi della struttura fisica descrive dettagliatamente come apparirà il testo formattato. 
+Queste ha una filosofia WYSIWYG, ``What You See Is What You Get''. Si vuole poter descrivere testi per schermi di dimensione e 
+
+
+Linguaggi di marcatura logica o semantica descrive il significato strutturale degli oggetti da formattare con una filosofia WYGIWYM, ``What You Get Is What You Mean''. 
+
+HTML usa una marcatura logica e permette di realizzare pagine web senza doversi preoccupare delle caratteristiche del dispositivo sul quale quel testo sarà offerto in 
+consultazione. 
+Ogni marcatore in HTML viene identificato all'interno di parentesi acute \verb|< ... >|. I marcatori di fine formattazione hanno uno slash prima della parentesi angolata 
+aperta \verb|</ ... >|. Alcuni marcatori ammettono valori dopo un uguale. 
+I commenti hanno una forma \verb|<!-- ... --->|.
+Le parentesi angolate non sono quindi disponibili come caratteri si utilizzano caratteri speciali per indicare questi caratteri che non possono essere scritti 
+direttamente. Iniziano con \verb|&| o \verb|;|:
+\begin{itemize}
+    \item \verb|&lt|: \verb|<|;
+    \item \verb|&gt|: \verb|>|;
+    \item \verb|&amp|: \verb|&|;
+    \item \verb|&_grave|: lettera \verb|_| con accento grave. 
+\end{itemize} 
+
+Esistono marcatori meta che non necessariamente servono per la formattazione, ma possono inserire marcatori per identificare certe parole all'interno della pagina. 
+
+Un file HTML viene strutturato all'interno del marcatore \verb|<html> ... </html>| e si può dividere in due sezioni \verb|<head> ... </head>| che contiene informazioni relative all'intera pagina, 
+e \verb|<body> ... </body>| che contiene descrizioni relative agli oggetti da visualizzare nella pagina. 
+Nell'intestazione si può trovare il titolo con \verb|<title> ... </title>|, metadati \verb|<meta ... = ... >|
+
+Si può formattare il testo con i seguenti marcatori:
+\begin{itemize}
+    \item \verb|<center> ... </center>|: Centratura;
+    \item \verb|<h1> ... </h1>|: Titolo;
+    \item \verb|<h2> ... </h2>|: Sottotitolo;
+    \item \verb|<b> ... </b>|: \textbf{Bold};
+    \item \verb|<i> ... </i>|: \textit{Italic};
+    \item \verb|<u> ... </u>|: \underline{Sottolineato};
+    \item \verb|<blink> ... </blink>|: Lampeggiante. 
+\end{itemize}
+
+
+Si definiscono ancore con il marcatore \verb|<a> ... </a>|, in base all'attributo si possono creare hyperlink con \verb|href|, un ancora di un punto di arrivo con \verb|name|. 
+Si possono inserire hyperlink ad una posizione nella stessa pagina oppure ad un'ulteriore pagina. 
+
+Si possono inserire immagini con \verb|<img src="URL">|, a capi di un paragrafo \verb|<p>| o break \verb|<br>|, linee orizzontali \verb|<hr>| di cui si può modificare 
+lo spessore con \verb|size=...|. Si può colore del font con \verb|<font color=...></font>|. 
+Si possono realizzare liste non ordinate:
+\begin{minted}{html}
+    <ul>
+        <li> ...
+        <li> ...
+    </ul>
+\end{minted}
+Oppure ordinate:
+\begin{minted}{html}
+    <ol>
+        <li> ...
+        <li> ...
+    </ol>
+\end{minted}
+
+Si possono definire tabelle con:
+\begin{minted}{html}
+    <table>
+    <table border=...>
+    <tr> ... </tr> <!-- inizio-fine linea-->
+    <td> ... </td> <!-- inizio-fine cella-->
+    <th> ... </th> <!-- titolo cella-->
+    </table>
+\end{minted}
+
+Si possono definire ulteriori marcatori ed estensioni, ma se il browser non conosce il marcatore non produce errore, ma semplicemente lo ignora. 
+HTML è un linguaggio estremamente basilare che si è evoluto nel tempo, attualmente siamo alla versione HTML 5. 
+Il codice HTML viene scandito riga per riga, partendo dall'alto ed eventualmente viene formattata la pagina. HTML viene spesso accompagnato da altre tecnologie come 
+javascript o CSS, ``Cascading Style Sheets'', fogli di stile, elementi di formattazione che possono essere utilizzati epr rendere la pagina al meglio. 
 
 \end{document}
