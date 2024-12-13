@@ -53,7 +53,6 @@ Università degli Studi ``Roma Tre"}}
 
 \maketitle
 \thispagestyle{link}
-
 \clearpage
 
 
@@ -65,8 +64,10 @@ Università degli Studi ``Roma Tre"}}
 
 \tableofcontents
 
+
 \clearpage
 \pagenumbering{arabic}
+
 
 %% TODO acronimi maiuscolo/minuscolo
 
@@ -664,7 +665,9 @@ dnsit e 192.168.0.2 per dnsnet.
 
 Sono presenti configurazioni analoghe per lo SOA delle altre zone %% TODO 
 
+\subsection{Laboratorio del 13 Dicembre}
 
+%% TODO add esercitazione
 
 
 \clearpage
@@ -2086,5 +2089,130 @@ Si possono definire ulteriori marcatori ed estensioni, ma se il browser non cono
 HTML è un linguaggio estremamente basilare che si è evoluto nel tempo, attualmente siamo alla versione HTML 5. 
 Il codice HTML viene scandito riga per riga, partendo dall'alto ed eventualmente viene formattata la pagina. HTML viene spesso accompagnato da altre tecnologie come 
 javascript o CSS, ``Cascading Style Sheets'', fogli di stile, elementi di formattazione che possono essere utilizzati epr rendere la pagina al meglio. 
+
+\subsection{URL ed il Protocollo HTTP}
+
+Prima di descrivere il protocollo HTTP, bisogna descrivere l'URL, ``Uniform Resource Locator'', o l'URI, ``Uniform Resource Identifier''. Poiché in internet c'è la differenza 
+tra lar risorsa e la sua posizione. 
+
+Un URL rappresenta una rappresentazione testuale e compatta di una risorsa disponibile, in modo sintetico realizzata da uno schema, ed una parte dipendente dallo schema, 
+separati dal separatore \verb|:|. 
+Lo schema descrive il tipo di schema, e la parte seguente la individua secondo le caratteristiche di un dato schema. Tipicamente lo schema è \verb|http| o \verb|https|, 
+questi sono sia risorse che protocolli per acquisire risorse. Schemi come \verb|file| sono risorse presenti sul proprio calcolatore. 
+
+%% TODO add schemi
+
+
+Alcuni schemi utilizzano la stessa sintassi per la parte dipendente, questa sintassi si chiama ``Common Internet Scheme Syntax'', CISS. SI utilizza un doppio slash iniziale 
+seguito da un campo con l'userid e la password seguita da una chiocciola, ma questo è molto raramente utilizzato negli URL moderni. 
+Il secondo campo dopo la chiocciola corrisponde all'indirizzo dell'host, il suo numero IP, o ad una stringa identificativa di questo indirizzo sull'internet. 
+Il campo successivo specificato dopo \verb|:| indica la porta dove è disponibile quella risorsa, si suppone la risorsa sia un livello quattro che dispone di porte, 
+questa può essere omessa, ed in caso venga omessa si utilizza una porta di quelle note, associate a protocolli HTTP, come la porta 80. L'ultimo campo individua un file 
+all'interno del filesystem, del server con \verb|/| seguito dall'indirizzo del file. Alcuni sistemi presentano variazioni nella sintassi di questo campo, come HTTP e 
+HTTPS. 
+Questo identifica una risorsa, tipicamente attraverso l'indirizzo dell'host, ma l'indirizzo IP ha anche il ruolo di locazione, quindi è possibile localizzare la 
+risorsa dato l'IP. 
+
+%% TODO img schema e parte dipendente verb (?)
+
+Quando un browser deve accedere ad una risorsa individuata da un URL etra i campi di indirizzi e la porta, se non è specificata utilizza la porta 80, per il protocollo 
+HTTP. Questo lavoro lo effettua qualsiasi applicazione che tenta di accedere a duna risorsa. 
+Il campo userid e password vengono utilizzati per gestire un colloquio con il server, senza coinvolgere l'utente. In coda al path può esserci una stringa preceduta dal 
+carattere \verb|#| per individuare la posizione all'interno della pagina HTML, utilizzata dal client e non inviata al server. 
+Mentre una stringa preceduta da \verb|?| viene inviata al server, per specificare parametri o altre opzioni. 
+
+Il protocollo HTTP, ``HyperText Transfer Protocol'', è stato progettato come un protocollo di livello applicativo per realizzare sistemi distribuiti, basati su 
+ipertesti, anche se da molto non è più esclusivo per HTML. 
+
+
+HTTP venne inventato da Tim Bernes-Lee, un ricercatore del CERN nel 1989, e da HTTP/3, nel progetto QUIC, c'è una variazione molto grande rispetto alle reti 
+precedenti, con lo standard RFC 9114. 
+
+
+Una sessione di HTTP/1.0 è composta da quattro fasi di apertura, richiesta, risposta e chiusura. Nel codice del server è stato specificato ad un processo di ascoltare 
+sulla porta 80, oppure una porta specificata per ascoltare eventuali richieste di connessione. Un cliente quindi puà effettuare una connessione TCP con questa 
+porta TCP del server. Una volta instaurata una connessione TCP viene inviata una richiesta al server, un pacchetto HTTP di richiesta al server con la specifica della 
+risorsa alla quale si vuole accedere. Il server poi restituisce la risorsa, tipicamente un file, contenente una descrizione HTML di una pagina che si vuole visualizzare. 
+Dopo aver terminato la trasmissione, il server chiude la connessione TCP. 
+Avviene quindi un singolo scambio client-server in ogni sessione, questa sezione è completamente stateless. 
+
+Nella richiesta viene specificato uno di possibili metodi tra questi seguenti:
+\begin{itemize}
+    \item \verb|GET|: Richiede la risorsa indicata;
+    \item \verb|POST|: Invia dati alla risorsa indicata;
+    \item \verb|HEAD|: Chiede informazioni sulla risorsa indicata;
+    \item \verb|PUT|: Copia dei dati inviati sulla risorsa con una sostituzione di file;
+    \item \verb|DELETE|: Richiede la cancellazione della risorsa:
+    \item \verb|OPTIONS|: RIchiede di conoscere le opzioni disponibili per il trasferimento della risorsa specificata. 
+\end{itemize}
+
+
+Un pacchetto HTTP è strutturato da un'intestazione composta da un metodo, risorsa e versione di protocollo 
+seguita da informazioni aggiuntive. Una riga vuota quindi divide l'intestazione dal corpo del pacchetto dove sono presenti i dati. 
+%% TODO add ??
+Questi sono pacchetti di richiesta, pacchetti di risposta hanno nell'intestazione la versione, ed in linguaggio naturale il codice e la spiegazione per 
+il codice. 
+Questi codici di stato possono essere positivi, di tipo \verb|2xx| o \verb|3xx| oppure negativi \verb|4xx| o \verb|5xx|. Non è necessario conoscere questi codici di 
+risposta poiché nel pacchetto è presente un campo testuale contenente la spiegazione del codice. 
+I codici di risposta sono tipicamente sempre leggibili, per molti protocolli che definiti da standard RFC. 
+
+Nelle versioni successive i pacchetti vengono inviati allo stesso modo, ciò che ca,bia sono le informazioni addizionali. 
+Possono essere presenti alcuni campi di richiesta:
+\begin{itemize}
+    \item \verb|accept-charset|: Insieme di caratteri accettabili;
+    \item \verb|cookie|: Un cookie inviato precedentemente dal server;
+    \item \verb|content-length|: Lunghezza in byte del corpo;
+    \item \verb|host|: Il domain name del server e il numero di port TCP, utile per servire vari domini sullo stesso server. 
+\end{itemize}
+
+Su uno stesso server possono essere presenti servizi diversi, si utilizza il campo \verb|host| per specificare a quale di questi si vole accedere. 
+Ulteriori campi di richiesta
+\begin{itemize}
+    \item 
+\end{itemize}
+
+%% TODO ...
+
+Alcuni campi di risposta sono \verb|ETag|, questo è un identificatore assegnato da un server ad una specifica risorsa, può essere generato da una funzione hash. Può 
+offrire informazioni aggiuntive rispetto ad un semplice valore temporale. 
+Un altro di questi capi di risposta è \verb|set-cookie| questo contiene un cookie HTTP. 
+Un cookie è un dato spedito dal server e memorizzato nel client, viene re-inviato dal client al server ogni volta che accede a certe risorse, definite dallo scope del cookie. 
+Viene usato per gestire uno stato nelle sessioni HTTP. Il server può quindi riconoscere attività precedenti dello stesso client. 
+L'applicazione più evidente è quella dell'autenticazione degli accessi ad un server, questo cookie permettere al server di identificare lo stesso client, quindi attribuisce 
+i diritti per poter eseguire le operazioni successive. 
+Può anche permettere di tracciare le pagine visitate, da uno stesso utente. Un cookie può essere utilizzato anche da altri servizi nonostante non sia stato rilasciato per 
+un certo sito. Nell'EU all'accesso di un sito, questo è obbligato di specificare il motivo dei cookie che vengono utilizzati, il loro scopo o finalità, ed il modo in cui 
+vengono salvati e mantenuti nel tempo. Inoltre è possibile accedere comunque al sito senza accettare all'utilizzo dei cookie. 
+
+Il protocollo HTTP 1.1 permette di effettuare diverse sessioni sulla stessa 
+connessione TCP, ma questo dipende comunque dal server. 
+
+Questa possibilità è particolarmente importante se insieme a HTTP e TCP si 
+utilizza un protocollo per rendere sicure le connessioni. Attualmente si utilizza il 
+protocollo TLS; ``Transport Layer Security'', dopo l00instaurazione della 
+connessione TPC i due host si scambiano informazioni per mantenere la sicurezza delle connessioni. Quindi all'instaurazione della connessione TCP si effettua uno 
+scambio per determinare il protocollo di sicurezza utilizzato. Questo permette di offuscare i pacchetti trasmessi tra queste due macchine mantenendo la connessione 
+persistente. 
+Se fosse possibile effettuare una singola connessione TCP per ogni richiesta verrebbero scambiati 7 pacchetti di apertura-chiusura per una singola sessione. 
+
+HTTP quindi rappresenta una sequenza di transizioni richiesta-risposta tra un client ed un server, tipicamente originate da un singolo utente, per accedere 
+a risorse tra loro correlate. 
+
+Se si usano HTTP e TLS separatamente è opzionale l'utilizzo di TLS, mentre il protocollo HTTPS presenta l'utilizzo obbligatorio del protocollo di sicurezza 
+TLS. Cambia anche la porta di ascolto nota e diventa la porta 443. 
+
+%% TODO add http/2
+
+HTTP/3 invece utilizza un ulteriore protocollo di trasporto chiamato QUIC e non TCP. QUIC utilizza pacchetti UPD, basato su implementazioni nell'user-space e quindi 
+non sono legate all'aggiornamento del sistema operativo. 
+Si intreccia quindi l'evoluzione dei protocolli di trasporto e l'evoluzione di HTTP. 
+Questo rappresenta un fenomeno di evoluzione molto recente. 
+
+In QUIC il three-way-handshake è mescolato con l'handshake del protocollo TLS 1.3, con un minore overhead della connessione. Per utilizzare questo protocollo, 
+anche il server deve poterlo utilizzare, se il server è di Google allora non ci sono problemi, poiché questo protocollo è stato introdotto da Google. Se il 
+server non appartiene a Google, allora è possibile che utilizzi il protocollo QUIC, circa il 20\% dei siti Web utilizza il protocollo HTTP/3, mentre tutti i 
+browser lo utilizzano, perché vogliono offrire sempre migliori prestazioni. 
+
+
 
 \end{document}
