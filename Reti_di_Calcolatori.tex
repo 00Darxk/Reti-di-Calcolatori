@@ -2213,6 +2213,102 @@ anche il server deve poterlo utilizzare, se il server è di Google allora non ci
 server non appartiene a Google, allora è possibile che utilizzi il protocollo QUIC, circa il 20\% dei siti Web utilizza il protocollo HTTP/3, mentre tutti i 
 browser lo utilizzano, perché vogliono offrire sempre migliori prestazioni. 
 
+\clearpage
+
+\section{Posta Elettronica}
+
+La descrizione di questo servizio web consiste nel definire un criterio per la sua progettazione, utilizzato per realizzare nuovi servizi o modificarne di esistenti. 
+La progettazione è divisa in quattro fasi, un'analisi dei requisiti, definendo le caratteristiche dei servizi. La specifica delle primitive del servizio, che rappresenta la sua interfaccia. 
+Definizione dell'architettura e delle operazioni, e la definizione dei protocolli per ogni tipo di comunicazione, bisogna definire la struttura delle PDU, degli stati e delle procedure del protocollo. 
+
+I servizi di posta elettronica possono essere forniti da ISP, aziende come Google, che offrono altri servizi web. 
+
+
+Si effettua in seguito un'analisi dei requisiti di progettazione per un servizio di posta elettronica. 
+Un servizio di posta deve poter gestire messaggi in partenza ed in arrivo, spedire e ricevere messaggi ad uno o più 
+destinatari. Richiede ri preservare la riservatezza dei dati, e si vuole avere una certezza sulla consegna, è anche possibile avere una consegna 
+differita nel tempo, per garantire la consegna. Quest'approccio duale rispetto ad altri servizi web. 
+Si vuole che la configurazione sia poco onerosa da parte degli utenti finali con un'interfaccia utente 
+elementare ed intuitiva. 
+
+
+Definiti i requisiti si definiscono delle primitive di servizio offerte agli utenti, per i messaggi in partenza:
+\begin{itemize}
+    \item Composizione di un messaggio;
+    \item Memorizzazione di un messaggio;
+    \item Cancellazione di un messaggio;
+    \item Caricamento di un messaggio. 
+\end{itemize}
+Per i messaggi ricevuti:
+\begin{itemize}
+    \item Lettura dei messaggi;
+    \item Memorizzazione di un messaggio;
+    \item Cancellazione del messaggio;
+    \item Stampa di un messaggio. 
+\end{itemize}
+
+
+
+Queste sono le primitive di base per poter almeno gestire la posta elettronica. 
+Per progettare un servizio bisogna effettuare un'analisi dei requisiti e definire su di questi una serie di primitive di servizio. Dopo queste due fasi bisogna 
+definire l'architettura del servizio. 
+
+
+Si considera l'architettura odierna della posta elettronica, descrivendo ulteriori architetture non realizzabili valutando variazioni. Si considera un possibile architettura realizzata da una connessione diretta tra il mittente ed il destinatario. Sono quindi presenti due processi su questi due host, attivi, che devono poter ascoltare e inviare dati su una connessione, potrebbero utilizzare TCP. Per definire la porta di ascolto si potrebbe definire uno standard globale, su una porta ben nota alla definizione dell'architettura. 
+Questo approccio è molto semplice, il messaggio viene recapitato in tempo reale e si ha anche la certezza della consegna, basata sull'affidabilità di TCP. 
+Ma il mittente non può spedire il messaggio se il processo sul destinatario non è attivo, quindi non rappresenta un'implementazione realizzabile. Inoltre il mittente si deve ricordare il nome della macchina del destinatario, può essere il nome del DNS o dell'indirizzo IP, ma questo deve essere noto per poter instaurare la connessione. 
+Questo stesso approccio non è ragionevole per molti servizi basati sulle reti. Inoltre non viene definito come il destinatario viene autenticato, poiché viene riconosciuto solamente dalla macchina. 
+
+Si considera quindi una variante dove un server intermedio disaccoppia le due macchine host, questo server rappresenta il dominio del destinatario, ovvero un nodo dell'albero del namespace. 
+Si ipotizza di legare i destinatari a domini di internet, sotto qualche forma. Questo server di ricezione deve essere ben noto. 
+I processi di invio e ricezione sono disaccoppiati, ed il destinatario può essere autenticato dal server, dove sono presenti servizi di autenticazione. Il mittente non deve ricordare la specifica macchina del destinatario, ma solamente il dominio. 
+Ma questo server può essere impegnato, guasto o sovraccarico in un certo istante e questo non garantisce di ricevere il messaggio dal server. Se dopo aver inviato il messaggio il processo del mittente può essere chiuso e quindi il messaggio non è in grado di arrivare al server. Poiché non si ha autorità sulla gestione del server. 
+
+L'architettura moderna contiene un serve mittente per memorizzare il messaggio, con funzione di inoltro, e molti server duplicati, definendone uno primario ed altri 
+ausiliari. In questo modo se il primo server non è raggiungibile si può tentare di raggiungere uno dei server primari, per inoltrare il messaggio al destinatario. 
+
+Questa rappresenta un'architettura diversa da quella che is potrebbe aspettare. Bisogna quindi specificare come si definiscono indirizzi di posta elettronica, in rifermento a questa architettura. Una prima parte dell'indirizzo identifica un'entità che riceve il messaggio, ed una seconda parte per definire il dominio dell utente, dopo un \verb|@|, per ricavare il server che deve ricevere il messaggio. 
+
+La prima applicazione coinvolta nel servizio si chiama MUA, ``Mail User Agent'' e viene mandato in esecuzione quando si vuole accedere al servizio di posta elettronica. L'utente può chiudere questa applicazione quando lo ritiene opportuno e viene chiamata anche mailer. 
+L'applicazione MTA, ``Mail Transmission Agent'', al contrario della MUA, il MTA è accessibile in modo stabile nle tempo, poiché si trova su di un server di inoltro per permettere al messaggio di essere trasmesso da una sorgente ad una destinazione. 
+
+Esempi di MUA sono applicazioni Desktop come Mozilla Thunderbird o Microsoft Outlook, altri servizi si basano sul web che trasformano il browser in un MUA, come Gmail, a cui bisogna però autenticarsi sul browser. Sono inoltre disponibili molte applicazioni mobile Android ed iOS. 
+
+MUA e MTA sono applicazioni, che vengono eseguite su delle macchine, quelle che ospitano gli MTA sono dei server che possono avere diversi ruoli nell'architettura appena definita. Un primo tipo di server si chiama OMS, ``Outgoing Main Server'', alla quale MTA si riferisce direttamente il processo MUA del mittente. 
+Un server di tipo ``Mail eXchanger'', per ogni dominio DNS infatti esiste una lista di host, in ordine di priorità che ospitano gli MTA incaricati di ricevere posta per quel dominio. 
+Un ulteriore server chiamato ``Incoming Mail Server'' è il serve che contiene la MTA che comunica direttamente con la MUA del destinatario, generalmente coincide con il Mail eXchanger primario del dominio. 
+
+Si vuole che l'utente possa configurare facilmente il servizio della posta elettronica. In quest'architettura l'utente deve ricordarsi semplicemente due server, il suo MUA si riferisce infatti ad un Outgoing Mail Server ed un Incoming Mail Server. Questi server invece di specificarli con un indirizzo IP si possono specificare con un nome, in modo che se dovesse cambiare l'indirizzo IP della macchina non sarebbe necessario modificare il servizio. 
+
+Le MTA ospitate sull'Outgoing Mail Server sono suddivise in due processi chiamate MSA, ``Message Submission Agent'', quello a cui si rivolge la MUA per spedire la posta, ed il secondo è il vero e proprio MTA che cura la spedizione al MTA del dominio del destinatario. Lo stesso avviene per un IMS, dove esiste sempre un processo MTA, ed un ulteriore processo MDA, ``Mail Delivery Agent'', responsabile del recapito all'utente. 
+
+
+Definita l'architettura si definiscono una serie di azioni, a più livelli di dettaglio, scomposte in varie operazioni. Tutte le primitive di gestione dei messaggi in partenza e dei messaggi ricevuti 
+sono delegati al MUA. Quando l'utente richiede il salvataggio della MUA, quando l'utente richiede il salvataggio del messaggio, il MUA accede al file system locale, per salvare la nuova mail, in caso non esista, accodandola al file delle mail salvate, con il rispettivo testo. 
+
+Quando si spedisce un messaggio il MUA invia il messaggio al suo OMS, che cerca il Mail eXchanger del dominio del destinatario utilizzando il DNS, se il primario non è disponibile si rivolge al secondario, richiedendo al proprio serve primario la lista dei MX del dominio destinazione, in ordine di priorità, tentando di trasmettere il messaggio ad intervalli regolari. Se fallisce per tre giorni consecutivi viene notificato l'utente del fallimento. Se viene inviato ad un MX secondario, questo tenta ad intervalli regolari di inviare i messaggi salvati al MX primario. 
+
+Sono presenti anche servizi ausiliari, ovvero il DNS, senza il quale la posta elettronica non funzionerebbe, inoltre è necessario un File System distribuito, il server deve poter accedere ai file delle mail tramite un sistema per il File System distribuito, poiché potrebbero non trovarsi sullo stesso server. 
+
+Esiste un comando chiamato \verb|dig| che permette, sulle macchine Linux, di comportarsi come resolver, nel mondo Windows è presente un comando analogo chiamato \verb|nslookup|, che fornisce record MX. In questo modo è possibile ottenere le informazioni relative ai server ed i loro indirizzi IPv4. Utilizzando questo comando bisogna specificare ulteriori parametri per leggere i record MX, e specificare l'indirizzo. Questo va effettuato anche con il comando \verb|dig| specificando dopo la flag \verb|-f| il tipo di record che si vuole leggere e l'indirizzo corrispondente. 
+
+
+Dato un MUA configurato per spedire mail bisogna conoscere l'indirizzo IP dell'OMS, questo si ottiene specificando un nome ed invocando un DNS, questo effettua la risoluzione dell'indirizzo, e rappresenti il primo punto di contatto tra la posta elettronica ed il DNS, mentre un punto di contatto diverso rappresenta l'OMS che notifica al DNS di voler conoscere l'indirizzo MX del destinatario. Questa seconda operazione infatti non rappresenta una risoluzione canonica. Il messaggio viene inviato dall'OMS al MX relativo all'IMS del destinatario. 
+Il MX e l'IMS comunicano tra di loro tramite una memoria di massa condivisa sulla quale può scrivere il MX e leggere l'IMS. 
+
+
+Si possono distinguere due tipi di flussi di informazione, tra il primo MUA e l'MTA dell'OMS, che si trasmettono messaggi fino a quando non arrivano al MX primario del destinatario. 
+Questo primo flusso di informazione è realizzato da un client che intende trasferire uno o più messaggi, tramite un servizio che il server potrebbe accettare o rifiutare di concedere il servizio. 
+Non occorre autenticare gli interlocutori poiché o entrambi hanno i privilegi di amministratore, oppure uno di essi non è il mittente, e non si considera cruciale assicurarsi che il mittente corrisponda a quanto dichiarato. Poiché l'IMS ed il MX sono due macchine associate a compagnie diverse e non sarebbe realizzabile permettere a tutti i possibili OMS le autenticazioni del server MX, analogamente per il riferimento ad utenti che inviano messaggi da spedire ai proprio OMS. 
+Si suppone non ci sia una verifica di autenticazione in questo passaggio, e questo è la causa dello spam che invade la posta elettronica. 
+
+
+Mentre l'ultimo passaggio dall'IMS dal destinatario probabilmente è realizzato da un'interazione di richieste e risposte, e sembra essere intrinsecamente più complicato. Utilizza quindi un protocollo più articolato. 
+Il client si informa sul numero e la dimensione dei messaggi contenuti nel server, e destinati allo specifico utente. In questo passaggio l'autenticazione è indispensabile, e si possono trasferire o non trasferire messaggi. 
+Chi utilizza questi messaggi si deve autenticare poiché consente di leggere solo i messaggi espressamente indirizzati all'utente con le opportune credenziali. 
+
+
+
 
 
 \end{document}
