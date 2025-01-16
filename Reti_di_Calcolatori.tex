@@ -2018,7 +2018,7 @@ Possono essere presenti alcuni campi di richiesta:
 \end{itemize}
 Alcuni campi di risposta sono:
 \begin{itemize}
-    \item \verb|ETag|: Un identificatore assegnato da un \textit{server} ad una specifica versione della risorsa, può essere ottenuto con una funzione di \textit{has};
+    \item \verb|ETag|: Un identificatore assegnato da un \textit{server} ad una specifica versione della risorsa, può essere ottenuto con una funzione di \textit{hash};
     \item \verb|set-cookie|: Un \textit{cookie} \textcolor{NavyBlue}{HTTP}. 
 \end{itemize}
 Il \textit{server} può 
@@ -2063,17 +2063,15 @@ anche il \textit{server} deve poterlo utilizzare, sicuramente supportato da \tex
 
 \section{Posta Elettronica}
 
-La descrizione di questo servizio web consiste nel definire un criterio per la sua progettazione, utilizzato per realizzare nuovi servizi o modificarne di esistenti. 
-La progettazione è divisa in quattro fasi, un'analisi dei requisiti, definendo le caratteristiche dei servizi. La specifica delle primitive del servizio, che rappresenta la sua interfaccia. 
-Definizione dell'architettura e delle operazioni, e la definizione dei protocolli per ogni tipo di comunicazione, bisogna definire la struttura delle PDU, degli stati e delle procedure del protocollo. 
+La descrizione di questo servizio \textit{web} offre la definizione di un criterio per la progettazione o modifica di servizi. 
+La progettazione è divisa in quattro fasi, un'analisi dei requisiti, definendo le caratteristiche dei servizi. La specifica delle primitive del servizio, che rappresenta la sua interfaccia. La definizione dell'architettura e delle operazioni, definizione delle applicazioni coinvolte nella sua gestione, eventuali ambienti di supporto e le operazioni dei flussi di informazione. Laa definizione dei protocolli per ogni tipo di comunicazione, bisogna definire la struttura delle \textcolor{Brown}{pdu}, degli stati e delle procedure del protocollo. Non verrà trattato il dimensionamento o la dislocazione del servizio sulla rete. 
 
-I servizi di posta elettronica possono essere forniti da \textcolor{teal}{ISP}, aziende come Google, che offrono altri servizi web. 
+I servizi di posta elettronica possono essere forniti da \textcolor{teal}{ISP}, aziende come Google, che offrono molti servizi \textit{web}. 
 
 
-Si effettua in seguito un'analisi dei requisiti di progettazione per un servizio di posta elettronica. 
 Un servizio di posta deve poter gestire messaggi in partenza ed in arrivo, spedire e ricevere messaggi ad uno o più 
-destinatari. Richiede ri preservare la riservatezza dei dati, e si vuole avere una certezza sulla consegna, è anche possibile avere una consegna 
-differita nel tempo, per garantire la consegna. Quest'approccio duale rispetto ad altri servizi web. 
+destinatari. Richiede di preservare la riservatezza dei dati, e si vuole avere una certezza sulla consegna, è anche possibile avere una consegna 
+differita nel tempo, per essere garantita. Quest'approccio duale rispetto ad altri servizi \textit{web}. 
 Si vuole che la configurazione sia poco onerosa da parte degli utenti finali con un'interfaccia utente 
 elementare ed intuitiva. 
 
@@ -2094,63 +2092,92 @@ Per i messaggi ricevuti:
 \end{itemize}
 
 
-
-Queste sono le primitive di base per poter almeno gestire la posta elettronica. 
-Per progettare un servizio bisogna effettuare un'analisi dei requisiti e definire su di questi una serie di primitive di servizio. Dopo queste due fasi bisogna 
+Queste sono le primitive di base per poter almeno gestire la posta elettronica. Dopo queste due fasi bisogna 
 definire l'architettura del servizio. 
 
 
-Si considera l'architettura odierna della posta elettronica, descrivendo ulteriori architetture non realizzabili valutando variazioni. Si considera un possibile architettura realizzata da una connessione diretta tra il mittente ed il destinatario. Sono quindi presenti due processi su questi due \textit{host}, attivi, che devono poter ascoltare e inviare dati su una connessione, potrebbero utilizzare \textcolor{Bittersweet}{TCP}. Per definire la porta di ascolto si potrebbe definire uno standard globale, su una porta ben nota alla definizione dell'architettura. 
+Si considera l'architettura odierna della posta elettronica, descrivendo ulteriori architetture non realizzabili valutando variazioni. Si considera una possibile architettura realizzata da una connessione diretta tra il mittente ed il destinatario. Sono quindi presenti due processi su questi due \textit{host}, attivi, che devono poter ascoltare e inviare dati su una connessione, potrebbero utilizzare \textcolor{Bittersweet}{TCP}. Per definire la porta di ascolto si potrebbe definire uno standard globale, su una porta ben nota alla definizione dell'architettura. 
 Questo approccio è molto semplice, il messaggio viene recapitato in tempo reale e si ha anche la certezza della consegna, basata sull'affidabilità di \textcolor{Bittersweet}{TCP}. 
 Ma il mittente non può spedire il messaggio se il processo sul destinatario non è attivo, quindi non rappresenta un'implementazione realizzabile. Inoltre il mittente si deve ricordare il nome della macchina del destinatario, può essere il nome del \textcolor{Mahogany}{DNS} o dell'indirizzo \textcolor{Bittersweet}{IP}, ma questo deve essere noto per poter instaurare la connessione. 
 Questo stesso approccio non è ragionevole per molti servizi basati sulle reti. Inoltre non viene definito come il destinatario viene autenticato, poiché viene riconosciuto solamente dalla macchina. 
 
-Si considera quindi una variante dove un \textit{server} intermedio disaccoppia le due macchine \textit{host}, questo \textit{server} rappresenta il dominio del destinatario, ovvero un nodo dell'albero del namespace. 
+Si considera quindi una variante dove un \textit{server} intermedio disaccoppia le due macchine \textit{host}, questo \textit{server} rappresenta il dominio del destinatario, ovvero un nodo dell'albero del \textit{namespace}. 
 Si ipotizza di legare i destinatari a domini di \textit{internet}, sotto qualche forma. Questo \textit{server} di ricezione deve essere ben noto. 
 I processi di invio e ricezione sono disaccoppiati, ed il destinatario può essere autenticato dal \textit{server}, dove sono presenti servizi di autenticazione. Il mittente non deve ricordare la specifica macchina del destinatario, ma solamente il dominio. 
-Ma questo \textit{server} può essere impegnato, guasto o sovraccarico in un certo istante e questo non garantisce di ricevere il messaggio dal \textit{server}. Se dopo aver inviato il messaggio il processo del mittente può essere chiuso e quindi il messaggio non è in grado di arrivare al \textit{server}. Poiché non si ha autorità sulla gestione del \textit{server}. 
+Ma questo \textit{server} può essere impegnato, guasto o sovraccarico in un certo istante e questo non garantisce di ricevere il messaggio dal \textit{server}. Dopo aver inviato il messaggio infatti il processo del mittente può essere chiuso e quindi il messaggio non è in grado di arrivare al \textit{server}. Poiché non si ha autorità sulla gestione del \textit{server}. 
 
-L'architettura moderna contiene un serve mittente per memorizzare il messaggio, con funzione di inoltro, e molti \textit{server} duplicati, definendone uno primario ed altri 
-ausiliari. In questo modo se il primo \textit{server} non è raggiungibile si può tentare di raggiungere uno dei \textit{server} primari, per inoltrare il messaggio al destinatario. 
+L'architettura moderna contiene un \textit{server} mittente per memorizzare il messaggio, con funzione di inoltro, e molti \textit{server} duplicati, definendone uno primario ed altri 
+ausiliari, in ricezione. In questo modo se il primo \textit{server} non è raggiungibile si può tentare di raggiungere uno dei \textit{server} secondari, per inoltrare il messaggio al destinatario. 
 
-Questa rappresenta un'architettura diversa da quella che \textcolor{Emerald}{is} potrebbe aspettare. Bisogna quindi specificare come si definiscono indirizzi di posta elettronica, in rifermento a questa architettura. Una prima parte dell'indirizzo identifica un'entità che riceve il messaggio, ed una seconda parte per definire il dominio dell utente, dopo un \verb|@|, per ricavare il \textit{server} che deve ricevere il messaggio. 
+Questa rappresenta un'architettura diversa da quella che si potrebbe aspettare. Bisogna quindi specificare come si definiscono indirizzi di posta elettronica, in rifermento a questa architettura. Una prima parte dell'indirizzo identifica un'entità che riceve il messaggio, ed una seconda parte definisce il dominio dell'utente, dopo una chiocciola \verb|@|, per ricavare il \textit{server} che deve ricevere il messaggio. 
 
-La prima applicazione coinvolta nel servizio si chiama MUA, ``Mail User Agent'' e viene mandato in esecuzione quando si vuole accedere al servizio di posta elettronica. L'utente può chiudere questa applicazione quando lo ritiene opportuno e viene chiamata anche mailer. 
-L'applicazione MTA, ``Mail Transmission Agent'', al contrario della MUA, il MTA è accessibile in modo stabile nle tempo, poiché si trova su di un \textit{server} di inoltro per permettere al messaggio di essere trasmesso da una sorgente ad una destinazione. 
+La prima applicazione coinvolta nel servizio si chiama MUA, \textit{Mail User Agent} e viene mandata in esecuzione quando si vuole accedere al servizio di posta elettronica. L'utente può chiudere questa applicazione quando lo ritiene opportuno, viene chiamata anche \textit{mailer}. 
+L'applicazione MTA, \textit{Mail Transmission Agent}, al contrario della MUA, è accessibile in modo stabile nel tempo, poiché si trova su di un \textit{server} di inoltro per permettere al messaggio di essere trasmesso da una sorgente ad una destinazione. 
 
-Esempi di MUA sono applicazioni Desktop come Mozilla Thunderbird o Microsoft Outlook, altri servizi si basano sul web che trasformano il browser in un MUA, come Gmail, a cui bisogna però autenticarsi sul browser. Sono inoltre disponibili molte applicazioni mobile Android ed iOS. 
+Esempi di MUA sono applicazioni Desktop come Mozilla Thunderbird o Microsoft Outlook, altri servizi si basano sul \textit{web} che trasformano il browser in un MUA, come Gmail, a cui bisogna però autenticarsi sul \textit{browser}. Sono inoltre disponibili molte applicazioni mobile Android ed iOS. 
 
-MUA e MTA sono applicazioni, che vengono eseguite su delle macchine, quelle che ospitano gli MTA sono dei \textit{server} che possono avere diversi ruoli nell'architettura appena definita. Un primo tipo di \textit{server} si chiama OMS, ``Outgoing Main Server'', alla quale MTA si riferisce direttamente il processo MUA del mittente. 
-Un \textit{server} di tipo ``Mail eXchanger'', per ogni dominio \textcolor{Mahogany}{DNS} infatti esiste una lista di \textit{host}, in ordine di priorità che ospitano gli MTA incaricati di ricevere posta per quel dominio. 
-Un ulteriore \textit{server} chiamato ``Incoming Mail Server'' è il serve che contiene la MTA che comunica direttamente con la MUA del destinatario, generalmente coincide con il Mail eXchanger primario del dominio. 
+MUA e MTA sono applicazioni, che vengono eseguite su delle macchine, quelle che ospitano gli MTA sono dei \textit{server} che possono avere diversi ruoli nell'architettura appena definita. Un primo tipo di \textit{server} si chiama OMS, \textit{Outgoing Main Server}, alla quale MTA si riferisce direttamente il processo MUA del mittente. 
+Un \textit{server} di tipo \textit{Mail eXchanger}, per ogni dominio \textcolor{Mahogany}{DNS} infatti esiste una lista di \textit{host}, in ordine di priorità che ospitano gli MTA incaricati di ricevere posta per quel dominio. 
+Un ulteriore \textit{server} chiamato \textit{Incoming Mail Server} contiene la MTA che comunica direttamente con la MUA del destinatario, generalmente coincide con il Mail eXchanger primario del dominio. 
 
-Si vuole che l'utente possa configurare facilmente il servizio della posta elettronica. In quest'architettura l'utente deve ricordarsi semplicemente due \textit{server}, il suo MUA si riferisce infatti ad un Outgoing Mail Server ed un Incoming Mail Server. Questi \textit{server} invece di specificarli con un indirizzo \textcolor{Bittersweet}{IP} si possono specificare con un nome, in modo che se dovesse cambiare l'indirizzo \textcolor{Bittersweet}{IP} della macchina non sarebbe necessario modificare il servizio. 
+Si vuole che l'utente possa configurare facilmente il servizio della posta elettronica. In quest'architettura l'utente deve ricordarsi semplicemente due \textit{server}, il suo MUA si riferisce infatti ad un OMS ed un IMS. Questi \textit{server} invece di specificarli con un indirizzo \textcolor{Bittersweet}{IP} si possono specificare con un nome, in modo che se dovesse cambiare l'indirizzo \textcolor{Bittersweet}{IP} della macchina non sarebbe necessario modificare il servizio. 
 
-Le MTA ospitate sull'Outgoing Mail Server sono suddivise in due processi chiamate MSA, ``Message Submission Agent'', quello a cui si rivolge la MUA per spedire la posta, ed il secondo è il vero e proprio MTA che cura la spedizione al MTA del dominio del destinatario. Lo stesso avviene per un IMS, dove esiste sempre un processo MTA, ed un ulteriore processo MDA, ``Mail Delivery Agent'', responsabile del recapito all'utente. 
+Le MTA ospitate sull'OMS sono suddivise in due processi chiamate MSA, \textit{Message Submission Agent}, quello a cui si rivolge la MUA per spedire la posta, ed il secondo è il vero e proprio MTA che cura la spedizione al MTA del dominio del destinatario. Lo stesso avviene per un IMS, dove esiste sempre un processo MTA, ed un ulteriore processo MDA, \textit{Mail Delivery Agent}, responsabile del recapito all'utente. 
 
 
 Definita l'architettura si definiscono una serie di azioni, a più livelli di dettaglio, scomposte in varie operazioni. Tutte le primitive di gestione dei messaggi in partenza e dei messaggi ricevuti 
-sono delegati al MUA. Quando l'utente richiede il salvataggio della MUA, quando l'utente richiede il salvataggio del messaggio, il MUA accede al \textit{file} system locale, per salvare la nuova mail, in caso non esista, accodandola al \textit{file} delle mail salvate, con il rispettivo testo. 
+sono delegati al MUA. Quando l'utente richiede il salvataggio della MUA, quando l'utente richiede il salvataggio del messaggio, il MUA accede al \textit{filesystem} locale, per salvare la nuova \textit{mail}, in caso non esista, accodandola al \textit{file} delle \textit{mail} salvate, con il rispettivo testo. 
 
-Quando si spedisce un messaggio il MUA invia il messaggio al suo OMS, che cerca il Mail eXchanger del dominio del destinatario utilizzando il \textcolor{Mahogany}{DNS}, se il primario non è disponibile si rivolge al secondario, richiedendo al proprio serve primario la lista dei MX del dominio destinazione, in ordine di priorità, tentando di trasmettere il messaggio ad intervalli regolari. Se fallisce per tre giorni consecutivi viene notificato l'utente del fallimento. Se viene inviato ad un MX secondario, questo tenta ad intervalli regolari di inviare i messaggi salvati al MX primario. 
+Quando si spedisce un messaggio il MUA invia il messaggio al suo OMS, che cerca il MX del dominio del destinatario utilizzando il \textcolor{Mahogany}{DNS}, se il primario non è disponibile si rivolge al secondario, richiedendo al proprio \textit{server} primario la lista dei MX del dominio destinazione, in ordine di priorità, tentando di trasmettere il messaggio ad intervalli regolari. Se fallisce per tre giorni consecutivi viene notificato l'utente del fallimento. Se viene inviato ad un MX secondario, questo tenta ad intervalli regolari di inviare i messaggi salvati al MX primario. 
 
-Sono presenti anche servizi ausiliari, ovvero il \textcolor{Mahogany}{DNS}, senza il quale la posta elettronica non funzionerebbe, inoltre è necessario un File System distribuito, il \textit{server} deve poter accedere ai \textit{file} delle mail tramite un sistema per il File System distribuito, poiché potrebbero non trovarsi sullo stesso \textit{server}. 
+Sono presenti anche servizi ausiliari, ovvero il \textcolor{Mahogany}{DNS}, senza il quale la posta elettronica non funzionerebbe, inoltre è necessario un \textit{filesystem} distribuito. I \textit{server} MX infatti devono poter accedere alle \textit{mail} tramite un sistema distribuito, poiché potrebbero non trovarsi sullo stesso \textit{server}. 
 
-Esiste un comando chiamato \verb|dig| che permette, sulle macchine Linux, di comportarsi come resolver, nel mondo Windows è presente un comando analogo chiamato \verb|nslookup|, che fornisce record MX. In questo modo è possibile ottenere le informazioni relative ai \textit{server} ed i loro indirizzi \textcolor{BurntOrange}{IPv4}. Utilizzando questo comando bisogna specificare ulteriori parametri per leggere i record MX, e specificare l'indirizzo. Questo va effettuato anche con il comando \verb|dig| specificando dopo la flag \verb|-f| il tipo di record che si vuole leggere e l'indirizzo corrispondente. 
+Esiste un comando chiamato \verb|dig| che permette, sulle macchine Linux, di comportarsi come \textit{resolver}, nel mondo Windows è presente un comando analogo chiamato \verb|nslookup|, che fornisce \textit{record} MX. In questo modo è possibile ottenere le informazioni relative ai \textit{server} ed i loro indirizzi \textcolor{BurntOrange}{IPv4}. Utilizzando questo comando bisogna specificare ulteriori parametri per leggere i \textit{record} MX, e specificare l'indirizzo. Questo va effettuato anche con il comando \verb|dig| specificando dopo la \textit{flag} \verb|-f| il tipo di \textit{record} che si vuole leggere e l'indirizzo corrispondente. 
+
+\begin{minted}{powershell}
+    \prompt> dig -f MX gmail.com
+\end{minted}
 
 
-Dato un MUA configurato per spedire mail bisogna conoscere l'indirizzo \textcolor{Bittersweet}{IP} dell'OMS, questo si ottiene specificando un nome ed invocando un \textcolor{Mahogany}{DNS}, questo effettua la risoluzione dell'indirizzo, e rappresenti il primo punto di contatto tra la posta elettronica ed il \textcolor{Mahogany}{DNS}, mentre un punto di contatto diverso rappresenta l'OMS che notifica al \textcolor{Mahogany}{DNS} di voler conoscere l'indirizzo MX del destinatario. Questa seconda operazione infatti non rappresenta una risoluzione canonica. Il messaggio viene inviato dall'OMS al MX relativo all'IMS del destinatario. 
+Dato un MUA configurato per spedire \textit{mail} bisogna conoscere l'indirizzo \textcolor{Bittersweet}{IP} dell'OMS, questo si ottiene specificando un nome ed invocando un \textcolor{Mahogany}{DNS}, questo effettua la risoluzione dell'indirizzo, e rappresenta il primo punto di contatto tra la posta elettronica ed il \textcolor{Mahogany}{DNS}. Un punto di contatto diverso rappresenta l'OMS che notifica al \textcolor{Mahogany}{DNS} di voler conoscere l'indirizzo MX del destinatario. Questa seconda operazione infatti non rappresenta una risoluzione canonica. Il messaggio viene inviato dall'OMS al MX relativo all'IMS del destinatario. 
 Il MX e l'IMS comunicano tra di loro tramite una memoria di massa condivisa sulla quale può scrivere il MX e leggere l'IMS. 
 
 
 Si possono distinguere due tipi di flussi di informazione, tra il primo MUA e l'MTA dell'OMS, che si trasmettono messaggi fino a quando non arrivano al MX primario del destinatario. 
-Questo primo flusso di informazione è realizzato da un \textit{client} che intende trasferire uno o più messaggi, tramite un servizio che il \textit{server} potrebbe accettare o rifiutare di concedere il servizio. 
-Non occorre autenticare gli interlocutori poiché o entrambi hanno i privilegi di amministratore, oppure uno di essi non è il mittente, e non si considera cruciale assicurarsi che il mittente corrisponda a quanto dichiarato. Poiché l'IMS ed il MX sono due macchine associate a compagnie diverse e non sarebbe realizzabile permettere a tutti i possibili OMS le autenticazioni del \textit{server} MX, analogamente per il riferimento ad utenti che inviano messaggi da spedire ai proprio OMS. 
-Si suppone non ci sia una verifica di autenticazione in questo passaggio, e questo è la causa dello spam che invade la posta elettronica. 
+Questo primo flusso di informazione è realizzato da un \textit{client} che intende trasferire uno o più messaggi, tramite un servizio che il \textit{server} potrebbe accettare o rifiutare di concedere. 
+Non occorre autenticare gli interlocutori poiché o entrambi hanno i privilegi di amministratore, oppure uno di essi è il mittente, e non si considera cruciale assicurarsi che il mittente corrisponda a quanto dichiarato. Poiché l'IMS ed il MX sono due macchine associate a compagnie diverse e non sarebbe realizzabile permettere a tutti i possibili OMS le autenticazioni del \textit{server} MX, analogamente per il riferimento ad utenti che inviano messaggi da spedire ai proprio OMS. 
+Si suppone non ci sia una verifica di autenticazione in questo passaggio, e questo è la causa dello \textit{spam} che invade la posta elettronica. 
 
 
 Mentre l'ultimo passaggio dall'IMS dal destinatario probabilmente è realizzato da un'interazione di richieste e risposte, e sembra essere intrinsecamente più complicato. Utilizza quindi un protocollo più articolato. 
 Il \textit{client} si informa sul numero e la dimensione dei messaggi contenuti nel \textit{server}, e destinati allo specifico utente. In questo passaggio l'autenticazione è indispensabile, e si possono trasferire o non trasferire messaggi. 
-Chi utilizza questi messaggi si deve autenticare poiché consente di leggere solo i messaggi espressamente indirizzati all'utente con le opportune credenziali. 
+Chi utilizza questi messaggi si deve autenticare poiché consente di leggere solo i messaggi espressamente indirizzati all'utente con le opportune credenziali. In questo passaggio bisogna permettere all'utente di cancellare messaggi senza trasferirli o di leggerli senza cancellarli. 
+
+
+Poiché questi due flussi di informazione sono così diversi, si utilizzano due sistemi di comunicazione diversi per ognuno di essi. Dato che la quantità di informazioni da scambiare non è determinabile a priori, si utilizza un protocollo connesso \textcolor{Bittersweet}{TCP} per instaurare le connessioni. Bisogna definire due protocolli, definendo le operazioni, le procedure, i pacchetti e gli stati attraversati. 
+Questi protocollo utilizzano un meccanismo \textit{client-server}, dove il \textit{client} chiede al \textit{server} un servizio. Bisogna analizzare la differenza tra queste richieste e le risposte. In \textcolor{NavyBlue}{HTTP} la richiesta si effettua specificando un metodo, ed il \textit{server} invia al \textit{client} una risorsa in base al metodo specificato. 
+Anche in questi protocolli si utilizzano dei metodi, e bisogna definire i loro metodi d'uso, e le relative risposte dal \textit{server}. 
+Il primo tipo di flusso di informazione è supportato da un protocollo chiamato smtp \textit{Simple Mail Transfer Protocol}, molto vecchio e modificato molte volte. Questo protocollo usa una porta \textcolor{Bittersweet}{TCP} \textit{well-known} \verb|25|. Ed è interamente \textit{text based}, quindi di facile comprensione. Ci sono varie RFC che definisco il corpo di un messaggio di posta elettronica, tra cui 821, 5321 e 5322. Tipicamente la struttura del protocollo è rimasta invariate, solamente la struttura del corpo del messaggio è stata modificata. 
+Per iniziare una conversazione in smtp si utilizza il comando \verb|HELO|, seguito da un dominio. Il comando \verb|MAIL FROM| inizia il trasferimento di una \textit{mail} specificando uno o più destinatari. 
+\verb|RCPT TO| individua un destinatario, se sono presenti più destinatari, e non sono presenti nel dominio locale, viene richiesto all'applicazione ricevente di inoltrarli al MX del dominio, tramite un'operazione di \textit{relaying}. 
+Il comando \verb|DATA| indica l'inizio del corpo della \textit{mail}, e verrà trattato tale fino all'arrivo della combinazione \verb|<CRLF>. <CRLF>|. Un punto ad inizio di riga ed un accapo, poiché tutte le righe del messaggio vengono processate, ed ai punti di inizio riga vengono sostituiti dei doppi punti, il processo inverso viene effettuato anche in ricezione per visualizzare correttamente il messaggio. 
+Il comando \verb|RSET| interrompe una connessione, terminando il trasferimento corrente. 
+Per autenticarsi si utilizzano i comandi \verb|VRFY| che richiede al ricevente di confermare che il destinatario esiste. \verb|EXPN| richiede al ricevente di confermare che l\textit{alias} di posta specificato corrisponde ad una lista di utenti, eventualmente ritornata al ricevente. 
+Il comando \verb|HELP| restituisce tutti i comandi disponibili, se viene seguito da un comando, fornisce informazioni specifiche per quel comando. 
+Il comando \verb|NOOP| non effettua alcuna operazione, ma richiede una risposta affermativa dalla controparte. Per terminare una comunicazione si utilizza il comando \verb|QUIT|. 
+
+Le risposte del \textit{server} sono dei codici numerici, seguiti da una loro spiegazione in linguaggio naturale, analogamente per \textcolor{NavyBlue}{HTTP}. 
+
+%% TODO lista codici di risposta
+
+Una transazione viene iniziata quando il \textit{client} inserisce il comando \verb|MAIL|, che deve essere seguito da \verb|RCPT|, eventualmente iterato, e poi dal comando \verb|DATA| per specificare il corpo del messaggio. A questo punto il \textit{server} entra in uno stato di accettazione del messaggio che termina quando riconosce la sequenza \verb|<CRLF>. <CRLF>|. Durante il trasferimento non vengono accettati comandi, dopo un trasferimento avvenuto con successo si può chiudere la transazione con il comando \verb|QUIT|. 
+
+Per la transazione tra l'IMS e la MUA del destinatario si possono utilizzare molti protocolli, uno di questi è pop3, \textit{Post Office Protocol 3}, utilizza la porta \textit{well known} \verb|10|, specificato nelle RFC 1725 e 1939. Ormai non è più utilizzato e si utilizza il protocollo imap, o variazioni sempre su di imap. 
+I comandi di pop3 sono composti da quattro lettere e le risposte dal \textit{server} ISM sono precedute da \verb|+OK| se positive e da \verb|-ERR| se negative. I comandi \verb|USER| e \verb|PASS| permettono di autenticare l'utente, specificando queste informazioni. Queste passano in chiaro sulla rete, se non è specificato un protocollo di cifratura. 
+Alcuni comandi sono gli stessi come \verb|NOOP|, \verb|RSET| e \verb|QUIT|. Mentre per effettuare le operazioni specifiche di questo flusso di informazione si utilizzano i comandi \verb|LIST|, che fornisce una lista dei messaggi disponibili, ordinati e numerati, affiancati da un numero che rappresenta la dimensione del messaggio in byte. Il comando \verb|STAT| mostra il numero di messaggi totali e la loro dimensione complessiva. 
+I byte vengono chiamati ottetti, \textit{octets}, gruppi di 8 bit. 
+Per visualizzare un messaggio si utilizza il comando \verb|RETR| seguito dal numero del messaggio che si vuole visualizzare. Per eliminare un messaggio si utilizza \verb|DELE|, sempre seguito dal numero relativo al messaggio. 
+
+Il primo stato di pop3 è l'autenticazione, dopo essere autenticato entra in uno stato di transazione, dove è possibile effettuare richieste di servizio del \textit{client} al \textit{server}. Dopo aver inviato tutto entra in uno stato di \textit{update} e vengono rilasciate le risorse acquisite, e la connessione \textcolor{Bittersweet}{TCP} viene chiusa. 
 
 \end{document}
