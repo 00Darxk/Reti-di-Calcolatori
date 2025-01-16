@@ -44,7 +44,7 @@
 \AtBeginDocument{%
   \renewcommand{\figurename}{Fig.}
 }
-\fancypagestyle{link}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\fancyfoot[C]{Sorgente del file \LaTeX$\,\,$disponibile al seguente link: \url{https://github.com/00Darxk/Reti-di-Calcolatori/}}}
+\fancypagestyle{link}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\fancyfoot[C]{Sorgente del \textit{file} \LaTeX$\,\,$disponibile al seguente link: \url{https://github.com/00Darxk/Reti-di-Calcolatori/}}}
 
 \begin{document}
 
@@ -1673,8 +1673,8 @@ Il \textcolor{Mahogany}{DNS} o Domain Name System è un applicazione del livello
 Poiché è scomodo utilizzare un numero per identificare un indirizzo, si vuole assegnare ad ogni interfaccia un nome, più riconoscibile, questo protocollo si occupa della mappatura 
 tra questi nomi assegnati all'indirizzo \textcolor{Bittersweet}{IP} corrispondente. 
 Agli albori dell'\textit{internet} questo ``Spazio dei Nomi'' o \textit{namespace} era \textit{flat}, ovvero l'insiemi dei nomi ammissibili non aveva restrizioni, quindi poteva essere assegnato qualsiasi nome arbitrario, e la mappatura veniva tracciata da una 
-persona a mano su un file testuale. Al crescere della dimensione della rete tuttavia potevano facilmente sorgere conflitti. La possibilità di aggiungere e modificare i nomi 
-necessitava di un accesso a questo file di testo centrale costante. 
+persona a mano su un \textit{file} testuale. Al crescere della dimensione della rete tuttavia potevano facilmente sorgere conflitti. La possibilità di aggiungere e modificare i nomi 
+necessitava di un accesso a questo \textit{file} di testo centrale costante. 
 
 Per migliorare questo servizio si è pensato di decentralizzare l'assegnazione dei nomi e la responsabilità del \textit{mapping} tra nome ed indirizzo. Inoltre la più 
 importante aggiunta è la possibilità di accedere al \textit{mapping} con tecniche \textit{client}-\textit{server}. 
@@ -1823,36 +1823,28 @@ Per effettuare una \textit{query} non ricorsiva si utilizza la \textit{flag} \ve
 \subsection{Il Linguaggio \textcolor{Peach}{HTML}}
 
 Il linguaggio \textcolor{Peach}{HTML} è il linguaggio che specifica le pagine web, si interessa il protocollo che porta queste informazioni attraverso la rete, ovvero \textcolor{NavyBlue}{HTTP}. 
-\textcolor{Peach}{HTML}, \textit{HyperText Markup Language}, è un testo che può contenere riferimenti ad altri ipertesti. Un marcatore è un codice che segnala l'inizio o la fine di una primitiva  di 
+\textcolor{Peach}{HTML}, \textit{HyperText Markup Language}, è un testo che può contenere riferimenti ad altri ipertesti. Un marcatore è un codice che segnala l'inizio o la fine di una primitiva di 
 formattazione del testo. 
 
-%% TODO 
-
-Le caratteristiche dell'ipertesto sono la concisione 
-
+Le caratteristiche dell'ipertesto sono la concisione, dato che il contenuto di una singola pagina può essere ristretto all'essenziale; la completezza, l'informazione distribuita sulle varie pagine può essere arbitrariamente dettagliata; la condivisione, i dati non vengono replicati ma condivisi, evitando quindi le ridondanze. 
 Si può arrivare a livelli di completezza arbitrari affidando a subordinate distribuendo l'informazione nelle pagine. 
-I dati vengono condivisi evitando le ridondanze 
-
-L'ipertesto costituito dall'insieme di tutte le pagine presenti su \textit{internet} viene denominato World Wide Web, rete estesa al mondo intero. 
-Bisogna distinguere tra \textit{internet} e WWW. La parola \textit{internet} è ulteriormente ambigua poiché il nome del \textit{protocol} Internet Protocol e l'insieme dei protocolli \textit{Internet Protocol Suite}. 
+L'ipertesto costituito dall'insieme di tutte le pagine presenti su \textit{internet} viene denominato \textit{World Wide Web}, rete estesa al mondo intero. 
+Bisogna distinguere tra \textit{internet} e WWW. La parola \textit{internet} è ulteriormente ambigua poiché il nome del protocollo di livello quattro \textit{Internet Protocol} e l'insieme dei protocolli di rete \textit{Internet Protocol Suite} condividono lo stesso nome. 
 Inoltre si riferisce alla struttura fisica, ma spesso si riferisce a tutti i servizi disponibili in questo ambiente distribuito. 
-Mentre WWW si riferisce alla rete logica costituita dalle pagine web e dai loro hyperlink, queste costituiscono solo uno dei servizi offerti dall'\textit{internet}. 
+Mentre WWW si riferisce alla rete logica costituita dalle pagine \textit{web} e dai loro \textit{hyperlink}, queste costituiscono solo uno dei servizi offerti da \textit{internet}. 
 
 
-\textcolor{Peach}{HTML} è un linguaggio di ``markup'', è un linguaggio che codifica delle informazioni tramite marcatori. Un linguaggio di marcatura ha senso quando si vuole rappresentare 
+\textcolor{Peach}{HTML} è un linguaggio di \textit{markup}, è un linguaggio che codifica delle informazioni tramite marcatori. Un linguaggio di marcatura ha senso quando si vuole rappresentare 
 un'informazione che può essere strutturata in termini sequenziali. 
 
-Si possono identificare linguaggi di marcatura fisica o logica. I linguaggi della struttura fisica descrive dettagliatamente come apparirà il testo formattato. 
-Queste ha una filosofia WYSIWYG, ``What You See Is What You Get''. Si vuole poter descrivere testi per schermi di dimensione e 
+Si possono identificare linguaggi di marcatura fisica o logica. I linguaggi di marcatura fisica descrivono dettagliatamente come apparirà il testo formattato. 
+Queste hanno una filosofia WYSIWYG, \textit{What You See Is What You Get}. Si vuole poter descrivere testi per schermi di dimensione e risoluzioni differenti, quindi specificare direttamente la dimensione degli oggetti di una pagina è sconsigliato. Si utilizzano quindi linguaggi di marcatura logica o semantica descrive il significato strutturale degli oggetti da formattare con una filosofia WYGIWYM, \textit{What You Get Is What You Mean}. 
 
-
-Linguaggi di marcatura logica o semantica descrive il significato strutturale degli oggetti da formattare con una filosofia WYGIWYM, ``What You Get Is What You Mean''. 
-
-\textcolor{Peach}{HTML} usa una marcatura logica e permette di realizzare pagine web senza doversi preoccupare delle caratteristiche del dispositivo sul quale quel testo sarà offerto in 
+\textcolor{Peach}{HTML} usa una marcatura logica e permette di realizzare pagine \textit{web} senza doversi preoccupare delle caratteristiche del dispositivo sul quale quel testo sarà offerto in 
 consultazione. 
-Ogni marcatore in \textcolor{Peach}{HTML} viene identificato all'interno di parentesi acute \verb|< ... >|. I marcatori di fine formattazione hanno uno slash prima della parentesi angolata 
-aperta \verb|</ ... >|. Alcuni marcatori ammettono valori dopo un uguale. 
-I commenti hanno una forma \verb|<!-- ... --->|.
+Ogni marcatore in \textcolor{Peach}{HTML} viene identificato all'interno di parentesi acute \verb|< ... >|. I marcatori di fine formattazione hanno uno \textit{slash} prima della parentesi angolata 
+aperta \verb|</ ... >|. Alcuni marcatori ammettono valori, specificati dopo un uguale: \verb|<marcatore attributo1 = valore1 ... attributoN = valoreN>|. 
+I commenti si scrivono nel seguente formato \verb|<!-- ... --->|.
 Le parentesi angolate non sono quindi disponibili come caratteri si utilizzano caratteri speciali per indicare questi caratteri che non possono essere scritti 
 direttamente. Iniziano con \verb|&| o \verb|;|:
 \begin{itemize}
@@ -1862,9 +1854,9 @@ direttamente. Iniziano con \verb|&| o \verb|;|:
     \item \verb|&_grave|: lettera \verb|_| con accento grave. 
 \end{itemize} 
 
-Esistono marcatori meta che non necessariamente servono per la formattazione, ma possono inserire marcatori per identificare certe parole all'interno della pagina. 
+Esistono marcatori di metadati che non necessariamente servono per la formattazione, ma possono inserire marcatori per identificare certe parole all'interno della pagina: \verb|<meta ...>|. 
 
-Un file \textcolor{Peach}{HTML} viene strutturato all'interno del marcatore \verb|<html> ... </html>| e si può dividere in due sezioni \verb|<head> ... </head>| che contiene informazioni relative all'intera pagina, 
+Un \textit{file} \textcolor{Peach}{HTML} viene strutturato all'interno del marcatore \verb|<html> ... </html>| e si può dividere in due sezioni \verb|<head> ... </head>| che contiene informazioni relative all'intera pagina, 
 e \verb|<body> ... </body>| che contiene descrizioni relative agli oggetti da visualizzare nella pagina. 
 Nell'intestazione si può trovare il titolo con \verb|<title> ... </title>|, metadati \verb|<meta ... = ... >|
 
@@ -1880,11 +1872,10 @@ Si può formattare il testo con i seguenti marcatori:
 \end{itemize}
 
 
-Si definiscono ancore con il marcatore \verb|<a> ... </a>|, in base all'attributo si possono creare hyperlink con \verb|href|, un ancora di un punto di arrivo con \verb|name|. 
-Si possono inserire hyperlink ad una posizione nella stessa pagina oppure ad un'ulteriore pagina. 
+Si definiscono ancore con il marcatore \verb|<a href="..."> ... </a>|, in base all'attributo si possono creare \textit{hyperlink} specificando un \textcolor{SpringGreen}{URL}, oppure un punto di arrivo o un indirizzo ad un punto di arrivo a questa o ad altre pagine. 
 
-Si possono inserire immagini con \verb|<img src="URL">|, a capi di un paragrafo \verb|<p>| o break \verb|<br>|, linee orizzontali \verb|<hr>| di cui si può modificare 
-lo spessore con \verb|size=...|. Si può colore del font con \verb|<font color=...></font>|. 
+Si possono inserire immagini con \verb|<img src="\textcolor{SpringGreen}{URL}">|, a capi di un paragrafo \verb|<p>| o \textit{break} \verb|<br>|, linee orizzontali \verb|<hr>| di cui si può modificare 
+lo spessore con \verb|size=...|. Si può cambiare il colore del font con \verb|<font color=...></font>|. 
 Si possono realizzare liste non ordinate:
 \begin{minted}{html}
     <ul>
@@ -1899,144 +1890,174 @@ Oppure ordinate:
         <li> ...
     </ol>
 \end{minted}
-
 Si possono definire tabelle con:
 \begin{minted}{html}
-    <table>
     <table border=...>
-    <tr> ... </tr> <!-- inizio-fine linea-->
-    <td> ... </td> <!-- inizio-fine cella-->
-    <th> ... </th> <!-- titolo cella-->
+        <th> ... </th> <!-- titolo cella-->
+        <tr>  <!-- inizio-fine linea-->
+            <td> ... </td> <!-- inizio-fine cella-->
+            ...
+            <td> ... </td> <!-- inizio-fine cella-->
+        </tr> 
     </table>
 \end{minted}
 
-Si possono definire ulteriori marcatori ed estensioni, ma se il browser non conosce il marcatore non produce errore, ma semplicemente lo ignora. 
+Si possono definire ulteriori marcatori ed estensioni, ma se il \textit{browser} non conosce il marcatore non produce errore, ma semplicemente lo ignora. 
 \textcolor{Peach}{HTML} è un linguaggio estremamente basilare che si è evoluto nel tempo, attualmente siamo alla versione \textcolor{Peach}{HTML} 5. 
 Il codice \textcolor{Peach}{HTML} viene scandito riga per riga, partendo dall'alto ed eventualmente viene formattata la pagina. \textcolor{Peach}{HTML} viene spesso accompagnato da altre tecnologie come 
-javascript o CSS, ``Cascading Style Sheets'', fogli di stile, elementi di formattazione che possono essere utilizzati epr rendere la pagina al meglio. 
+javascript o CSS, \textit{Cascading Style Sheets}, fogli di stile, elementi di formattazione che possono essere utilizzati per rendere la pagina al meglio. 
 
-\subsection{URL ed il Protocollo \textcolor{NavyBlue}{HTTP}}
+\subsection{\textcolor{SpringGreen}{URL} ed il Protocollo \textcolor{NavyBlue}{HTTP}}
 
-Prima di descrivere il protocollo \textcolor{NavyBlue}{HTTP}, bisogna descrivere l'URL, ``Uniform Resource Locator'', o l'URI, ``Uniform Resource Identifier''. Poiché in \textit{internet} c'è la differenza 
-tra lar risorsa e la sua posizione. 
+Prima di descrivere il protocollo \textcolor{NavyBlue}{HTTP}, bisogna descrivere l'\textcolor{SpringGreen}{URL}, \textit{Uniform Resource Locator}, o l'URI, \textit{Uniform Resource Identifier}. Poiché in \textit{internet} non si differenzia tra la risorsa e la sua posizione. 
 
-Un URL rappresenta una rappresentazione testuale e compatta di una risorsa disponibile, in modo sintetico realizzata da uno schema, ed una parte dipendente dallo schema, 
-separati dal separatore \verb|:|. 
-Lo schema descrive il tipo di schema, e la parte seguente la individua secondo le caratteristiche di un dato schema. Tipicamente lo schema è \verb|http| o \verb|https|, 
-questi sono sia risorse che protocolli per acquisire risorse. Schemi come \verb|file| sono risorse presenti sul proprio calcolatore. 
+Un \textcolor{SpringGreen}{URL} è una rappresentazione testuale e compatta di una risorsa disponibile, in modo sintetico realizzata da uno schema, ed una parte dipendente dallo schema, separati da \verb|:|. 
+Lo schema descrive il tipo di risorsa acceduta, e la parte seguente la individua secondo le caratteristiche di un dato schema. Tipicamente lo schema è \verb|http| o \verb|https|, 
+questi sono sia risorse che protocolli per acquisire risorse. Schemi come \verb|\textit{file}| sono risorse presenti sul proprio calcolatore. 
 
-%% TODO add schemi
-
-
-Alcuni schemi utilizzano la stessa sintassi per la parte dipendente, questa sintassi si chiama ``Common Internet Scheme Syntax'', CISS. SI utilizza un doppio slash iniziale 
-seguito da un campo con l'userid e la password seguita da una chiocciola, ma questo è molto raramente utilizzato negli URL moderni. 
-Il secondo campo dopo la chiocciola corrisponde all'indirizzo dell'\textit{host}, il suo numero \textcolor{Bittersweet}{IP}, o ad una stringa identificativa di questo indirizzo sull'\textit{internet}. 
+Alcuni schemi utilizzano la stessa sintassi per la parte dipendente, questa sintassi si chiama \textit{Common Internet Scheme Syntax}, CISS. Si utilizza un doppio \textit{slash} iniziale 
+seguito da un campo con l'\textit{userid} e la \textit{password} seguita da una chiocciola, ma questo è molto raramente utilizzato negli \textcolor{SpringGreen}{URL} moderni. 
+Il secondo campo dopo la chiocciola corrisponde all'indirizzo dell'\textit{host}, il suo numero \textcolor{Bittersweet}{IP}, o ad una stringa identificativa di questo indirizzo sulla rete. 
 Il campo successivo specificato dopo \verb|:| indica la porta dove è disponibile quella risorsa, si suppone la risorsa sia un livello quattro che dispone di porte, 
-questa può essere omessa, ed in caso venga omessa si utilizza una porta di quelle note, associate a protocolli \textcolor{NavyBlue}{HTTP}, come la porta 80. L'ultimo campo individua un file 
-all'interno del filesystem, del \textit{server} con \verb|/| seguito dall'indirizzo del file. Alcuni sistemi presentano variazioni nella sintassi di questo campo, come \textcolor{NavyBlue}{HTTP} e 
+questa può essere omessa, ed in caso si utilizza una porta di quelle note, associate a protocolli \textcolor{NavyBlue}{HTTP}, come la porta \texttt{80}. L'ultimo campo individua un \textit{file} 
+all'interno del \textit{filesystem}, del \textit{server} con \verb|/| seguito dall'indirizzo del \textit{file}. Alcuni sistemi presentano variazioni nella sintassi di questo campo, come \textcolor{NavyBlue}{HTTP} e 
 HTTPS. 
 Questo identifica una risorsa, tipicamente attraverso l'indirizzo dell'\textit{host}, ma l'indirizzo \textcolor{Bittersweet}{IP} ha anche il ruolo di locazione, quindi è possibile localizzare la 
 risorsa dato l'\textcolor{Bittersweet}{IP}. 
 
-%% TODO img schema e parte dipendente verb (?)
+\begin{figure}[H]%
+    \centering%
+    \includegraphics[width=3cm]{example-image}% %% TODO img
+    \caption{Struttura Schema di \textcolor{NavyBlue}{HTTP}}%  
+\end{figure}
 
-Quando un browser deve accedere ad una risorsa individuata da un URL etra i campi di indirizzi e la porta, se non è specificata utilizza la porta 80, per il protocollo 
-\textcolor{NavyBlue}{HTTP}. Questo lavoro lo effettua qualsiasi applicazione che tenta di accedere a duna risorsa. 
-Il campo userid e password vengono utilizzati per gestire un colloquio con il \textit{server}, senza coinvolgere l'utente. In coda al path può esserci una stringa preceduta dal 
+Quando un browser deve accedere ad una risorsa individuata da un \textcolor{SpringGreen}{URL} etra i campi di indirizzi e la porta, se non è specificata utilizza la porta \texttt{80}, per il protocollo 
+\textcolor{NavyBlue}{HTTP}. Questo lavoro lo effettua qualsiasi applicazione che tenta di accedere ad una risorsa. 
+Il campo \textit{userid} e \textit{password} vengono utilizzati per gestire un colloquio con il \textit{server}, senza coinvolgere l'utente. In coda al percorso della risorsa può esserci una stringa preceduta dal 
 carattere \verb|#| per individuare la posizione all'interno della pagina \textcolor{Peach}{HTML}, utilizzata dal \textit{client} e non inviata al \textit{server}. 
-Mentre una stringa preceduta da \verb|?| viene inviata al \textit{server}, per specificare parametri o altre opzioni. 
+Oppure una stringa preceduta da \verb|?| viene inviata al \textit{server}, per specificare parametri o altre opzioni. 
 
-Il protocollo \textcolor{NavyBlue}{HTTP}, ``HyperText Transfer Protocol'', è stato progettato come un protocollo di livello applicativo per realizzare sistemi distribuiti, basati su 
-ipertesti, anche se da molto non è più esclusivo per \textcolor{Peach}{HTML}. 
-
+Il protocollo \textcolor{NavyBlue}{HTTP}, \textit{HyperText Transfer Protocol}, è stato progettato come un protocollo di livello applicativo per realizzare sistemi distribuiti, basati su 
+ipertesti, anche se da molto non è più esclusivo per \textcolor{Peach}{HTML}. Questo protocollo si basa su uno schema richiesta-risposta tra il \textit{client} ed il \textit{server}; uno di questi colloqui tra \textit{client} e \textit{server} si chiama sessione. 
 
 \textcolor{NavyBlue}{HTTP} venne inventato da Tim Bernes-Lee, un ricercatore del CERN nel 1989, e da \textcolor{NavyBlue}{HTTP}/3, nel progetto QUIC, c'è una variazione molto grande rispetto alle reti 
 precedenti, con lo standard RFC 9114. 
 
 
-Una sessione di \textcolor{NavyBlue}{HTTP}/1.0 è composta da quattro fasi di apertura, richiesta, risposta e chiusura. Nel codice del \textit{server} è stato specificato ad un processo di ascoltare 
-sulla porta 80, oppure una porta specificata per ascoltare eventuali richieste di connessione. Un cliente quindi puà effettuare una connessione \textcolor{Bittersweet}{TCP} con questa 
+Una sessione di \textcolor{NavyBlue}{HTTP}/1.0 è composta da quattro fasi: apertura, richiesta, risposta e chiusura. Nel codice del \textit{server} è stato specificato ad un processo di ascoltare 
+sulla porta \texttt{80}, oppure una porta specificata per ascoltare eventuali richieste di connessione. Un cliente quindi puà effettuare una connessione \textcolor{Bittersweet}{TCP} con questa 
 porta \textcolor{Bittersweet}{TCP} del \textit{server}. Una volta instaurata una connessione \textcolor{Bittersweet}{TCP} viene inviata una richiesta al \textit{server}, un pacchetto \textcolor{NavyBlue}{HTTP} di richiesta al \textit{server} con la specifica della 
-risorsa alla quale si vuole accedere. Il \textit{server} poi restituisce la risorsa, tipicamente un file, contenente una descrizione \textcolor{Peach}{HTML} di una pagina che si vuole visualizzare. 
+risorsa alla quale si vuole accedere. Il \textit{server} poi restituisce la risorsa, tipicamente un \textit{file}, contenente una descrizione \textcolor{Peach}{HTML} di una pagina che si vuole visualizzare. 
 Dopo aver terminato la trasmissione, il \textit{server} chiude la connessione \textcolor{Bittersweet}{TCP}. 
-Avviene quindi un singolo scambio \textit{client}-\textit{server} in ogni sessione, questa sezione è completamente stateless. 
+Avviene quindi un singolo scambio \textit{client}-\textit{server} in ogni sessione, questa sezione è completamente \textit{stateless}. 
 
-Nella richiesta viene specificato uno di possibili metodi tra questi seguenti:
+Nella richiesta viene specificato uno di possibili metodi tra questi seguenti, per specificare quale azione da eseguire alla risorsa:
 \begin{itemize}
     \item \verb|GET|: Richiede la risorsa indicata;
     \item \verb|POST|: Invia dati alla risorsa indicata;
     \item \verb|HEAD|: Chiede informazioni sulla risorsa indicata;
-    \item \verb|PUT|: Copia dei dati inviati sulla risorsa con una sostituzione di file;
+    \item \verb|PUT|: Copia dei dati inviati sulla risorsa con una sostituzione di \textit{file};
     \item \verb|DELETE|: Richiede la cancellazione della risorsa:
     \item \verb|OPTIONS|: RIchiede di conoscere le opzioni disponibili per il trasferimento della risorsa specificata. 
 \end{itemize}
 
 
-Un pacchetto \textcolor{NavyBlue}{HTTP} è strutturato da un'intestazione composta da un metodo, risorsa e versione di protocollo 
-seguita da informazioni aggiuntive. Una riga vuota quindi divide l'intestazione dal corpo del pacchetto dove sono presenti i dati. 
-%% TODO add ??
-Questi sono pacchetti di richiesta, pacchetti di risposta hanno nell'intestazione la versione, ed in linguaggio naturale il codice e la spiegazione per 
+Un pacchetto \textcolor{NavyBlue}{HTTP} di richiesta è strutturato da un'intestazione composta da uno di questi metodi, la risorsa e la versione di protocollo da adottare 
+seguita da informazioni aggiuntive, \textit{request fields}, sul collegamento instaurato. Una riga vuota quindi divide l'intestazione dal corpo del pacchetto dove sono presenti i dati effettivamente inviati dal \textit{client} al \textit{server}. 
+
+\begin{figure}[H]%
+    \centering%
+    \includegraphics[width=3cm]{example-image}% %% TODO img
+    \caption{Struttura \textcolor{NavyBlue}{HTTP} \textcolor{Brown}{pdu} di Richiesta}%  
+\end{figure}
+
+I pacchetti di risposta hanno nell'intestazione la versione, il codice di stato ed in linguaggio naturale la spiegazione per 
 il codice. 
 Questi codici di stato possono essere positivi, di tipo \verb|2xx| o \verb|3xx| oppure negativi \verb|4xx| o \verb|5xx|. Non è necessario conoscere questi codici di 
-risposta poiché nel pacchetto è presente un campo testuale contenente la spiegazione del codice. 
+risposta poiché nel pacchetto è presente loro spiegazione. 
 I codici di risposta sono tipicamente sempre leggibili, per molti protocolli che definiti da standard RFC. 
+Nell'intestazione sono presenti anche i \textit{response fields} su trasferimento dal \textit{server} al \textit{client}, seguiti da una riga vuota per separare l'intestazione dal corpo del pacchetto, contenente i dati inviati. 
+
+I codici di stato più comuni sono, riguardo a richieste soddisfatte del \textit{client}:
+\begin{itemize}
+    \item \verb|200|: Il pacchetto contiene ciò che è stato richiesto;
+    \item \verb|201|: \`{E} stat creata una nuova risorsa come richiesto;
+    \item \verb|202|: \`{E} stata accettata la richiesta, ma non è stata creata la nuova risorsa. 
+\end{itemize}
+Possono essere riguardo ulteriori azioni richieste per completare l'operazione:
+\begin{itemize}
+    \item \verb|301|: La risorsa è disponibile ad un altro indirizzo;
+    \item \verb|304|: La risorsa non è stata modificata. 
+\end{itemize}
+Possono specificare che la richiesta errata e non può essere soddisfatta:
+\begin{itemize}
+    \item \verb|400|: La sintassi della richiesta è errata;
+    \item \verb|401|: \`{E} richiesta autorizzazione;
+    \item \verb|403|: La risorsa non è disponibile;
+    \item \verb|404|: La risorsa non esiste;
+    \item \verb|405|: Il metodo specificato non è permesso per la risorsa indicata;
+    \item \verb|414|: Il nome della risorsa è troppo lungo. 
+\end{itemize}
+Oppure possono indicare che non può essere soddisfatta una richiesta legittima:
+\begin{itemize}
+    \item \verb|500|: \`{E} stato sollevato un errore interno al \textit{server};
+    \item \verb|501|: La funzionalità richiesta non è implementata;
+    \item \verb|505|: La versione del protocollo specificata non è supportata. 
+\end{itemize}
+
 
 Nelle versioni successive i pacchetti vengono inviati allo stesso modo, ciò che ca,bia sono le informazioni addizionali. 
 Possono essere presenti alcuni campi di richiesta:
 \begin{itemize}
     \item \verb|accept-charset|: Insieme di caratteri accettabili;
-    \item \verb|cookie|: Un cookie inviato precedentemente dal \textit{server};
+    \item \verb|cookie|: Un \textit{cookie} inviato precedentemente dal \textit{server}, usando \verb|set-cookie|;
     \item \verb|content-length|: Lunghezza in byte del corpo;
-    \item \verb|\textit{host}|: Il domain name del \textit{server} e il numero di \textit{port} \textcolor{Bittersweet}{TCP}, utile per servire vari domini sullo stesso \textit{server}. 
+    \item \verb|host|: Il \textit{domain name} del \textit{server} e il numero di \textit{port} \textcolor{Bittersweet}{TCP}, utile per servire vari domini sullo stesso \textit{server}. Su uno stesso \textit{server} possono essere presenti servizi diversi, si utilizza il campo \verb|host| per specificare a quale di questi si vole accedere;
+    \item \verb|if-modified-since|: Permette al \textit{server} di inviare una risposta \verb|304| \textit{not modified} se la risorsa è invariata dopo la data specificata; 
+    \item \verb|if-none-match|: Permette al \textit{server} di inviare una risposta \verb|304| \textit{not modified} se la risorsa è invariata. 
 \end{itemize}
-
-Su uno stesso \textit{server} possono essere presenti servizi diversi, si utilizza il campo \verb|\textit{host}| per specificare a quale di questi si vole accedere. 
-Ulteriori campi di richiesta
+Alcuni campi di risposta sono:
 \begin{itemize}
-    \item 
+    \item \verb|ETag|: Un identificatore assegnato da un \textit{server} ad una specifica versione della risorsa, può essere ottenuto con una funzione di \textit{has};
+    \item \verb|set-cookie|: Un \textit{cookie} \textcolor{NavyBlue}{HTTP}. 
 \end{itemize}
-
-%% TODO ...
-
-Alcuni campi di risposta sono \verb|ETag|, questo è un identificatore assegnato da un \textit{server} ad una specifica risorsa, può essere generato da una funzione hash. Può 
+Il \textit{server} può 
 offrire informazioni aggiuntive rispetto ad un semplice valore temporale. 
-Un altro di questi capi di risposta è \verb|set-cookie| questo contiene un cookie \textcolor{NavyBlue}{HTTP}. 
-Un cookie è un dato spedito dal \textit{server} e memorizzato nel \textit{client}, viene re-inviato dal \textit{client} al \textit{server} ogni volta che accede a certe risorse, definite dallo scope del cookie. 
-Viene usato per gestire uno stato nelle sessioni \textcolor{NavyBlue}{HTTP}. Il \textit{server} può quindi riconoscere attività precedenti dello stesso \textit{client}. 
-L'applicazione più evidente è quella dell'autenticazione degli accessi ad un \textit{server}, questo cookie permettere al \textit{server} di identificare lo stesso \textit{client}, quindi attribuisce 
+Un \textit{cookie} è un dato spedito dal \textit{server} e memorizzato nel \textit{client}, viene re-inviato dal \textit{client} al \textit{server} ogni volta che accede a certe risorse, definite dallo scope del \textit{cookie}. 
+Viene usato per gestire uno stato nelle sessioni \textcolor{NavyBlue}{HTTP}. Il \textit{server} può quindi riconoscere attività precedenti dello stesso \textit{client} in base ai \textit{cookie}. 
+L'applicazione più evidente è quella dell'autenticazione degli accessi ad un \textit{server}, questo \textit{cookie} permettere al \textit{server} di identificare lo stesso \textit{client}, quindi attribuisce 
 i diritti per poter eseguire le operazioni successive. 
-Può anche permettere di tracciare le pagine visitate, da uno stesso utente. Un cookie può essere utilizzato anche da altri servizi nonostante non sia stato rilasciato per 
-un certo sito. Nell'EU all'accesso di un sito, questo è obbligato di specificare il motivo dei cookie che vengono utilizzati, il loro scopo o finalità, ed il modo in cui 
-vengono salvati e mantenuti nel tempo. Inoltre è possibile accedere comunque al sito senza accettare all'utilizzo dei cookie. 
+Può anche permettere di tracciare le pagine visitate da uno stesso utente. Un \textit{cookie} può essere utilizzato anche da altri servizi nonostante non sia stato rilasciato per 
+un certo sito. Nell'EU all'accesso di un sito, questo è obbligato di specificare il motivo dei \textit{cookie} che vengono utilizzati, il loro scopo o finalità, ed il modo in cui 
+vengono salvati e mantenuti nel tempo. Inoltre è possibile accedere comunque ad un sito senza accettare all'utilizzo dei \textit{cookie}. 
+
 
 Il protocollo \textcolor{NavyBlue}{HTTP} 1.1 permette di effettuare diverse sessioni sulla stessa 
-connessione \textcolor{Bittersweet}{TCP}, ma questo dipende comunque dal \textit{server}. 
+connessione \textcolor{Bittersweet}{TCP}, ma questo dipende comunque dal \textit{server}, diminuendo la latenza. 
 
 Questa possibilità è particolarmente importante se insieme a \textcolor{NavyBlue}{HTTP} e \textcolor{Bittersweet}{TCP} si 
 utilizza un protocollo per rendere sicure le connessioni. Attualmente si utilizza il 
-protocollo TLS; ``Transport Layer Security'', dopo l00instaurazione della 
-connessione TPC i due \textit{host} si scambiano informazioni per mantenere la sicurezza delle connessioni. Quindi all'instaurazione della connessione \textcolor{Bittersweet}{TCP} si effettua uno 
+protocollo TLS, \textit{Transport Layer Security}, dopo l'instaurazione della 
+connessione \textcolor{Bittersweet}{TCP} i due \textit{host} si scambiano informazioni per mantenere la sicurezza delle connessioni con un altro \textit{three-way-handshake}. Quindi all'instaurazione della connessione \textcolor{Bittersweet}{TCP} si effettua uno 
 scambio per determinare il protocollo di sicurezza utilizzato. Questo permette di offuscare i pacchetti trasmessi tra queste due macchine mantenendo la connessione 
 persistente. 
-Se fosse possibile effettuare una singola connessione \textcolor{Bittersweet}{TCP} per ogni richiesta verrebbero scambiati 7 pacchetti di apertura-chiusura per una singola sessione. 
+Se fosse possibile effettuare una singola connessione \textcolor{Bittersweet}{TCP} per ogni richiesta verrebbero scambiati 7 pacchetti di apertura-chiusura per una singola sessione, 10 considerando anche i protocolli di sicurezza. Quindi in versioni precedenti alla 1.1 l'\textit{overhead} per l'invio di un singolo pacchetto è molto rilevante.   
 
-\textcolor{NavyBlue}{HTTP} quindi rappresenta una sequenza di transizioni richiesta-risposta tra un \textit{client} ed un \textit{server}, tipicamente originate da un singolo utente, per accedere 
-a risorse tra loro correlate. 
+\textcolor{NavyBlue}{HTTP} quindi rappresenta una sequenza di transizioni richiesta-risposta tra un \textit{client} ed un \textit{server}, tipicamente originate da un singolo utente, per accedere a risorse tra loro correlate. 
 
-Se si usano \textcolor{NavyBlue}{HTTP} e TLS separatamente è opzionale l'utilizzo di TLS, mentre il protocollo HTTPS presenta l'utilizzo obbligatorio del protocollo di sicurezza 
-TLS. Cambia anche la porta di ascolto nota e diventa la porta 443. 
+Se si usano \textcolor{NavyBlue}{HTTP} e TLS separatamente, è opzionale l'utilizzo di TLS, mentre il protocollo HTTPS presenta l'utilizzo obbligatorio del protocollo di sicurezza TLS. Cambia anche la porta di ascolto nota e diventa la porta \texttt{443}. 
 
-%% TODO add http/2
+Nonostante la possibilità di inviare più richieste su una stessa connessione, queste vengono effettuate sequenzialmente, e quindi una nuova richiesta può essere inviata solamente dopo aver ricevuto la risposta della precedente, indipendentemente dal tempo di attesa. Per cui dalla seconda versione del protocollo si inseriscono meccanismi di parallelismo, inviando varie richieste sulla stessa connessione, in un processo chiamato \textcolor{NavyBlue}{HTTP} \textit{pipelining}. 
 
-\textcolor{NavyBlue}{HTTP}/3 invece utilizza un ulteriore protocollo di trasporto chiamato QUIC e non \textcolor{Bittersweet}{TCP}. QUIC utilizza pacchetti UPD, basato su implementazioni nell'user-space e quindi 
+\textcolor{NavyBlue}{HTTP}/3 invece utilizza un ulteriore protocollo di trasporto chiamato QUIC e non \textcolor{Bittersweet}{TCP}. QUIC utilizza pacchetti \textcolor{Fuchsia}{UDP}, basato su implementazioni nell'\textit{user-space} e quindi 
 non sono legate all'aggiornamento del sistema operativo. 
 Si intreccia quindi l'evoluzione dei protocolli di trasporto e l'evoluzione di \textcolor{NavyBlue}{HTTP}. 
 Questo rappresenta un fenomeno di evoluzione molto recente. 
 
-In QUIC il three-way-handshake è mescolato con l'handshake del protocollo TLS 1.3, con un minore \textit{overhead} della connessione. Per utilizzare questo protocollo, 
-anche il \textit{server} deve poterlo utilizzare, se il \textit{server} è di Google allora non ci sono problemi, poiché questo protocollo è stato introdotto da Google. Se il 
-\textit{server} non appartiene a Google, allora è possibile che utilizzi il protocollo QUIC, circa il 20\% dei siti Web utilizza il protocollo \textcolor{NavyBlue}{HTTP}/3, mentre tutti i 
-browser lo utilizzano, perché vogliono offrire sempre migliori prestazioni. 
+In QUIC il \textit{three-way-handshake} è mescolato con l'\textit{handshake} del protocollo TLS 1.3, con un minore \textit{overhead} della connessione. Per utilizzare questo protocollo, 
+anche il \textit{server} deve poterlo utilizzare, sicuramente supportato da \textit{server} appartenenti a Google, avendo creato questo protocollo. Anche se il 
+\textit{server} non appartiene a Google, allora è possibile che utilizzi il protocollo QUIC, circa il 20\% dei siti \textit{web} infatti utilizza il protocollo \textcolor{NavyBlue}{HTTP}/3, mentre tutti i 
+\textit{browser} lo utilizzano, perché vogliono offrire sempre migliori prestazioni ai loro utenti. 
 
 \clearpage
 
@@ -2109,11 +2130,11 @@ Le MTA ospitate sull'Outgoing Mail Server sono suddivise in due processi chiamat
 
 
 Definita l'architettura si definiscono una serie di azioni, a più livelli di dettaglio, scomposte in varie operazioni. Tutte le primitive di gestione dei messaggi in partenza e dei messaggi ricevuti 
-sono delegati al MUA. Quando l'utente richiede il salvataggio della MUA, quando l'utente richiede il salvataggio del messaggio, il MUA accede al file system locale, per salvare la nuova mail, in caso non esista, accodandola al file delle mail salvate, con il rispettivo testo. 
+sono delegati al MUA. Quando l'utente richiede il salvataggio della MUA, quando l'utente richiede il salvataggio del messaggio, il MUA accede al \textit{file} system locale, per salvare la nuova mail, in caso non esista, accodandola al \textit{file} delle mail salvate, con il rispettivo testo. 
 
 Quando si spedisce un messaggio il MUA invia il messaggio al suo OMS, che cerca il Mail eXchanger del dominio del destinatario utilizzando il \textcolor{Mahogany}{DNS}, se il primario non è disponibile si rivolge al secondario, richiedendo al proprio serve primario la lista dei MX del dominio destinazione, in ordine di priorità, tentando di trasmettere il messaggio ad intervalli regolari. Se fallisce per tre giorni consecutivi viene notificato l'utente del fallimento. Se viene inviato ad un MX secondario, questo tenta ad intervalli regolari di inviare i messaggi salvati al MX primario. 
 
-Sono presenti anche servizi ausiliari, ovvero il \textcolor{Mahogany}{DNS}, senza il quale la posta elettronica non funzionerebbe, inoltre è necessario un File System distribuito, il \textit{server} deve poter accedere ai file delle mail tramite un sistema per il File System distribuito, poiché potrebbero non trovarsi sullo stesso \textit{server}. 
+Sono presenti anche servizi ausiliari, ovvero il \textcolor{Mahogany}{DNS}, senza il quale la posta elettronica non funzionerebbe, inoltre è necessario un File System distribuito, il \textit{server} deve poter accedere ai \textit{file} delle mail tramite un sistema per il File System distribuito, poiché potrebbero non trovarsi sullo stesso \textit{server}. 
 
 Esiste un comando chiamato \verb|dig| che permette, sulle macchine Linux, di comportarsi come resolver, nel mondo Windows è presente un comando analogo chiamato \verb|nslookup|, che fornisce record MX. In questo modo è possibile ottenere le informazioni relative ai \textit{server} ed i loro indirizzi \textcolor{BurntOrange}{IPv4}. Utilizzando questo comando bisogna specificare ulteriori parametri per leggere i record MX, e specificare l'indirizzo. Questo va effettuato anche con il comando \verb|dig| specificando dopo la flag \verb|-f| il tipo di record che si vuole leggere e l'indirizzo corrispondente. 
 
